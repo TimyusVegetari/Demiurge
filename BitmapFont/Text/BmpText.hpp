@@ -69,12 +69,12 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     ////////////////////////////////////////////////////////////
     /// \brief Construct the text from a string, font and scale
     ///
-    /// \param szString       Text assigned to the string
-    /// \param oBmpFont       Font used to draw the string
-    /// \param fScale         Case scale of characters
+    /// \param szString         Text assigned to the string
+    /// \param oBmpFont         Font used to draw the string
+    /// \param fCharacterScale  Case scale of characters
     ///
     ////////////////////////////////////////////////////////////
-    BmpText ( const sf::String& sfString, const BmpFont& oBmpFont, GLuint uiCharacterScale = 1 );
+    BmpText ( const sf::String& sfString, const BmpFont& oBmpFont, GLfloat fCharacterScale = 1.f );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -176,7 +176,7 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     /// \see GetCharacterScale
     ///
     ////////////////////////////////////////////////////////////
-    void SetCharacterScale ( GLuint uiScale );
+    void SetCharacterScale ( GLfloat fScale );
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's style
@@ -236,7 +236,7 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     /// \see SetCharacterScale
     ///
     ////////////////////////////////////////////////////////////
-    GLuint GetCharacterScale ( void ) const;
+    GLfloat GetCharacterScale ( void ) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's style

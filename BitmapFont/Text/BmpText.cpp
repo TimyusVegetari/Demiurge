@@ -45,11 +45,11 @@ BmpText::BmpText ( void ) :
 }
 
 ////////////////////////////////////////////////////////////
-BmpText::BmpText ( const sf::String& sfString, const BmpFont& oBmpFont, GLuint uiCharacterScale ) :
+BmpText::BmpText ( const sf::String& sfString, const BmpFont& oBmpFont, GLfloat fCharacterScale ) :
   m_sfString        (sfString),
   m_pBmpFont        (&oBmpFont),
   m_uiGlyphAdvance  (1),
-  m_fCharacterScale (static_cast<GLfloat> (uiCharacterScale)),
+  m_fCharacterScale (fCharacterScale),
   m_uiStyle         (sf::Text::Regular),
   m_sfColor         (sf::Color (255, 255, 255)),
   m_sfVertices      (sf::Quads),
@@ -148,8 +148,7 @@ void BmpText::SetStyle ( sf::Uint32 uiStyle ) {
 }
 
 ////////////////////////////////////////////////////////////
-void BmpText::SetCharacterScale ( GLuint uiCharacterScale ) {
-  GLfloat fCharacterScale = static_cast<GLfloat> (uiCharacterScale);
+void BmpText::SetCharacterScale ( GLfloat fCharacterScale ) {
   if (m_fCharacterScale != fCharacterScale) {
     m_fCharacterScale = fCharacterScale;
     UpdateGeometry ();
@@ -181,8 +180,8 @@ sf::Uint32 BmpText::GetStyle ( void ) const {
 }
 
 ////////////////////////////////////////////////////////////
-GLuint BmpText::GetCharacterScale ( void ) const {
-  return static_cast<GLuint> (m_fCharacterScale);
+GLfloat BmpText::GetCharacterScale ( void ) const {
+  return m_fCharacterScale;
 }
 
 ////////////////////////////////////////////////////////////
