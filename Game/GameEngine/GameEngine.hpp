@@ -56,6 +56,7 @@ class GameEngine {
     std::string         m_szAuthor;
     std::string         m_szVersion;
     std::string         m_szCopyright;
+    std::string         m_szDate;
     sf::Image           m_sfIcon;
 
     // Universal clock of the game
@@ -99,6 +100,36 @@ class GameEngine {
     GLboolean InitWinMain ( void );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Transmit the elapsed time from the universal clock to internal variable.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ElapsedTime ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Compute the center of the screen in the main window, or fullscreen.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ComputeWindowCenter ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Close the main window of the game.
+    ///
+    ////////////////////////////////////////////////////////////
+    void CloseWindow ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Copy the current contents of the window to an image.
+    ///
+    /// This is a slow operation, whose main purpose is to make screenshots of
+    /// the application. This method update an internal image with the contents of the main
+    /// window. (see the capture method in the SFML render window)
+    ///
+    /// \see GetScreenCapture
+    ///
+    ////////////////////////////////////////////////////////////
+    void CaptureScreen ( void );
+
+    ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
@@ -135,6 +166,14 @@ class GameEngine {
     std::string GetCopyright ( void );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the date of development of the game.
+    ///
+    /// \return The date of development of the game
+    ///
+    ////////////////////////////////////////////////////////////
+    std::string GetDate ( void );
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the icon of the game.
     ///
     /// \return The icon of the game
@@ -159,24 +198,12 @@ class GameEngine {
     GLuint GetHeight ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Transmit the elapsed time from the universal clock to internal variable.
-    ///
-    ////////////////////////////////////////////////////////////
-    void ElapsedTime ( void );
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the main render window of the game.
     ///
     /// \return The main render window of the game
     ///
     ////////////////////////////////////////////////////////////
     sf::RenderWindow* GetWindow ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Compute the center of the screen in the main window, or fullscreen.
-    ///
-    ////////////////////////////////////////////////////////////
-    void ComputeWindowCenter ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the width of the main window.
@@ -219,12 +246,6 @@ class GameEngine {
     GLboolean WindowIsOpen ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Close the main window of the game.
-    ///
-    ////////////////////////////////////////////////////////////
-    void CloseWindow ( void );
-
-    ////////////////////////////////////////////////////////////
     /// \brief Set the pause of the game.
     ///
     /// \param bSleep   Boolean value to indicate if the pause is activated or not
@@ -259,18 +280,6 @@ class GameEngine {
     ///
     ////////////////////////////////////////////////////////////
     GLboolean PollEvent ( sf::Event& sfEvent );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Copy the current contents of the window to an image.
-    ///
-    /// This is a slow operation, whose main purpose is to make screenshots of
-    /// the application. This method update an internal image with the contents of the main
-    /// window. (see the capture method in the SFML render window)
-    ///
-    /// \see GetScreenCapture
-    ///
-    ////////////////////////////////////////////////////////////
-    void CaptureScreen ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the internal image of the capture of the screen.

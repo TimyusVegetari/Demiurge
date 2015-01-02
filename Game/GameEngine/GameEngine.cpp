@@ -35,6 +35,7 @@ GameEngine::GameEngine ( void ) :
   m_szAuthor        (""),
   m_szVersion       (""),
   m_szCopyright     (""),
+  m_szDate          (""),
   m_uiElapsedTime   (0),
   m_bSleep          (GL_FALSE)
 {
@@ -71,6 +72,26 @@ GLboolean GameEngine::InitWinMain ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+void GameEngine::ElapsedTime ( void ) {
+  m_uiElapsedTime = static_cast<GLuint> ((m_sfClock.getElapsedTime ()).asMilliseconds ());
+}
+
+////////////////////////////////////////////////////////////
+void GameEngine::ComputeWindowCenter ( void ) {
+  m_v2uWindowCenter = sf::Vector2u (m_sfWindow.getSize ().x/2, m_sfWindow.getSize ().y/2);
+}
+
+////////////////////////////////////////////////////////////
+void GameEngine::CloseWindow ( void ) {
+  m_sfWindow.close ();
+}
+
+////////////////////////////////////////////////////////////
+void GameEngine::CaptureScreen ( void ) {
+  m_sfScreenCapture = m_sfWindow.capture ();
+}
+
+////////////////////////////////////////////////////////////
 // Accessor methods
 ////////////////////////////////////////////////////////////
 
@@ -95,6 +116,11 @@ std::string GameEngine::GetCopyright ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+std::string GameEngine::GetDate ( void ) {
+  return m_szDate;
+}
+
+////////////////////////////////////////////////////////////
 sf::Image& GameEngine::GetIcon ( void ) {
   return m_sfIcon;
 }
@@ -110,18 +136,8 @@ GLuint GameEngine::GetHeight ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void GameEngine::ElapsedTime ( void ) {
-  m_uiElapsedTime = static_cast<GLuint> ((m_sfClock.getElapsedTime ()).asMilliseconds ());
-}
-
-////////////////////////////////////////////////////////////
 sf::RenderWindow* GameEngine::GetWindow ( void ) {
   return &m_sfWindow;
-}
-
-////////////////////////////////////////////////////////////
-void GameEngine::ComputeWindowCenter ( void ) {
-  m_v2uWindowCenter = sf::Vector2u (m_sfWindow.getSize ().x/2, m_sfWindow.getSize ().y/2);
 }
 
 ////////////////////////////////////////////////////////////
@@ -150,11 +166,6 @@ GLboolean GameEngine::WindowIsOpen ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void GameEngine::CloseWindow ( void ) {
-  m_sfWindow.close ();
-}
-
-////////////////////////////////////////////////////////////
 GLboolean GameEngine::GetSleep ( void ) {
   return m_bSleep;
 }
@@ -167,11 +178,6 @@ void GameEngine::SetSleep ( GLboolean bSleep ) {
 ////////////////////////////////////////////////////////////
 GLboolean GameEngine::PollEvent ( sf::Event& sfEvent ) {
   return m_sfWindow.pollEvent (sfEvent);
-}
-
-////////////////////////////////////////////////////////////
-void GameEngine::CaptureScreen ( void ) {
-  m_sfScreenCapture = m_sfWindow.capture ();
 }
 
 ////////////////////////////////////////////////////////////
