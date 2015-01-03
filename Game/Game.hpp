@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2014 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * \brief Class for the game engine of Demiurge.
  * \author Anthony Acroute
  * \version 0.3
- * \date 2013-2014
+ * \date 2013-2015
  *
  */
 
