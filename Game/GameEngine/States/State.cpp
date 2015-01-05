@@ -28,9 +28,6 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-//State::ST_Context::ST_Context (sf::RenderWindow& sfWindow, drimi::Font& gFont, Player& gPlayer)
-//: m_psfWindow (&sfWindow), m_pgFont (&gFont), m_pgPlayer (&gPlayer) {
-//}
 State::ST_Context::ST_Context ( sf::RenderWindow& sfWindow, drimi::BmpFont& oBmpFont ) :
   m_psfMainWindow (&sfWindow),
   m_poBmpFont     (&oBmpFont)

@@ -36,7 +36,7 @@
 class StateStack;
 
 ////////////////////////////////////////////////////////////
-/// \brief Class for create states of the game like as the menu,
+/// \brief Class to create states of the game like as the menu,
 /// game pause, current game session, cinematic, etc...
 ///
 ////////////////////////////////////////////////////////////
