@@ -31,7 +31,7 @@
 ////////////////////////////////////////////////////////////
 Game::Game ( void ) {
   // Initialization of the datas of the game engine
-  m_v2uSize       = sf::Vector2u (854, 480);
+  m_v2uSize       = sf::Vector2u (DEMIURGE_WIDTH, DEMIURGE_HEIGHT);
   m_szTitle       = DEMIURGE_NAME;
   m_szAuthor      = DEMIURGE_AUTHOR;
   m_szVersion     = DEMIURGE_VERSION;

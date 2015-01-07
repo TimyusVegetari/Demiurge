@@ -33,6 +33,12 @@
 #ifndef STATE_HPP__
 #define STATE_HPP__
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include "GameStates/StateIdentifiers.hpp"
+#if defined (INCLUDE_SFML__) && defined (INCLUDE_STD__) && defined (INCLUDE_DRIMI__)
+
 class StateStack;
 
 ////////////////////////////////////////////////////////////
@@ -147,4 +153,5 @@ class State {
     ST_Context GetContext ( void ) const;
 };
 
+#endif // INCLUDE_SFML__ && INCLUDE_STD__ && INCLUDE_DRIMI__
 #endif // STATE_HPP__

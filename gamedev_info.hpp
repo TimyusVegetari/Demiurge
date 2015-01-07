@@ -12,4 +12,7 @@
   #define DEMIURGE_AUTHOR   "Anthony Acroute"
   #define DEMIURGE_LICENSE  "GNU General Public License - version 2"
   #define DEMIURGE_DATE     "2011-2014"
+
+  #define DEMIURGE_WIDTH    960
+  #define DEMIURGE_HEIGHT   540
 #endif
