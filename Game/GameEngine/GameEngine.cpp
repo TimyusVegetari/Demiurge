@@ -22,6 +22,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "GameEngine.hpp"
+#include "States/StateStack.cpp"
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
@@ -29,6 +30,7 @@
 
 ////////////////////////////////////////////////////////////
 GameEngine::GameEngine ( void ) :
+  m_sfWindow        (),
   m_v2uWindowCenter (0, 0),
   m_v2uSize         (0, 0),
   m_szTitle         (""),
@@ -36,8 +38,13 @@ GameEngine::GameEngine ( void ) :
   m_szVersion       (""),
   m_szCopyright     (""),
   m_szDate          (""),
+  m_sfIcon          (),
+  m_sfClock         (),
   m_uiElapsedTime   (0),
-  m_bSleep          (GL_FALSE)
+  m_oBmpFont        (),
+  m_oStateStack     (State::ST_Context (m_sfWindow, m_oBmpFont)),
+  m_bSleep          (GL_FALSE),
+	m_sfScreenCapture ()
 {
 }
 

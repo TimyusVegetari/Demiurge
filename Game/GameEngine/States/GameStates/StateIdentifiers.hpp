@@ -41,7 +41,8 @@ namespace States {
 
 enum ID {
   None,
-  InDevInfo
+  InDevInfo,
+  Title
 };
 
 }

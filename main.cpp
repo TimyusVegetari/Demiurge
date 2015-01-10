@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2014 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,34 @@
 //
 ////////////////////////////////////////////////////////////
 
-#include <iostream>
-#include <cstdlib>
+#include "gamedev_info.hpp"
+#include "includes.hpp"
 
 int main ( void ) {
-  std::cout << "Demiurge by Timyus Vegetari" << std::endl;
-  std::cout << "Game under GNU General Public License version 2" << std::endl;
-  std::cout << "Program in C++, using OpenGL and SFML" << std::endl << std::endl;
+  Game oGame;
 
+  // Initialisation of the game
+  if (oGame.GameInit () && oGame.InitWinMain ()) {
+    while (oGame.WindowIsOpen ()) {
+      oGame.ElapsedTime ();
+
+      // Game running
+      oGame.GameCycle ();
+
+      // Render the game
+      oGame.GamePaint ();
+    }
+    // End of the game
+    oGame.GameEnd ();
+
+    // Freeing of the ressources...
+
+    std::cout << "Press 'Enter' to quit..." << std::endl;
+    std::cin.get();
+    return EXIT_SUCCESS;
+  }
+  std::cout << "Error : The main window cannot be open !" << std::endl;
   std::cout << "Press 'Enter' to quit..." << std::endl;
   std::cin.get ();
-  return EXIT_SUCCESS;
+  return EXIT_FAILURE;
 }

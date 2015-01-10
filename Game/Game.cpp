@@ -65,8 +65,17 @@ GLboolean Game::GameInit ( void ) {
   std::cout << "Created in " << m_szDate << std::endl;
   std::cout << "Program in C++, using OpenGL and SFML" << std::endl << std::endl;
 
+  // Loading of the fonts of the game
+  m_oBmpFont.LoadFromFile ("datas/font.png", GL_FALSE);
+  m_oBmpFont.LoadFromFile ("datas/font_bold.png", GL_TRUE);
+
+  // States registration in the stack
+  RegisterStates ();
+  // Prepare the first state of the game
+  m_oStateStack.PushState (States::ID::InDevInfo);
+
   // Create the OpenGL context with SFML
-  sf::Context context (sf::ContextSettings (32), m_v2uSize.x, m_v2uSize.y);
+  //sf::Context context (sf::ContextSettings (32), m_v2uSize.x, m_v2uSize.y);
 
   // Activate the vertical synchronisation of the screen
   m_sfWindow.setVerticalSyncEnabled (GL_TRUE);
@@ -81,32 +90,22 @@ GLboolean Game::GameInit ( void ) {
 void Game::GameCycle ( void ) {
   // If it's time to check events and execute game mecanic
   if (TickClock ()) {
-    // Elementary events for the main window of the game
-    sf::Event sfEvent;
-    while (PollEvent (sfEvent)) {
-      switch (sfEvent.type) {
-        // Close window :
-        case sf::Event::Closed :
-          CloseWindow ();
-          break;
-        // Resize window :
-        case sf::Event::Resized :
-          m_sfWindow.setView (sf::View (sf::FloatRect (0, 0, sfEvent.size.width, sfEvent.size.height)));
-          ComputeWindowCenter ();
-          break;
-        default :
-          break;
-      }
-    }
-  }
+    // Events and update game states, scenes, ... (game mecanic)
+    ProcessInput ();
+    m_oStateStack.Update ();
 
-  // Events and update of the game states, scenes, ... (game mecanic)
+    // If the stack is empty, the crash state is called
+    if (m_oStateStack.IsEmpty ())
+      m_oStateStack.PushState (States::ID::None);
+  }
 }
 
 ////////////////////////////////////////////////////////////
 void Game::GamePaint ( void ) {
+  m_sfWindow.clear ();
 
   // Draw of the game states, scenes, ...
+  m_oStateStack.Draw ();
 
   m_sfWindow.display ();
 }
@@ -136,4 +135,33 @@ GLboolean Game::TickClock ( void ) {
     return GL_TRUE;
   }
   return GL_FALSE;
+}
+
+////////////////////////////////////////////////////////////
+void Game::RegisterStates ( void ) {
+  m_oStateStack.RegisterState<InDevInfoState> (States::ID::InDevInfo);
+}
+
+////////////////////////////////////////////////////////////
+void Game::ProcessInput ( void ) {
+  sf::Event sfEvent;
+  while (PollEvent (sfEvent)) {
+    // Call of the HandleEvent of the states of the game
+    m_oStateStack.HandleEvent (sfEvent);
+
+    // Elementary events for the main window of the game
+    switch (sfEvent.type) {
+      // Close window :
+      case sf::Event::Closed :
+        CloseWindow ();
+        break;
+      // Resize window :
+      case sf::Event::Resized :
+        m_sfWindow.setView (sf::View (sf::FloatRect (0, 0, sfEvent.size.width, sfEvent.size.height)));
+        ComputeWindowCenter ();
+        break;
+      default :
+        break;
+    }
+  }
 }

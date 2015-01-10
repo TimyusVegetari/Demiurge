@@ -33,7 +33,7 @@
 #ifndef STATEDEFINITIONS_HPP__
 #define STATEDEFINITIONS_HPP__
 
-#include "CrashState.cpp"
-#include "InDevInfoState.cpp"
+#include "CrashState/CrashState.cpp"
+#include "InDevInfoState/InDevInfoState.cpp"
 
 #endif // STATEDEFINITIONS_HPP__

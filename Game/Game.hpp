@@ -41,7 +41,7 @@
 #include "GameEngine/GameEngine.hpp"
 
 ////////////////////////////////////////////////////////////
-/// \brief Class for initialising and executing the game
+/// \brief Class for initialising and executing the game.
 ///
 ////////////////////////////////////////////////////////////
 class Game : public GameEngine {
@@ -61,17 +61,17 @@ class Game : public GameEngine {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
+    /// \brief Default constructor.
     ///
-    /// This constructor defines a game
+    /// This constructor defines a game.
     ///
     ////////////////////////////////////////////////////////////
     Game            ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
+    /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the game
+    /// Cleans up all the internal resources used by the game.
     ///
     ////////////////////////////////////////////////////////////
     virtual ~Game   ( void );
@@ -81,27 +81,27 @@ class Game : public GameEngine {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize all the composants of the game
+    /// \brief Initialize all the composants of the game.
     ///
-    /// \return True if initializing succeeded, false if it failed
+    /// \return True if initializing succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
     GLboolean GameInit ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Manage the mecanic part of the game
+    /// \brief Manage the mecanic part of the game.
     ///
     ////////////////////////////////////////////////////////////
     void GameCycle ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Drawn all the composants of the game
+    /// \brief Drawn all the composants of the game.
     ///
     ////////////////////////////////////////////////////////////
     void GamePaint ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Manage the closing of the game
+    /// \brief Manage the closing of the game.
     ///
     ////////////////////////////////////////////////////////////
     void GameEnd ( void );
@@ -111,9 +111,9 @@ class Game : public GameEngine {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the tick rate of the time of game mecanic
+    /// \brief Set the tick rate of the time of game mecanic.
     ///
-    /// \param uiTickRate   Tick rate of the game mecanic, in ticks
+    /// \param uiTickRate   Tick rate of the game mecanic, in ticks.
     ///
     ////////////////////////////////////////////////////////////
     void SetTickRate ( GLuint uiTickRate );
@@ -124,12 +124,24 @@ class Game : public GameEngine {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get if the tick delay is elapsed and update the tick trigger
+    /// \brief Get if the tick delay is elapsed and update the tick trigger.
     ///
-    /// \return True if the tick delay is elapsed, False else
+    /// \return True if the tick delay is elapsed, False else.
     ///
     ////////////////////////////////////////////////////////////
     GLboolean TickClock ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Contains the registration of the states of the game.
+    ///
+    ////////////////////////////////////////////////////////////
+    void RegisterStates ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Process the input for all the components of the game.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ProcessInput ( void );
 };
 
 #endif // DEMIURGE_DEVINFO

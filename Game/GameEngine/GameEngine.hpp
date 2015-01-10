@@ -36,7 +36,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#if defined (INCLUDE_SFML__) && defined (INCLUDE_DRIMI__)
 #include <string>
+#include "States/StateStack.hpp"
 
 ////////////////////////////////////////////////////////////
 /// \brief Class for elementary game system
@@ -62,6 +64,10 @@ class GameEngine {
     // Universal clock of the game
 		sf::Clock           m_sfClock;
     GLuint              m_uiElapsedTime;
+
+    // Elemetary ressources of the game
+    drimi::BmpFont      m_oBmpFont;         ///< Bitmap font of the game.
+    StateStack          m_oStateStack;
 
 		GLboolean           m_bSleep;
 		sf::Image           m_sfScreenCapture;
@@ -300,4 +306,5 @@ class GameEngine {
     void SetMouseVisibility ( GLboolean bVisibility );
 };
 
+#endif // INCLUDE_SFML__ && INCLUDE_DRIMI__
 #endif // GAMEENGINE_HPP__
