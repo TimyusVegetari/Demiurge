@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2014 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,18 @@
 // along with Demiurge.  If not, see <http://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+// Description for Doxygen
+////////////////////////////////////////////////////////////
+/**
+ * \file BmpFont.hpp
+ * \brief Class to define a bitmap font.
+ * \author Anthony Acroute
+ * \version 0.2
+ * \date 2013-2015
+ *
+ */
 
 #ifndef DRIMI_BITMAPFONT_FONT_HPP__
 #define DRIMI_BITMAPFONT_FONT_HPP__
@@ -58,7 +70,7 @@ class BmpFont {
     ////////////////////////////////////////////////////////////
     ST_Page             m_oPages[2];
     GLint               m_iAdvance;
-    //CallbackMap*        m_pCallbacks;
+    sf::Shader*         m_psfShader;
   public:
 
     ////////////////////////////////////////////////////////////
@@ -105,6 +117,17 @@ class BmpFont {
     ///
     ////////////////////////////////////////////////////////////
     GLboolean LoadFromFile ( const std::string& szFileName, GLboolean bBold );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the shader of the bitmap font from a file
+    ///
+    /// \param szVertFileName Path of the vertex shader file to load
+    /// \param szFragFileName Path of the fragment shader file to load
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean LoadShaderFromFile ( const std::string& szVertFileName, const std::string& szFragFileName );
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -172,6 +195,14 @@ class BmpFont {
     ///
     ////////////////////////////////////////////////////////////
     const sf::Texture& GetTexture ( GLboolean bBold ) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the shader of the bitmap font
+    ///
+    /// \return Shader if it's exist, NULL else
+    ///
+    ////////////////////////////////////////////////////////////
+    const sf::Shader* GetShader ( void ) const;
   private:
 
     ////////////////////////////////////////////////////////////

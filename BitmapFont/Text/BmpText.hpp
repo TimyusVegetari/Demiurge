@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2014 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,18 @@
 // along with Demiurge.  If not, see <http://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+// Description for Doxygen
+////////////////////////////////////////////////////////////
+/**
+ * \file BmpText.hpp
+ * \brief Class to define a bitmap text.
+ * \author Anthony Acroute
+ * \version 0.2
+ * \date 2013-2015
+ *
+ */
 
 #ifndef DRIMI_BITMAPFONT_TEXT_HPP__
 #define DRIMI_BITMAPFONT_TEXT_HPP__
@@ -43,14 +55,15 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::String          m_sfString;         ///< String to display
-    const BmpFont*      m_pBmpFont;         ///< Font used to display the string
-    GLuint              m_uiGlyphAdvance;   ///< Horizontal space between characters
-    GLfloat             m_fCharacterScale;  ///< Base scale of characters
-    sf::Uint32          m_uiStyle;          ///< Text style (see sf::Text::Style enum)
-    sf::Color           m_sfColor;          ///< Text color
-    sf::VertexArray     m_sfVertices;       ///< Vertex array containing the text's geometry
-    sf::FloatRect       m_sfBounds;         ///< Bounding rectangle of the text (in local coordinates)
+    sf::String              m_sfString;             ///< String to display
+    const BmpFont*          m_pBmpFont;             ///< Font used to display the string
+    GLuint                  m_uiGlyphAdvance;       ///< Horizontal space between characters
+    GLfloat                 m_fCharacterScale;      ///< Base scale of characters
+    sf::Uint32              m_uiStyle;              ///< Text style (see sf::Text::Style enum)
+    sf::Color               m_sfColor;              ///< Text color
+    mutable sf::VertexArray m_sfVertices;           ///< Vertex array containing the text's geometry
+    mutable sf::FloatRect   m_sfBounds;             ///< Bounding rectangle of the text (in local coordinates)
+    mutable GLboolean       m_bGeometryNeedUpdate;  ///< Does the geometry need to be recomputed ?
 
   public:
 
@@ -117,7 +130,7 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     /// \return Local bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    sf::FloatRect getLocalBounds ( void ) const;
+    sf::FloatRect GetLocalBounds ( void ) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the global bounding rectangle of the entity
@@ -131,7 +144,7 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     /// \return Global bounding rectangle of the entity
     ///
     ////////////////////////////////////////////////////////////
-    sf::FloatRect getGlobalBounds ( void ) const;
+    sf::FloatRect GetGlobalBounds ( void ) const;
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
@@ -203,6 +216,24 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     ///
     ////////////////////////////////////////////////////////////
     void SetColor ( const sf::Color& sfColor );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief set the local origin of the object
+    ///
+    /// The origin of an object defines the center point for
+    /// all transformations (position, scale, rotation).
+    /// The coordinates of this point must be relative to the
+    /// top-left corner of the object, and ignore all
+    /// transformations (position, scale, rotation).
+    /// The default origin of a transformable object is (0, 0).
+    ///
+    /// \param x  X coordinate of the new origin
+    /// \param y  Y coordinate of the new origin
+    ///
+    /// \see getOrigin in sf::Transformable
+    ///
+    ////////////////////////////////////////////////////////////
+    void setOrigin ( GLfloat x, GLfloat y );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
@@ -277,13 +308,13 @@ class BmpText : public sf::Drawable, public sf::Transformable {
     /// \brief Draw the underline
     ///
     ////////////////////////////////////////////////////////////
-    void DrawUnderline ( GLfloat fX, GLfloat fY, GLfloat fUnderlineOffset, GLfloat fUnderlineThickness );
+    void DrawUnderline ( GLfloat fX, GLfloat fY, GLfloat fUnderlineOffset, GLfloat fUnderlineThickness ) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the text's geometry
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateGeometry ( void );
+    void UpdateGeometry ( void ) const;
 };
 
 } // namespace drimi

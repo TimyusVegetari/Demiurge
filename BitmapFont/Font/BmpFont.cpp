@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2014 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,15 +39,19 @@ BmpFont::ST_Page::ST_Page ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-BmpFont::BmpFont ( void ) {
-  m_iAdvance = -1;
+BmpFont::BmpFont ( void ) :
+  m_iAdvance  (-1),
+  m_psfShader (NULL)
+{
 }
 
 ////////////////////////////////////////////////////////////
-BmpFont::BmpFont ( const BmpFont& oCopy ) {
+BmpFont::BmpFont ( const BmpFont& oCopy ) :
+  m_iAdvance  (oCopy.m_iAdvance),
+  m_psfShader (oCopy.m_psfShader)
+{
   m_oPages[0] = oCopy.m_oPages[0];
   m_oPages[1] = oCopy.m_oPages[1];
-  m_iAdvance  = oCopy.m_iAdvance;
 }
 
 ////////////////////////////////////////////////////////////
@@ -188,6 +192,15 @@ GLboolean BmpFont::LoadFromFile ( const std::string& szFileName, GLboolean bBold
 }
 
 ////////////////////////////////////////////////////////////
+GLboolean BmpFont::LoadShaderFromFile ( const std::string& szVertFileName, const std::string& szFragFileName ) {
+  if (m_psfShader != NULL)
+    delete m_psfShader;
+  m_psfShader = new sf::Shader ();
+
+  return m_psfShader->loadFromFile (szVertFileName, szFragFileName);
+}
+
+////////////////////////////////////////////////////////////
 BmpFont& BmpFont::operator = ( const BmpFont& oRight ) {
   m_oPages[0] = oRight.m_oPages[0];
   m_oPages[1] = oRight.m_oPages[1];
@@ -237,6 +250,11 @@ const sf::Texture& BmpFont::GetTexture ( GLboolean bBold ) const {
 }
 
 ////////////////////////////////////////////////////////////
+const sf::Shader* BmpFont::GetShader ( void ) const {
+  return m_psfShader;
+}
+
+////////////////////////////////////////////////////////////
 // Internal methods
 ////////////////////////////////////////////////////////////
 
@@ -246,6 +264,8 @@ void BmpFont::Cleanup ( void ) {
   m_oPages[0].m_vRows.clear ();
   m_oPages[1].m_mapGlyphs.clear ();
   m_oPages[1].m_vRows.clear ();
+  if (m_psfShader != NULL)
+    delete m_psfShader;
 }
 
 }

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2014 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,29 +33,30 @@ namespace drimi {
 
 ////////////////////////////////////////////////////////////
 BmpText::BmpText ( void ) :
-  m_sfString        (""),
-  m_pBmpFont        (NULL),
-  m_uiGlyphAdvance  (1),
-  m_fCharacterScale (1.f),
-  m_uiStyle         (sf::Text::Regular),
-  m_sfColor         (sf::Color (255, 255, 255)),
-  m_sfVertices      (sf::Quads),
-  m_sfBounds        ()
+  m_sfString            (""),
+  m_pBmpFont            (NULL),
+  m_uiGlyphAdvance      (1),
+  m_fCharacterScale     (1.f),
+  m_uiStyle             (sf::Text::Regular),
+  m_sfColor             (sf::Color (255, 255, 255)),
+  m_sfVertices          (sf::Quads),
+  m_sfBounds            (),
+  m_bGeometryNeedUpdate (GL_FALSE)
 {
 }
 
 ////////////////////////////////////////////////////////////
 BmpText::BmpText ( const sf::String& sfString, const BmpFont& oBmpFont, GLfloat fCharacterScale ) :
-  m_sfString        (sfString),
-  m_pBmpFont        (&oBmpFont),
-  m_uiGlyphAdvance  (1),
-  m_fCharacterScale (fCharacterScale),
-  m_uiStyle         (sf::Text::Regular),
-  m_sfColor         (sf::Color (255, 255, 255)),
-  m_sfVertices      (sf::Quads),
-  m_sfBounds        ()
+  m_sfString            (sfString),
+  m_pBmpFont            (&oBmpFont),
+  m_uiGlyphAdvance      (1),
+  m_fCharacterScale     (fCharacterScale),
+  m_uiStyle             (sf::Text::Regular),
+  m_sfColor             (sf::Color (255, 255, 255)),
+  m_sfVertices          (sf::Quads),
+  m_sfBounds            (),
+  m_bGeometryNeedUpdate (GL_TRUE)
 {
-  UpdateGeometry ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -112,13 +113,15 @@ sf::Vector2f BmpText::FindCharacterPos ( std::size_t index ) const {
 }
 
 ////////////////////////////////////////////////////////////
-sf::FloatRect BmpText::getLocalBounds ( void ) const {
+sf::FloatRect BmpText::GetLocalBounds ( void ) const {
+  UpdateGeometry ();
+
   return m_sfBounds;
 }
 
 ////////////////////////////////////////////////////////////
-sf::FloatRect BmpText::getGlobalBounds ( void ) const {
-  return getTransform ().transformRect (getLocalBounds ());
+sf::FloatRect BmpText::GetGlobalBounds ( void ) const {
+  return getTransform ().transformRect (GetLocalBounds ());
 }
 
 ////////////////////////////////////////////////////////////
@@ -127,15 +130,17 @@ sf::FloatRect BmpText::getGlobalBounds ( void ) const {
 
 ////////////////////////////////////////////////////////////
 void BmpText::SetString ( const sf::String& sfString ) {
-  m_sfString = sfString;
-  UpdateGeometry ();
+  if (m_sfString != sfString) {
+    m_sfString = sfString;
+    m_bGeometryNeedUpdate = GL_TRUE;
+  }
 }
 
 ////////////////////////////////////////////////////////////
 void BmpText::SetFont ( const BmpFont& oBmpFont ) {
   if (m_pBmpFont != &oBmpFont) {
     m_pBmpFont = &oBmpFont;
-    UpdateGeometry ();
+    m_bGeometryNeedUpdate = GL_TRUE;
   }
 }
 
@@ -143,7 +148,7 @@ void BmpText::SetFont ( const BmpFont& oBmpFont ) {
 void BmpText::SetStyle ( sf::Uint32 uiStyle ) {
   if (m_uiStyle != uiStyle) {
     m_uiStyle = uiStyle;
-    UpdateGeometry ();
+    m_bGeometryNeedUpdate = GL_TRUE;
   }
 }
 
@@ -151,7 +156,7 @@ void BmpText::SetStyle ( sf::Uint32 uiStyle ) {
 void BmpText::SetCharacterScale ( GLfloat fCharacterScale ) {
   if (m_fCharacterScale != fCharacterScale) {
     m_fCharacterScale = fCharacterScale;
-    UpdateGeometry ();
+    m_bGeometryNeedUpdate = GL_TRUE;
   }
 }
 
@@ -159,9 +164,19 @@ void BmpText::SetCharacterScale ( GLfloat fCharacterScale ) {
 void BmpText::SetColor ( const sf::Color& sfColor ) {
   if (sfColor != m_sfColor) {
     m_sfColor = sfColor;
-    for (GLuint uiIter=0 ; uiIter<m_sfVertices.getVertexCount () ; ++uiIter)
-      m_sfVertices[uiIter].color = m_sfColor;
+
+    // Change vertex colors directly, no need to update whole geometry
+    // (if geometry is updated anyway, we can skip this step)
+    if (!m_bGeometryNeedUpdate) {
+      for (GLuint uiIter=0 ; uiIter<m_sfVertices.getVertexCount () ; ++uiIter)
+        m_sfVertices[uiIter].color = m_sfColor;
+    }
   }
+}
+
+////////////////////////////////////////////////////////////
+void BmpText::setOrigin ( GLfloat x, GLfloat y ) {
+  sf::Transformable::setOrigin (floorf (x), floorf (y));
 }
 
 ////////////////////////////////////////////////////////////
@@ -196,16 +211,19 @@ const sf::Color& BmpText::GetColor ( void ) const {
 ////////////////////////////////////////////////////////////
 void BmpText::draw ( sf::RenderTarget& target, sf::RenderStates states ) const {
   if (m_pBmpFont) {
+    UpdateGeometry ();
+
     GLboolean bBold = (m_uiStyle & sf::Text::Style::Bold) != 0;
 
     states.transform *= getTransform ();
     states.texture = &m_pBmpFont->GetTexture (bBold);
+    states.shader = m_pBmpFont->GetShader ();
     target.draw (m_sfVertices, states);
   }
 }
 
 ////////////////////////////////////////////////////////////
-void BmpText::DrawUnderline ( GLfloat fX, GLfloat fY, GLfloat fUnderlineOffset, GLfloat fUnderlineThickness ) {
+void BmpText::DrawUnderline ( GLfloat fX, GLfloat fY, GLfloat fUnderlineOffset, GLfloat fUnderlineThickness ) const {
   GLfloat fTop = fY + fUnderlineOffset;
   GLfloat fBottom = fTop + fUnderlineThickness;
 
@@ -216,7 +234,14 @@ void BmpText::DrawUnderline ( GLfloat fX, GLfloat fY, GLfloat fUnderlineOffset, 
 }
 
 ////////////////////////////////////////////////////////////
-void BmpText::UpdateGeometry ( void ) {
+void BmpText::UpdateGeometry ( void ) const {
+  // Do nothing, if geometry has not changed
+  if (!m_bGeometryNeedUpdate)
+    return;
+
+  // Mark geometry as updated
+  m_bGeometryNeedUpdate = GL_FALSE;
+
   // Clear the previous geometry
   m_sfVertices.clear ();
   m_sfBounds = sf::FloatRect ();
@@ -298,7 +323,7 @@ void BmpText::UpdateGeometry ( void ) {
     DrawUnderline (fX+static_cast<GLfloat> (m_pBmpFont->GetKerning (uiPrevChar, bBold)) * m_fCharacterScale, fY, fUnderlineOffset, fUnderlineThickness);
 
   // Update the bounding rectangle
-  m_sfBounds.left = 0;
+  m_sfBounds.left = 0.f;
   m_sfBounds.top = fMinY;
   if (fX > m_sfBounds.width)
     m_sfBounds.width = fX;

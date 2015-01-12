@@ -38,13 +38,13 @@ CrashState::CrashState ( StateStack& oStack, ST_Context stContext ) :
   m_oError.SetString          ("A critical error of unknown origin arose and caused the stop of the game.");
   m_oError.SetStyle           (sf::Text::Style::Bold);
   m_oError.SetColor           (sf::Color::Red);
-	m_oError.setOrigin          (m_oError.getLocalBounds ().width / 2.f, 0.f);
+	m_oError.setOrigin          (m_oError.GetLocalBounds ().width / 2.f, 0.f);
 	m_oError.setPosition        (stContext.m_psfMainWindow->getSize ().x / 2.f, 100.f);
 	//Error details
   m_oDetails.SetFont            (*stContext.m_poBmpFont);
   m_oDetails.SetString          ("There is no detail available.");
   m_oDetails.SetColor           (sf::Color::Yellow);
-	m_oDetails.setOrigin          (m_oDetails.getLocalBounds ().width / 2.f, 0.f);
+	m_oDetails.setOrigin          (m_oDetails.GetLocalBounds ().width / 2.f, 0.f);
 	m_oDetails.setPosition        (stContext.m_psfMainWindow->getSize ().x / 2.f, 120.f);
 }
 

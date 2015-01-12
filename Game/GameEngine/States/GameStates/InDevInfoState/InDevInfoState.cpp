@@ -40,7 +40,7 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
   m_oTitle.SetString      ("Please note this is a pre-alpha version of Demiurge.\n\n");
   m_oTitle.SetStyle       (sf::Text::Style::Bold);
   m_oTitle.SetColor       (sf::Color::Yellow);
-	m_oTitle.setOrigin      (m_oTitle.getLocalBounds ().width / 2.f, 0.f);
+	m_oTitle.setOrigin      (m_oTitle.GetLocalBounds ().width / 2.f, 0.f);
 	m_oTitle.setPosition    (stContext.m_psfMainWindow->getSize ().x / 2.f, 100.f);
 	// In development information contant
   m_oContent.SetFont      (*stContext.m_poBmpFont);
@@ -53,7 +53,7 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
                           +std::string ("evolve during the years.\n\n")
                           +std::string ("Thank you for your understanding and good game !"));
   m_oContent.SetColor     (sf::Color::Green);
-	m_oContent.setOrigin    (m_oContent.getLocalBounds ().width / 2.f, 0.f);
+	m_oContent.setOrigin    (m_oContent.GetLocalBounds ().width / 2.f, 0.f);
 	m_oContent.setPosition  (stContext.m_psfMainWindow->getSize ().x / 2.f, 120.f);
 }
 
