@@ -255,10 +255,11 @@ void BmpText::UpdateGeometry ( void ) const {
     return;
 
   // Precompute the variables needed by the algorithm
-  GLfloat fHSpace = static_cast<GLfloat> (m_uiGlyphAdvance) * m_fCharacterScale;
-  GLfloat fVSpace = static_cast<GLfloat> (m_pBmpFont->GetLineSpacing ()) * m_fCharacterScale;
-  GLfloat fX      = 0.f;
-  GLfloat fY      = m_fCharacterScale;
+  GLfloat fHSpace   = static_cast<GLfloat> (m_uiGlyphAdvance) * m_fCharacterScale;
+  GLfloat fVSpace   = static_cast<GLfloat> (m_pBmpFont->GetLineSpacing ()) * m_fCharacterScale;
+  GLfloat fX        = 0.f;
+  GLfloat fY        = m_fCharacterScale;
+  GLfloat fBoundsW  = 0.f;
 
   // Compute values related to the text style
   GLboolean bBold             = (m_uiStyle & sf::Text::Style::Bold) != 0;
@@ -311,6 +312,8 @@ void BmpText::UpdateGeometry ( void ) const {
 
     // Advance to the next character
     fX += static_cast<GLfloat> (m_uiGlyphAdvance) * m_fCharacterScale;
+    if (fX > fBoundsW)
+      fBoundsW = fX;
 
     // Update the minimum Y coordinate
     GLfloat fHeight = fY + fTop;
@@ -325,8 +328,7 @@ void BmpText::UpdateGeometry ( void ) const {
   // Update the bounding rectangle
   m_sfBounds.left = 0.f;
   m_sfBounds.top = fMinY;
-  if (fX > m_sfBounds.width)
-    m_sfBounds.width = fX;
+  m_sfBounds.width = fBoundsW;
   m_sfBounds.height = fY - fMinY;
 }
 
