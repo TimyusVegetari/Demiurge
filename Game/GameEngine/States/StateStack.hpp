@@ -112,7 +112,7 @@ class StateStack : private sf::NonCopyable {
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    void RegisterState ( States::ID eStatesID );
+    void RegisterState ( States::ID eStateID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Call all the update of the states in the stack.
@@ -180,7 +180,7 @@ class StateStack : private sf::NonCopyable {
     /// \return Pointer of constructed state.
     ///
     ////////////////////////////////////////////////////////////
-    State::Ptr CreateState ( States::ID gStateID );
+    State::Ptr CreateState ( States::ID eStateID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply changes in the stack.
