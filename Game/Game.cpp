@@ -69,6 +69,9 @@ GLboolean Game::GameInit ( void ) {
   m_oBmpFont.LoadFromFile ("datas/font.png", GL_FALSE);
   m_oBmpFont.LoadFromFile ("datas/font_bold.png", GL_TRUE);
 
+  // Render targets registration in the list
+  RegisterRenderTargets ();
+
   // States registration in the stack
   RegisterStates ();
   // Prepare the first state of the game
@@ -78,7 +81,8 @@ GLboolean Game::GameInit ( void ) {
   //sf::Context context (sf::ContextSettings (32), m_v2uSize.x, m_v2uSize.y);
 
   // Activate the vertical synchronisation of the screen
-  m_sfWindow.setVerticalSyncEnabled (GL_TRUE);
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  sfMainWindow.setVerticalSyncEnabled (GL_TRUE);
 
   // Restart the universal clock
   m_sfClock.restart ();
@@ -102,17 +106,19 @@ void Game::GameCycle ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Game::GamePaint ( void ) {
-  m_sfWindow.clear ();
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  sfMainWindow.clear ();
 
   // Draw of the game states, scenes, ...
   m_oStateStack.Draw ();
 
-  m_sfWindow.display ();
+  sfMainWindow.display ();
 }
 
 ////////////////////////////////////////////////////////////
 void Game::GameEnd ( void ) {
   CloseWindow ();
+  m_oRenderTargetsManager.DeleteRenderTarget (RenderTargets::ID::MainWindow);
 }
 
 ////////////////////////////////////////////////////////////
@@ -144,6 +150,8 @@ void Game::RegisterStates ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Game::ProcessInput ( void ) {
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+
   sf::Event sfEvent;
   while (PollEvent (sfEvent)) {
     // Call of the HandleEvent of the states of the game
@@ -157,7 +165,7 @@ void Game::ProcessInput ( void ) {
         break;
       // Resize window :
       case sf::Event::Resized :
-        m_sfWindow.setView (sf::View (sf::FloatRect (0, 0, sfEvent.size.width, sfEvent.size.height)));
+        sfMainWindow.setView (sf::View (sf::FloatRect (0, 0, sfEvent.size.width, sfEvent.size.height)));
         ComputeWindowCenter ();
         break;
       default :

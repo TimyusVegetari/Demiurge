@@ -38,6 +38,7 @@
 ////////////////////////////////////////////////////////////
 #if defined (INCLUDE_SFML__) && defined (INCLUDE_DRIMI__)
 #include <string>
+#include "RenderTargetsManager/RenderTargetsManager.hpp"
 #include "States/StateStack.hpp"
 
 ////////////////////////////////////////////////////////////
@@ -51,26 +52,26 @@ class GameEngine {
     // Member data
     ////////////////////////////////////////////////////////////
 
-    sf::RenderWindow    m_sfWindow;
-    sf::Vector2u        m_v2uWindowCenter;
-    sf::Vector2u        m_v2uSize;
-    std::string         m_szTitle;
-    std::string         m_szAuthor;
-    std::string         m_szVersion;
-    std::string         m_szCopyright;
-    std::string         m_szDate;
-    sf::Image           m_sfIcon;
+    RenderTargetsManager  m_oRenderTargetsManager;
+    sf::Vector2u          m_v2uWindowCenter;
+    sf::Vector2u          m_v2uSize;
+    std::string           m_szTitle;
+    std::string           m_szAuthor;
+    std::string           m_szVersion;
+    std::string           m_szCopyright;
+    std::string           m_szDate;
+    sf::Image             m_sfIcon;
 
     // Universal clock of the game
-		sf::Clock           m_sfClock;
-    GLuint              m_uiElapsedTime;
+		sf::Clock             m_sfClock;
+    GLuint                m_uiElapsedTime;
 
     // Elemetary ressources of the game
-    drimi::BmpFont      m_oBmpFont;         ///< Bitmap font of the game.
-    StateStack          m_oStateStack;
+    drimi::BmpFont        m_oBmpFont;         ///< Bitmap font of the game.
+    StateStack            m_oStateStack;
 
-		GLboolean           m_bSleep;
-		sf::Image           m_sfScreenCapture;
+		GLboolean             m_bSleep;
+		sf::Image             m_sfScreenCapture;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -204,12 +205,14 @@ class GameEngine {
     GLuint GetHeight ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the main render window of the game.
+    /// \brief Get a render window of the game.
     ///
-    /// \return The main render window of the game
+    /// \param eRenderTargetID  ID of the render window.
+    ///
+    /// \return A render window of the game
     ///
     ////////////////////////////////////////////////////////////
-    sf::RenderWindow* GetWindow ( void );
+    sf::RenderWindow& GetWindow ( RenderTargets::ID eRenderTargetID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the width of the main window.
@@ -304,6 +307,16 @@ class GameEngine {
     ///
     ////////////////////////////////////////////////////////////
     void SetMouseVisibility ( GLboolean bVisibility );
+
+    ////////////////////////////////////////////////////////////
+    // Internal methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Contains the registration of the render targets of the game.
+    ///
+    ////////////////////////////////////////////////////////////
+    void RegisterRenderTargets ( void );
 };
 
 #endif // INCLUDE_SFML__ && INCLUDE_DRIMI__

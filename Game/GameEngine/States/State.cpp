@@ -28,9 +28,9 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-State::ST_Context::ST_Context ( sf::RenderWindow& sfWindow, drimi::BmpFont& oBmpFont ) :
-  m_psfMainWindow (&sfWindow),
-  m_poBmpFont     (&oBmpFont)
+State::ST_Context::ST_Context ( RenderTargetsManager&	m_oRenderTargetsManager, drimi::BmpFont& oBmpFont ) :
+  m_poRenderTargetsManager  (&m_oRenderTargetsManager),
+  m_poBmpFont               (&oBmpFont)
 {
 }
 

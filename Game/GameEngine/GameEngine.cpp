@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////
 #include "GameEngine.hpp"
 #include "States/StateStack.cpp"
+#include "RenderTargetsManager/RenderTargetsManager.cpp"
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
@@ -30,21 +31,21 @@
 
 ////////////////////////////////////////////////////////////
 GameEngine::GameEngine ( void ) :
-  m_sfWindow        (),
-  m_v2uWindowCenter (0, 0),
-  m_v2uSize         (0, 0),
-  m_szTitle         (""),
-  m_szAuthor        (""),
-  m_szVersion       (""),
-  m_szCopyright     (""),
-  m_szDate          (""),
-  m_sfIcon          (),
-  m_sfClock         (),
-  m_uiElapsedTime   (0),
-  m_oBmpFont        (),
-  m_oStateStack     (State::ST_Context (m_sfWindow, m_oBmpFont)),
-  m_bSleep          (GL_FALSE),
-	m_sfScreenCapture ()
+  m_oRenderTargetsManager (),
+  m_v2uWindowCenter       (0, 0),
+  m_v2uSize               (0, 0),
+  m_szTitle               (""),
+  m_szAuthor              (""),
+  m_szVersion             (""),
+  m_szCopyright           (""),
+  m_szDate                (""),
+  m_sfIcon                (),
+  m_sfClock               (),
+  m_uiElapsedTime         (0),
+  m_oBmpFont              (),
+  m_oStateStack           (State::ST_Context (m_oRenderTargetsManager, m_oBmpFont)),
+  m_bSleep                (GL_FALSE),
+	m_sfScreenCapture       ()
 {
 }
 
@@ -58,16 +59,18 @@ GameEngine::~GameEngine ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean GameEngine::InitWinMain ( void ) {
-  // Set the mini icon of the main window
-  if (m_sfIcon.getSize ().x != 0)
-    m_sfWindow.setIcon (m_sfIcon.getSize ().x, m_sfIcon.getSize ().y, m_sfIcon.getPixelsPtr ());
+  // Create the main window and set the mini icon and the title
+  m_oRenderTargetsManager.AddRenderTarget (RenderTargets::ID::MainWindow);
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
 
-  // Set the title of the main window
+  if (m_sfIcon.getSize ().x != 0)
+    sfMainWindow.setIcon (m_sfIcon.getSize ().x, m_sfIcon.getSize ().y, m_sfIcon.getPixelsPtr ());
+
   std::string szTitle (m_szTitle+" "+m_szVersion);
-  m_sfWindow.create (sf::VideoMode (m_v2uSize.x, m_v2uSize.y, 32), szTitle);
+  sfMainWindow.create (sf::VideoMode (m_v2uSize.x, m_v2uSize.y, 32), szTitle);
 
   // Check if the main window is open
-  if (!m_sfWindow.isOpen ()) {
+  if (!sfMainWindow.isOpen ()) {
     std::cout << "Error : The main window cannot open !" << std::endl;
     return GL_FALSE;
   }
@@ -85,17 +88,20 @@ void GameEngine::ElapsedTime ( void ) {
 
 ////////////////////////////////////////////////////////////
 void GameEngine::ComputeWindowCenter ( void ) {
-  m_v2uWindowCenter = sf::Vector2u (m_sfWindow.getSize ().x/2, m_sfWindow.getSize ().y/2);
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  m_v2uWindowCenter = sf::Vector2u (sfMainWindow.getSize ().x/2, sfMainWindow.getSize ().y/2);
 }
 
 ////////////////////////////////////////////////////////////
 void GameEngine::CloseWindow ( void ) {
-  m_sfWindow.close ();
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  sfMainWindow.close ();
 }
 
 ////////////////////////////////////////////////////////////
 void GameEngine::CaptureScreen ( void ) {
-  m_sfScreenCapture = m_sfWindow.capture ();
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  m_sfScreenCapture = sfMainWindow.capture ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -143,18 +149,20 @@ GLuint GameEngine::GetHeight ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-sf::RenderWindow* GameEngine::GetWindow ( void ) {
-  return &m_sfWindow;
+sf::RenderWindow& GameEngine::GetWindow ( RenderTargets::ID eRenderTargetID ) {
+  return m_oRenderTargetsManager.GetRenderTargetObject<sf::RenderWindow> (eRenderTargetID);
 }
 
 ////////////////////////////////////////////////////////////
 GLuint GameEngine::GetWindowWidth ( void ) {
-  return m_sfWindow.getSize ().x;
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  return sfMainWindow.getSize ().x;
 }
 
 ////////////////////////////////////////////////////////////
 GLuint GameEngine::GetWindowHeight ( void ) {
-  return m_sfWindow.getSize ().y;
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  return sfMainWindow.getSize ().y;
 }
 
 ////////////////////////////////////////////////////////////
@@ -169,7 +177,8 @@ GLuint GameEngine::GetWindowCenterY ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean GameEngine::WindowIsOpen ( void ) {
-  return m_sfWindow.isOpen ();
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  return sfMainWindow.isOpen ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -184,7 +193,8 @@ void GameEngine::SetSleep ( GLboolean bSleep ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean GameEngine::PollEvent ( sf::Event& sfEvent ) {
-  return m_sfWindow.pollEvent (sfEvent);
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  return sfMainWindow.pollEvent (sfEvent);
 }
 
 ////////////////////////////////////////////////////////////
@@ -194,5 +204,15 @@ sf::Image& GameEngine::GetScreenCapture ( void ) {
 
 ////////////////////////////////////////////////////////////
 void GameEngine::SetMouseVisibility ( GLboolean bVisibility ) {
-  m_sfWindow.setMouseCursorVisible (bVisibility);
+  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  sfMainWindow.setMouseCursorVisible (bVisibility);
+}
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+void GameEngine::RegisterRenderTargets ( void ) {
+  m_oRenderTargetsManager.RegisterRenderTarget<sf::RenderWindow> (RenderTargets::ID::MainWindow);
 }

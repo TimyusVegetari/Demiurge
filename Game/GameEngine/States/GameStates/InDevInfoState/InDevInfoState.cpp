@@ -35,13 +35,16 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
   m_uiTickTrigger   (500),
   m_uiElapsedTicks  (0)
 {
+  // Getting of the main window
+  sf::RenderWindow& sfMainWindow = GetMainWindow ();
+
 	// In development information title
   m_oTitle.SetFont        (*stContext.m_poBmpFont);
   m_oTitle.SetString      ("Please note this is a pre-alpha version of Demiurge.");
   m_oTitle.SetStyle       (sf::Text::Style::Bold);
   m_oTitle.SetColor       (sf::Color::Yellow);
 	m_oTitle.setOrigin      (m_oTitle.GetLocalBounds ().width / 2.f, 0.f);
-	m_oTitle.setPosition    (stContext.m_psfMainWindow->getSize ().x / 2.f, 100.f);
+	m_oTitle.setPosition    (sfMainWindow.getView ().getCenter ().x, 100.f);
 	// In development information contant
   m_oContent.SetFont      (*stContext.m_poBmpFont);
   m_oContent.SetString    (std::string ("It has only a fraction of the planned features\n")
@@ -54,7 +57,7 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
                           +std::string ("Thank you for your understanding and good game !"));
   m_oContent.SetColor     (sf::Color::Green);
 	m_oContent.setOrigin    (m_oContent.GetLocalBounds ().width / 2.f, 0.f);
-	m_oContent.setPosition  (stContext.m_psfMainWindow->getSize ().x / 2.f, 130.f);
+	m_oContent.setPosition  (sfMainWindow.getView ().getCenter ().x, 130.f);
 }
 
 ////////////////////////////////////////////////////////////
@@ -67,9 +70,9 @@ InDevInfoState::~InDevInfoState ( void ) {
 
 ////////////////////////////////////////////////////////////
 void InDevInfoState::Draw ( void ) {
-  sf::RenderWindow& sfWindow = *GetContext ().m_psfMainWindow;
-	sfWindow.draw (m_oTitle);
-	sfWindow.draw (m_oContent);
+  sf::RenderWindow& sfMainWindow = GetMainWindow ();
+	sfMainWindow.draw (m_oTitle);
+	sfMainWindow.draw (m_oContent);
 }
 
 ////////////////////////////////////////////////////////////
@@ -95,4 +98,13 @@ GLboolean InDevInfoState::HandleEvent ( const sf::Event& sfEvent ) {
     }
 	}
 	return GL_TRUE;
+}
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+sf::RenderWindow& InDevInfoState::GetMainWindow ( void ) {
+  return GetContext ().m_poRenderTargetsManager->GetRenderTargetObject<sf::RenderWindow> (RenderTargets::ID::MainWindow);
 }

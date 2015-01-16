@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,55 +22,60 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file State.hpp
- * \brief Class for the states of the game.
+ * \file RenderTargetsManager.hpp
+ * \brief Class to manage the render targets.
  * \author Anthony Acroute
  * \version 0.1
- * \date 2014-2015
+ * \date 2015
  *
  */
 
-#ifndef STATE_HPP__
-#define STATE_HPP__
+#ifndef RENDERTARGETSMANAGER_HPP__
+#define RENDERTARGETSMANAGER_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "GameStates/StateIdentifiers.hpp"
-#if defined (INCLUDE_SFML__) && defined (INCLUDE_STD__) && defined (INCLUDE_DRIMI__)
-
-class StateStack;
+#if defined (INCLUDE_SFML__)
+#include "RenderTargetsIdentifiers.hpp"
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create states of the game like as the menu,
-/// game pause, current game session, cinematic, etc...
+// Types
+////////////////////////////////////////////////////////////
+namespace RenderTarget {
+  typedef std::unique_ptr<sf::RenderTarget> Ptr;  ///< Unique pointer of render target.
+}
+
+////////////////////////////////////////////////////////////
+/// \brief Class to manage the render targets.
 ///
 ////////////////////////////////////////////////////////////
-class State {
+class RenderTargetsManager : sf::NonCopyable {
 
   public :
     ////////////////////////////////////////////////////////////
-    // Types
+    // Enumeration
     ////////////////////////////////////////////////////////////
-    typedef std::unique_ptr<State>  Ptr; ///< Unique pointer of state.
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Structure defining a unique ressources context.
-    ///
-    ////////////////////////////////////////////////////////////
-    struct ST_Context {
-			RenderTargetsManager*	m_poRenderTargetsManager; ///< Pointer to the render targets manager of the game.
-			drimi::BmpFont*       m_poBmpFont;              ///< Pointer to the bitmap font of the game.
-
-			ST_Context            ( RenderTargetsManager&	m_oRenderTargetsManager, drimi::BmpFont& oBmpFont );
+    enum ERROR {
+      NONE,
+      UNREGISTERED_OBJECT,
+      UNCONSTRUCTED_OBJECT
     };
 
   private :
     ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    typedef std::map<RenderTargets::ID, RenderTarget::Ptr>::size_type Size_type;  ///< std::map::size_type of created render target list
+    typedef std::pair<RenderTargets::ID, RenderTarget::Ptr>           Pair;       ///< std::pair of created render target.
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    StateStack*       m_poStack;
-    ST_Context        m_stContext;
+    std::map<GLuint, RenderTarget::Ptr>       m_mList;        ///< List of created render target.
+    std::map<RenderTargets::ID,
+        std::function<RenderTarget::Ptr ()>>  m_mFactories;   ///< List of functions to call constructor of the specific render targets.
+    GLuint                                    m_uiError;      ///< Error value if an error arose.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -80,78 +85,96 @@ class State {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a state.
+    /// This constructor defines a manager of render targets .
     ///
     ////////////////////////////////////////////////////////////
-    State ( StateStack& oStack, ST_Context stContext );
+    RenderTargetsManager ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the state.
+    /// Cleans up all the internal resources used by the manager of render targets.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~State ( void );
+    virtual ~RenderTargetsManager ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the state.
+    /// \brief Register a render target in the list.
+    ///
+    /// \tparam T   Type of the specific render target.
+    ///
+    /// \param eRenderTargetID  ID of the render target to register.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw ( void ) = 0;
+    template <typename T>
+    void RegisterRenderTarget ( RenderTargets::ID eRenderTargetID );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Call all the update of the components of the state.
+    /// \brief Add a render target in the list.
     ///
-    /// \return True to permit the other states to be updated, false else.
+    /// \param eRenderTargetID  ID of the registered render target.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean Update ( void ) = 0;
+    void AddRenderTarget ( RenderTargets::ID eRenderTargetID );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the events for all the components of the state.
+    /// \brief Remove a render target in the list.
     ///
-    /// \return True to permit the events of the other states to be checked, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const sf::Event& sfEvent ) = 0;
-
-  protected :
-    ////////////////////////////////////////////////////////////
-    /// \brief Add the state on the top of the stack.
-    ///
-    /// \param sStateID   Value to identify a specific state.
+    /// \param eRenderTargetID  ID of the registered render target.
     ///
     ////////////////////////////////////////////////////////////
-    void RequestStackPush ( States::ID eStateID );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Remove the state of the stack.
-    ///
-    ////////////////////////////////////////////////////////////
-    void RequestStackPop ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Call the method to clean the stack.
-    ///
-    ////////////////////////////////////////////////////////////
-    void RequestStateClear ( void );
+    Size_type DeleteRenderTarget ( RenderTargets::ID eRenderTargetID );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the unique ressources context of the game
+    /// \brief Get if the list is empty.
     ///
-    /// \return The unique ressources context
+    /// \return True if the list is empty, false else.
     ///
     ////////////////////////////////////////////////////////////
-    ST_Context GetContext ( void ) const;
+    GLboolean IsEmpty ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the identified render target.
+    ///
+    /// \param eRenderTargetID  ID of the registered render target.
+    ///
+    /// \return Render target or NULL.
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    T& GetRenderTargetObject ( RenderTargets::ID eRenderTargetID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the value of an error.
+    ///
+    /// \return Value of an error.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLuint CheckError ( void );
+
+  private:
+    ////////////////////////////////////////////////////////////
+    // Internal methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a type of specific render target.
+    ///
+    /// \param eRenderTargetID   ID of the registered render target.
+    ///
+    /// \return Pointer of constructed render target.
+    ///
+    ////////////////////////////////////////////////////////////
+    Pair CreateRenderTarget ( RenderTargets::ID eRenderTargetID );
 };
 
-#endif // INCLUDE_SFML__ && INCLUDE_STD__ && INCLUDE_DRIMI__
-#endif // STATE_HPP__
+#endif // INCLUDE_SFML__
+#endif // RENDERTARGETSMANAGER_HPP__

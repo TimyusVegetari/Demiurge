@@ -33,19 +33,22 @@ CrashState::CrashState ( StateStack& oStack, ST_Context stContext ) :
   m_oError (),
   m_oDetails ()
 {
+  // Getting of the main window
+  sf::RenderWindow& sfMainWindow = GetMainWindow ();
+
   // Error message
-  m_oError.SetFont            (*stContext.m_poBmpFont);
-  m_oError.SetString          ("A critical error of unknown origin arose and caused the stop of the game.");
-  m_oError.SetStyle           (sf::Text::Style::Bold);
-  m_oError.SetColor           (sf::Color::Red);
-	m_oError.setOrigin          (m_oError.GetLocalBounds ().width / 2.f, 0.f);
-	m_oError.setPosition        (stContext.m_psfMainWindow->getSize ().x / 2.f, 100.f);
+  m_oError.SetFont        (*stContext.m_poBmpFont);
+  m_oError.SetString      ("A critical error of unknown origin arose and caused the stop of the game.");
+  m_oError.SetStyle       (sf::Text::Style::Bold);
+  m_oError.SetColor       (sf::Color::Red);
+	m_oError.setOrigin      (m_oError.GetLocalBounds ().width / 2.f, 0.f);
+	m_oError.setPosition    (sfMainWindow.getView ().getCenter ().x, 100.f);
 	//Error details
-  m_oDetails.SetFont            (*stContext.m_poBmpFont);
-  m_oDetails.SetString          ("There is no detail available.");
-  m_oDetails.SetColor           (sf::Color::Yellow);
-	m_oDetails.setOrigin          (m_oDetails.GetLocalBounds ().width / 2.f, 0.f);
-	m_oDetails.setPosition        (stContext.m_psfMainWindow->getSize ().x / 2.f, 120.f);
+  m_oDetails.SetFont      (*stContext.m_poBmpFont);
+  m_oDetails.SetString    ("There is no detail available.");
+  m_oDetails.SetColor     (sf::Color::Yellow);
+	m_oDetails.setOrigin    (m_oDetails.GetLocalBounds ().width / 2.f, 0.f);
+	m_oDetails.setPosition  (sfMainWindow.getView ().getCenter ().x, 130.f);
 }
 
 ////////////////////////////////////////////////////////////
@@ -58,9 +61,9 @@ CrashState::~CrashState ( void ) {
 
 ////////////////////////////////////////////////////////////
 void CrashState::Draw ( void ) {
-  sf::RenderWindow& sfWindow = *GetContext ().m_psfMainWindow;
-	sfWindow.draw (m_oError);
-	sfWindow.draw (m_oDetails);
+  sf::RenderWindow& sfMainWindow = GetMainWindow ();
+	sfMainWindow.draw (m_oError);
+	sfMainWindow.draw (m_oDetails);
 }
 
 ////////////////////////////////////////////////////////////
@@ -72,8 +75,18 @@ GLboolean CrashState::Update ( void ) {
 GLboolean CrashState::HandleEvent ( const sf::Event& sfEvent ) {
 	if (sfEvent.type == sf::Event::KeyPressed) {
     if (sfEvent.key.code == sf::Keyboard::Key::Escape) {
-      GetContext ().m_psfMainWindow->close ();
+      sf::RenderWindow& sfMainWindow = GetMainWindow ();
+      sfMainWindow.close ();
     }
 	}
 	return GL_FALSE;
+}
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+sf::RenderWindow& CrashState::GetMainWindow ( void ) {
+  return GetContext ().m_poRenderTargetsManager->GetRenderTargetObject<sf::RenderWindow> (RenderTargets::ID::MainWindow);
 }
