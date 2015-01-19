@@ -44,8 +44,7 @@ GameEngine::GameEngine ( void ) :
   m_uiElapsedTime         (0),
   m_oBmpFont              (),
   m_oStateStack           (State::ST_Context (m_oRenderTargetsManager, m_oBmpFont)),
-  m_bSleep                (GL_FALSE),
-	m_sfScreenCapture       ()
+  m_bSleep                (GL_FALSE)
 {
 }
 
@@ -61,16 +60,16 @@ GameEngine::~GameEngine ( void ) {
 GLboolean GameEngine::InitWinMain ( void ) {
   // Create the main window and set the mini icon and the title
   m_oRenderTargetsManager.AddRenderTarget (RenderTargets::ID::MainWindow);
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
 
   if (m_sfIcon.getSize ().x != 0)
-    sfMainWindow.setIcon (m_sfIcon.getSize ().x, m_sfIcon.getSize ().y, m_sfIcon.getPixelsPtr ());
+    gmMainWindow.SetIcon (m_sfIcon.getSize ().x, m_sfIcon.getSize ().y, m_sfIcon.getPixelsPtr ());
 
   std::string szTitle (m_szTitle+" "+m_szVersion);
-  sfMainWindow.create (sf::VideoMode (m_v2uSize.x, m_v2uSize.y, 32), szTitle);
+  gmMainWindow.Create (sf::VideoMode (m_v2uSize.x, m_v2uSize.y, 32), szTitle);
 
   // Check if the main window is open
-  if (!sfMainWindow.isOpen ()) {
+  if (!gmMainWindow.IsOpen ()) {
     std::cout << "Error : The main window cannot open !" << std::endl;
     return GL_FALSE;
   }
@@ -88,20 +87,8 @@ void GameEngine::ElapsedTime ( void ) {
 
 ////////////////////////////////////////////////////////////
 void GameEngine::ComputeWindowCenter ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  m_v2uWindowCenter = sf::Vector2u (sfMainWindow.getSize ().x/2, sfMainWindow.getSize ().y/2);
-}
-
-////////////////////////////////////////////////////////////
-void GameEngine::CloseWindow ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  sfMainWindow.close ();
-}
-
-////////////////////////////////////////////////////////////
-void GameEngine::CaptureScreen ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  m_sfScreenCapture = sfMainWindow.capture ();
+  gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  m_v2uWindowCenter = sf::Vector2u (gmMainWindow.GetWidth ()/2, gmMainWindow.GetHeight ()/2);
 }
 
 ////////////////////////////////////////////////////////////
@@ -149,20 +136,8 @@ GLuint GameEngine::GetHeight ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-sf::RenderWindow& GameEngine::GetWindow ( RenderTargets::ID eRenderTargetID ) {
-  return m_oRenderTargetsManager.GetRenderTargetObject<sf::RenderWindow> (eRenderTargetID);
-}
-
-////////////////////////////////////////////////////////////
-GLuint GameEngine::GetWindowWidth ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  return sfMainWindow.getSize ().x;
-}
-
-////////////////////////////////////////////////////////////
-GLuint GameEngine::GetWindowHeight ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  return sfMainWindow.getSize ().y;
+gm::RenderWindow& GameEngine::GetWindow ( RenderTargets::ID eRenderTargetID ) {
+  return m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (eRenderTargetID);
 }
 
 ////////////////////////////////////////////////////////////
@@ -177,8 +152,8 @@ GLuint GameEngine::GetWindowCenterY ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean GameEngine::WindowIsOpen ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  return sfMainWindow.isOpen ();
+  gm::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  return sfMainWindow.IsOpen ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -192,27 +167,10 @@ void GameEngine::SetSleep ( GLboolean bSleep ) {
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean GameEngine::PollEvent ( sf::Event& sfEvent ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  return sfMainWindow.pollEvent (sfEvent);
-}
-
-////////////////////////////////////////////////////////////
-sf::Image& GameEngine::GetScreenCapture ( void ) {
-  return m_sfScreenCapture;
-}
-
-////////////////////////////////////////////////////////////
-void GameEngine::SetMouseVisibility ( GLboolean bVisibility ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  sfMainWindow.setMouseCursorVisible (bVisibility);
-}
-
-////////////////////////////////////////////////////////////
 // Internal methods
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 void GameEngine::RegisterRenderTargets ( void ) {
-  m_oRenderTargetsManager.RegisterRenderTarget<sf::RenderWindow> (RenderTargets::ID::MainWindow);
+  m_oRenderTargetsManager.RegisterRenderTarget<gm::RenderWindow> (RenderTargets::ID::MainWindow);
 }

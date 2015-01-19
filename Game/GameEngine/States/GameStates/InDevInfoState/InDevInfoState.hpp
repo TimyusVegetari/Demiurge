@@ -113,7 +113,7 @@ class InDevInfoState : public State {
     /// \return The main render window of the game
     ///
     ////////////////////////////////////////////////////////////
-    sf::RenderWindow& GetMainWindow ( void );
+    gm::RenderWindow& GetMainWindow ( void );
 };
 
 #endif // INCLUDE_SFML__ && INCLUDE_STD__ && INCLUDE_DRIMI__

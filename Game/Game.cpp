@@ -81,8 +81,8 @@ GLboolean Game::GameInit ( void ) {
   //sf::Context context (sf::ContextSettings (32), m_v2uSize.x, m_v2uSize.y);
 
   // Activate the vertical synchronisation of the screen
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  sfMainWindow.setVerticalSyncEnabled (GL_TRUE);
+  gm::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  sfMainWindow.SetVerticalSyncEnabled (GL_TRUE);
 
   // Restart the universal clock
   m_sfClock.restart ();
@@ -106,18 +106,19 @@ void Game::GameCycle ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Game::GamePaint ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  sfMainWindow.clear ();
+  gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  gmMainWindow.Clear ();
 
   // Draw of the game states, scenes, ...
   m_oStateStack.Draw ();
 
-  sfMainWindow.display ();
+  gmMainWindow.Display ();
 }
 
 ////////////////////////////////////////////////////////////
 void Game::GameEnd ( void ) {
-  CloseWindow ();
+  gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  gmMainWindow.Close ();
   m_oRenderTargetsManager.DeleteRenderTarget (RenderTargets::ID::MainWindow);
 }
 
@@ -150,10 +151,10 @@ void Game::RegisterStates ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Game::ProcessInput ( void ) {
-  sf::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+  gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
 
   sf::Event sfEvent;
-  while (PollEvent (sfEvent)) {
+  while (gmMainWindow.PollEvent (sfEvent)) {
     // Call of the HandleEvent of the states of the game
     m_oStateStack.HandleEvent (sfEvent);
 
@@ -161,11 +162,11 @@ void Game::ProcessInput ( void ) {
     switch (sfEvent.type) {
       // Close window :
       case sf::Event::Closed :
-        CloseWindow ();
+        gmMainWindow.Close ();
         break;
       // Resize window :
       case sf::Event::Resized :
-        sfMainWindow.setView (sf::View (sf::FloatRect (0, 0, sfEvent.size.width, sfEvent.size.height)));
+        gmMainWindow.SetView (sf::View (sf::FloatRect (0, 0, sfEvent.size.width, sfEvent.size.height)));
         ComputeWindowCenter ();
         break;
       default :

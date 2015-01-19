@@ -34,7 +34,7 @@ CrashState::CrashState ( StateStack& oStack, ST_Context stContext ) :
   m_oDetails ()
 {
   // Getting of the main window
-  sf::RenderWindow& sfMainWindow = GetMainWindow ();
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
   // Error message
   m_oError.SetFont        (*stContext.m_poBmpFont);
@@ -42,13 +42,13 @@ CrashState::CrashState ( StateStack& oStack, ST_Context stContext ) :
   m_oError.SetStyle       (sf::Text::Style::Bold);
   m_oError.SetColor       (sf::Color::Red);
 	m_oError.setOrigin      (m_oError.GetLocalBounds ().width / 2.f, 0.f);
-	m_oError.setPosition    (sfMainWindow.getView ().getCenter ().x, 100.f);
+	m_oError.setPosition    (gmMainWindow.GetView ().getCenter ().x, 100.f);
 	//Error details
   m_oDetails.SetFont      (*stContext.m_poBmpFont);
   m_oDetails.SetString    ("There is no detail available.");
   m_oDetails.SetColor     (sf::Color::Yellow);
 	m_oDetails.setOrigin    (m_oDetails.GetLocalBounds ().width / 2.f, 0.f);
-	m_oDetails.setPosition  (sfMainWindow.getView ().getCenter ().x, 130.f);
+	m_oDetails.setPosition  (gmMainWindow.GetView ().getCenter ().x, 130.f);
 }
 
 ////////////////////////////////////////////////////////////
@@ -61,9 +61,9 @@ CrashState::~CrashState ( void ) {
 
 ////////////////////////////////////////////////////////////
 void CrashState::Draw ( void ) {
-  sf::RenderWindow& sfMainWindow = GetMainWindow ();
-	sfMainWindow.draw (m_oError);
-	sfMainWindow.draw (m_oDetails);
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+	gmMainWindow.Draw (m_oError);
+	gmMainWindow.Draw (m_oDetails);
 }
 
 ////////////////////////////////////////////////////////////
@@ -75,8 +75,8 @@ GLboolean CrashState::Update ( void ) {
 GLboolean CrashState::HandleEvent ( const sf::Event& sfEvent ) {
 	if (sfEvent.type == sf::Event::KeyPressed) {
     if (sfEvent.key.code == sf::Keyboard::Key::Escape) {
-      sf::RenderWindow& sfMainWindow = GetMainWindow ();
-      sfMainWindow.close ();
+      gm::RenderWindow& gmMainWindow = GetMainWindow ();
+      gmMainWindow.Close ();
     }
 	}
 	return GL_FALSE;
@@ -87,6 +87,6 @@ GLboolean CrashState::HandleEvent ( const sf::Event& sfEvent ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-sf::RenderWindow& CrashState::GetMainWindow ( void ) {
-  return GetContext ().m_poRenderTargetsManager->GetRenderTargetObject<sf::RenderWindow> (RenderTargets::ID::MainWindow);
+gm::RenderWindow& CrashState::GetMainWindow ( void ) {
+  return GetContext ().m_poRenderTargetsManager->GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
 }

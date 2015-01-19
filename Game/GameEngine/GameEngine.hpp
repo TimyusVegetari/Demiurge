@@ -71,7 +71,6 @@ class GameEngine {
     StateStack            m_oStateStack;
 
 		GLboolean             m_bSleep;
-		sf::Image             m_sfScreenCapture;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -117,24 +116,6 @@ class GameEngine {
     ///
     ////////////////////////////////////////////////////////////
     void ComputeWindowCenter ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Close the main window of the game.
-    ///
-    ////////////////////////////////////////////////////////////
-    void CloseWindow ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Copy the current contents of the window to an image.
-    ///
-    /// This is a slow operation, whose main purpose is to make screenshots of
-    /// the application. This method update an internal image with the contents of the main
-    /// window. (see the capture method in the SFML render window)
-    ///
-    /// \see GetScreenCapture
-    ///
-    ////////////////////////////////////////////////////////////
-    void CaptureScreen ( void );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
@@ -212,23 +193,7 @@ class GameEngine {
     /// \return A render window of the game
     ///
     ////////////////////////////////////////////////////////////
-    sf::RenderWindow& GetWindow ( RenderTargets::ID eRenderTargetID );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the width of the main window.
-    ///
-    /// \return The width of the main window
-    ///
-    ////////////////////////////////////////////////////////////
-    GLuint GetWindowWidth ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the height of the main window.
-    ///
-    /// \return The height of the main window
-    ///
-    ////////////////////////////////////////////////////////////
-    GLuint GetWindowHeight ( void );
+    gm::RenderWindow& GetWindow ( RenderTargets::ID eRenderTargetID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the X of the center of the main window.
@@ -273,40 +238,6 @@ class GameEngine {
     ///
     ////////////////////////////////////////////////////////////
     GLboolean GetSleep ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Pop the event on top of the event queue, if any, and return it.
-    ///
-    /// This function is not blocking: if there's no pending event then it will
-    /// return false and leave event unmodified. Note that more than one event
-    /// may be present in the event queue, thus you should always call this function
-    /// in a loop to make sure that you process every pending event. (see the pollevent
-    /// method in the SFML render window)
-    ///
-    /// \param sfEvent  Event to be returned
-    ///
-    /// \return True if an event was returned, or false if the event queue was empty
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean PollEvent ( sf::Event& sfEvent );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the internal image of the capture of the screen.
-    ///
-    /// \return The internal image of the capture of the screen
-    ///
-    /// \see CaptureScreen
-    ///
-    ////////////////////////////////////////////////////////////
-    sf::Image& GetScreenCapture ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the mouse visibility.
-    ///
-    /// \param bVisibility  Boolean value to indicate if the mouse is visible or not
-    ///
-    ////////////////////////////////////////////////////////////
-    void SetMouseVisibility ( GLboolean bVisibility );
 
     ////////////////////////////////////////////////////////////
     // Internal methods
