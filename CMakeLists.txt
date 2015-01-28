@@ -1,0 +1,128 @@
+cmake_minimum_required(VERSION 2.6)
+
+# For generators with multiple configurations (like C::B, VS, ...), only allow Debug and Release
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_CONFIGURATION_TYPES Debug Release)
+  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Limited configurations to what we need" FORCE)
+  mark_as_advanced(CMAKE_CONFIGURATION_TYPES)
+endif()
+
+# Specify default build type if none provided (before project() command)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+endif()
+mark_as_advanced(CMAKE_BUILD_TYPE)
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+# Declaration of the project
+project(Demiurge)
+
+# Specific compiler options
+if(CMAKE_COMPILER_IS_GNUCXX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
+	# Mac OS X: clang uses libc++ standard library
+	if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+	endif()
+endif()
+
+# User's settings - General C++ Flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -pedantic -Wconversion -Wsign-conversion -fexceptions")
+
+# Release / Debug flags
+#set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
+#set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin/)
+
+# Definitions flags to compile with dependencies 
+add_definitions(-DGLEW_STATIC -DSFML_STATIC)
+
+# Inclusion of the dependencies
+include_directories(
+        ${sfml_include_dir}
+				${glew_include_dir}
+				${tinyxml2_include_dir}
+				${freeimage_include_dir}
+)
+link_directories(
+        ${sfml_lib_dir}
+				${glew_lib_dir}
+				${tinyxml2_lib_dir}
+				${freeimage_lib_dir}
+)
+
+# Inclusion of the headers
+include_directories("${Demiurge_SOURCE_DIR}//include")
+
+# Generation of the sources files list
+file(
+        GLOB_RECURSE
+				source_files
+				src/*
+)
+
+# Compilation for Debug
+# Declaration of the executable
+add_executable(
+        Debug
+        ${source_files}
+)
+
+# Configuration of the links edition
+target_link_libraries(
+        Debug
+				${sfml_graphics_lib_name}-d
+				${sfml_window_lib_name}-d
+				${gdi32_lib_name}
+				${sfml_system_lib_name}-d
+				${winmm_lib_name}
+				${glew_lib_name}
+				${glu32_lib_name}
+				${opengl32_lib_name}
+				${freetype_lib_name}
+				${jpeg_lib_name}
+				${m_lib_name}
+				${tinyxml2_lib_name}
+				${freeimage_lib_name}
+)
+
+# Configuration of the path of the program
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG bin/Debug/)
+set_target_properties( Debug PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin/Debug/ )
+set_target_properties( Debug PROPERTIES RUNTIME_OUTPUT_NAME demiurge_dbg )
+set_target_properties( Debug PROPERTIES COMPILE_FLAGS "-O0 -g3" )
+
+# Compilation for Release
+# Declaration of the executable
+add_executable(
+        Release
+        ${source_files}
+)
+
+# Configuration of the links edition
+target_link_libraries(
+        Release
+				${sfml_graphics_lib_name}
+				${sfml_window_lib_name}
+				${gdi32_lib_name}
+				${sfml_system_lib_name}
+				${winmm_lib_name}
+				${glew_lib_name}
+				${glu32_lib_name}
+				${opengl32_lib_name}
+				${freetype_lib_name}
+				${jpeg_lib_name}
+				${m_lib_name}
+				${tinyxml2_lib_name}
+				${freeimage_lib_name}
+)
+
+# Configuration of the path of the program
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE bin/Release/)
+set_target_properties( Release PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin/Release/ )
+set_target_properties( Release PROPERTIES RUNTIME_OUTPUT_NAME demiurge )
+set_target_properties( Release PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG" )
