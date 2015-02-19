@@ -146,6 +146,7 @@ GLboolean Game::TickClock ( void ) {
 ////////////////////////////////////////////////////////////
 void Game::RegisterStates ( void ) {
   m_oStateStack.RegisterState<InDevInfoState> (States::ID::InDevInfo);
+  m_oStateStack.RegisterState<TitleState> (States::ID::Title);
 }
 
 ////////////////////////////////////////////////////////////

@@ -35,5 +35,6 @@
 
 #include "CrashState.hpp"
 #include "InDevInfoState.hpp"
+#include "TitleState.hpp"
 
 #endif // STATEDEFINITIONS_HPP__
