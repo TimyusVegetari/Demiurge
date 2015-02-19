@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,34 +21,25 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/GameEngine/States/State.hpp>
-#include <Game/GameEngine/States/StateStack.hpp>
-
-////////////////////////////////////////////////////////////
-// Structures
-////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-State::ST_Context::ST_Context ( RenderTargetsManager&	m_oRenderTargetsManager, drimi::BmpFont& oBmpFont, Textures2DManager& oTextures2DManager ) :
-  m_poRenderTargetsManager  (m_oRenderTargetsManager),
-  m_poBmpFont               (oBmpFont),
-  m_poTextures2DManager     (&oTextures2DManager)
-{
-}
+#include <Game/GameEngine/Textures2D/Textures2DManager.hpp>
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-State::State ( StateStack& oStack, ST_Context stContext ) :
-  m_poStack   (oStack),
-  m_stContext (stContext)
+Textures2DManager::Textures2DManager ( void ) :
+  m_mTextureMap ()
 {
+  Texture2D::Ptr psfTexture (new sf::Texture ());
+  psfTexture->create (16, 16);
+
+	m_mTextureMap.insert (std::make_pair (Textures2D::ID::None, std::move (psfTexture)));
 }
 
 ////////////////////////////////////////////////////////////
-State::~State ( void ) {
+Textures2DManager::~Textures2DManager ( void ) {
+	m_mTextureMap.clear ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -56,18 +47,24 @@ State::~State ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-void State::RequestStackPush ( States::ID eStateID ) {
-  m_poStack.PushState (eStateID);
+void Textures2DManager::LoadTexture ( Textures2D::ID eTextureID, const std::string& szFileName ) {
+	Texture2D::Ptr psfTexture (new sf::Texture ());
+	if (psfTexture->loadFromFile (szFileName)) {
+    m_mTextureMap.insert (std::make_pair (eTextureID, std::move (psfTexture)));
+	} else {
+    // Message which has to be delivered to the errors manager.
+    //...
+  }
 }
 
 ////////////////////////////////////////////////////////////
-void State::RequestStackPop ( void ) {
-	m_poStack.PopState ();
-}
-
-////////////////////////////////////////////////////////////
-void State::RequestStateClear ( void ) {
-	m_poStack.ClearStates ();
+void Textures2DManager::DeleteTexture ( Textures2D::ID eTextureID ) {
+  auto mFound = m_mTextureMap.find (eTextureID);
+  if (mFound == m_mTextureMap.end ()) {
+    // Message which has to be delivered to the errors manager.
+    //...
+  } else
+    m_mTextureMap.erase (eTextureID);
 }
 
 ////////////////////////////////////////////////////////////
@@ -75,6 +72,13 @@ void State::RequestStateClear ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-State::ST_Context State::GetContext ( void ) const {
-	return m_stContext;
+const sf::Texture& Textures2DManager::GetTexture ( Textures2D::ID eTextureID ) {
+  auto mFound = m_mTextureMap.find (eTextureID);
+  if (mFound == m_mTextureMap.end ()) {
+    // Message which has to be delivered to the errors manager.
+    //...
+
+    return *m_mTextureMap[Textures2D::ID::None];
+  }
+  return *mFound->second;
 }

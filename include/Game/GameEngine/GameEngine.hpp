@@ -37,6 +37,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "RenderTargets/RenderTargetsManager.hpp"
+#include "Textures2D/Textures2DManager.hpp"
 #include "States/StateStack.hpp"
 
 ////////////////////////////////////////////////////////////
@@ -65,7 +66,8 @@ class GameEngine {
     GLuint                m_uiElapsedTime;
 
     // Elemetary ressources of the game
-    drimi::BmpFont        m_oBmpFont;         ///< Bitmap font of the game.
+    drimi::BmpFont        m_oBmpFont;           ///< Bitmap font of the game.
+    Textures2DManager     m_oTextures2DManager; ///< Textures 2D of the game.
     StateStack            m_oStateStack;
 
 		GLboolean             m_bSleep;
