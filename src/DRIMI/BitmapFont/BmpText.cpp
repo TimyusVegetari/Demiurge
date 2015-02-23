@@ -254,7 +254,6 @@ void BmpText::UpdateGeometry ( void ) const {
   GLfloat fVSpace   = static_cast<GLfloat> (m_pBmpFont->GetLineSpacing ()) * m_fCharacterScale;
   GLfloat fX        = 0.f;
   GLfloat fY        = m_fCharacterScale;
-	GLfloat fBoundsW  = 0.f;
 
   // Compute values related to the text style
   GLboolean bBold             = (m_uiStyle & sf::Text::Style::Bold) != 0;
@@ -265,7 +264,10 @@ void BmpText::UpdateGeometry ( void ) const {
   GLfloat fTabulation         = (static_cast<GLfloat> (m_pBmpFont->GetKerning (L' ', bBold)) * m_fCharacterScale + fHSpace) * 2.f;
 
   // Create one quad for each character
+  GLfloat fMinX = m_fCharacterScale;
   GLfloat fMinY = m_fCharacterScale;
+  GLfloat fMaxX = 0.f;
+  GLfloat fMaxY = 0.f;
   sf::Uint32 uiPrevChar = 0;
   for (std::size_t i=0 ; i<m_sfString.getSize () ; ++i) {
     sf::Uint32 uiCurChar = m_sfString[i];
@@ -279,11 +281,24 @@ void BmpText::UpdateGeometry ( void ) const {
       DrawUnderline (fX, fY, fUnderlineOffset, fUnderlineThickness);
 
     // Handle special characters
-    switch (uiCurChar) {
-      case L' '  : fX += fHSpace;           continue;
-      case L'\t' : fX += fTabulation;       continue;
-      case L'\n' : fY += fVSpace; fX = 0.f; continue;
-      case L'\v' : fY += fVSpace * 2.f;     continue;
+    if ((uiCurChar == L' ') || (uiCurChar == L'\t') || (uiCurChar == L'\n') || (uiCurChar == L'\v')) {
+      // Update the current bounds (min coordinates)
+      fMinX = std::min (fMinX, fX);
+      fMinY = std::min (fMinY, fY);
+
+      switch (uiCurChar) {
+        case L' '  : fX += fHSpace;           break;
+        case L'\t' : fX += fTabulation;       break;
+        case L'\n' : fY += fVSpace; fX = 0.f; break;
+        case L'\v' : fY += fVSpace * 2.f;     break;
+      }
+
+      // Update the current bounds (max coordinates)
+      fMaxX = std::max (fMaxX, fX);
+      fMaxY = std::max (fMaxY, fY);
+
+      // Next glyph, no need to create a quad for whitespace
+      continue;
     }
 
     // Extract the current glyph's description
@@ -305,15 +320,14 @@ void BmpText::UpdateGeometry ( void ) const {
     m_sfVertices.append (sf::Vertex (sf::Vector2f (fX + fRight, fY + fBottom), m_sfColor, sf::Vector2f (fU2, fV2)));
     m_sfVertices.append (sf::Vertex (sf::Vector2f (fX + fLeft,  fY + fBottom), m_sfColor, sf::Vector2f (fU1, fV2)));
 
+    // Update the current bounds
+    fMinX = std::min (fMinX, fX + fLeft);
+    fMaxX = std::max (fMaxX, fX + fRight);
+    fMinY = std::min (fMinY, fY + fTop);
+    fMaxY = std::max (fMaxY, fY + fBottom);
+
     // Advance to the next character
     fX += static_cast<GLfloat> (m_uiGlyphAdvance) * m_fCharacterScale;
-    if (fX > fBoundsW)
-      fBoundsW = fX;
-
-    // Update the minimum Y coordinate
-    GLfloat fHeight = fY + fTop;
-    if (fHeight < fMinY)
-      fMinY = fHeight;
   }
 
   // If we're using the underlined style, add the last line
@@ -321,10 +335,10 @@ void BmpText::UpdateGeometry ( void ) const {
     DrawUnderline (fX+static_cast<GLfloat> (m_pBmpFont->GetKerning (uiPrevChar, bBold)) * m_fCharacterScale, fY, fUnderlineOffset, fUnderlineThickness);
 
   // Update the bounding rectangle
-  m_sfBounds.left = 0.f;
+  m_sfBounds.left = fMinX;
   m_sfBounds.top = fMinY;
-  m_sfBounds.width = fBoundsW;
-  m_sfBounds.height = fY - fMinY;
+  m_sfBounds.width = fMaxX - fMinX;
+  m_sfBounds.height = fMaxY - fMinY;
 }
 
 } // namespace drimi

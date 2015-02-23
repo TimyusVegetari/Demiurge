@@ -48,7 +48,7 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   // Game Title
   m_sfTitle.setTexture  (stContext.m_poTextures2DManager->GetTexture (Textures2D::ID::GameTitle));
 	m_sfTitle.setOrigin   (m_sfTitle.getLocalBounds ().width / 2.f, m_sfTitle.getLocalBounds ().height / 2.f);
-	m_sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat>(gmMainWindow.GetHeight ()) / 3.f));
+	m_sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
 
 	// Game version
   m_oVersion.SetFont      (stContext.m_poBmpFont);
@@ -58,13 +58,13 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   m_oVersion.SetStyle     (sf::Text::Style::Bold);
   m_oVersion.SetColor     (sf::Color::Yellow);
 	m_oVersion.SetOrigin    (0.f, m_oVersion.GetLocalBounds ().height);
-	m_oVersion.setPosition  (0.f, static_cast<GLfloat>(gmMainWindow.GetHeight ()));
+	m_oVersion.setPosition  (5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
 	// Game licence
   m_oLicense.SetFont      (stContext.m_poBmpFont);
   m_oLicense.SetString    (DEMIURGE_LICENSE);
   m_oLicense.SetColor     (sf::Color::Yellow);
 	m_oLicense.SetOrigin    (m_oLicense.GetLocalBounds ().width, m_oLicense.GetLocalBounds ().height);
-	m_oLicense.setPosition  (static_cast<GLfloat>(gmMainWindow.GetWidth ()), static_cast<GLfloat>(gmMainWindow.GetHeight ()));
+	m_oLicense.setPosition  (static_cast<GLfloat> (gmMainWindow.GetWidth ()) - 5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
 }
 
 ////////////////////////////////////////////////////////////
