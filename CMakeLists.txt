@@ -64,12 +64,19 @@ file(
 				source_files
 				src/*
 )
+# Generation of the header files list
+file(
+        GLOB_RECURSE
+				header_files
+				include/*
+)
 
 # Compilation for Debug
 # Declaration of the executable
 add_executable(
         Debug
         ${source_files}
+        ${header_files}
 )
 
 # Configuration of the links edition
