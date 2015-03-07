@@ -76,6 +76,9 @@ GLboolean Game::GameInit ( void ) {
   // Prepare the first state of the game
   m_oStateStack.PushState (States::ID::InDevInfo);
 
+  // Game objects registration
+  RegisterGameObjects ();
+
   // Create the OpenGL context with SFML
   //sf::Context context (sf::ContextSettings (32), m_v2uSize.x, m_v2uSize.y);
 
@@ -173,4 +176,9 @@ void Game::ProcessInput ( void ) {
         break;
     }
   }
+}
+
+////////////////////////////////////////////////////////////
+void Game::RegisterGameObjects ( void ) {
+  //m_oGameObjectsManager.RegisterGameObject<...> (GameObjects::ID::...);
 }

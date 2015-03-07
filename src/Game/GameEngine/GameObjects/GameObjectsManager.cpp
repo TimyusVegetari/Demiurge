@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,38 +21,23 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/GameEngine/States/State.hpp>
-#include <Game/GameEngine/States/StateStack.hpp>
-
-////////////////////////////////////////////////////////////
-// Structures
-////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-State::ST_Context::ST_Context ( RenderTargetsManager&	m_oRenderTargetsManager,
-                                drimi::BmpFont& oBmpFont,
-                                Textures2DManager& oTextures2DManager,
-                                GameObjectsManager& oGameObjectsManager ) :
-  m_poRenderTargetsManager  (m_oRenderTargetsManager),
-  m_poBmpFont               (oBmpFont),
-  m_poTextures2DManager     (&oTextures2DManager),
-  m_poGameObjectsManager    (oGameObjectsManager)
-{
-}
+#include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-State::State ( StateStack& oStack, ST_Context stContext ) :
-  m_poStack   (oStack),
-  m_stContext (stContext)
+GameObjectsManager::GameObjectsManager ( void ) :
+  m_mList       (),
+  m_mFactories  (),
+  m_uiError     (ERROR::NONE)
 {
 }
 
 ////////////////////////////////////////////////////////////
-State::~State ( void ) {
+GameObjectsManager::~GameObjectsManager ( void ) {
+	m_mList.clear ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -60,18 +45,13 @@ State::~State ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-void State::RequestStackPush ( States::ID eStateID ) {
-  m_poStack.PushState (eStateID);
+void GameObjectsManager::AddGameObject ( GameObjects::ID eGameObjectID ) {
+	m_mList.insert (CreateGameObject (eGameObjectID));
 }
 
 ////////////////////////////////////////////////////////////
-void State::RequestStackPop ( void ) {
-	m_poStack.PopState ();
-}
-
-////////////////////////////////////////////////////////////
-void State::RequestStateClear ( void ) {
-	m_poStack.ClearStates ();
+GameObjectsManager::Size_type GameObjectsManager::DeleteGameObject ( GameObjects::ID eGameObjectID ) {
+	return m_mList.erase (eGameObjectID);
 }
 
 ////////////////////////////////////////////////////////////
@@ -79,6 +59,27 @@ void State::RequestStateClear ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-State::ST_Context State::GetContext ( void ) const {
-	return m_stContext;
+GLboolean GameObjectsManager::IsEmpty ( void ) {
+	return m_mList.empty ();
+}
+
+////////////////////////////////////////////////////////////
+GLuint GameObjectsManager::CheckError ( void ) {
+	return m_uiError;
+}
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+GameObjectsManager::Pair GameObjectsManager::CreateGameObject ( GameObjects::ID eGameObjectID ) {
+  auto mFound = m_mFactories.find (eGameObjectID);
+  if (mFound == m_mFactories.end ()) {
+    m_uiError = ERROR::UNREGISTERED_OBJECT;
+
+    return GameObjectsManager::Pair (GameObjects::ID::None, nullptr);
+  }
+
+  return GameObjectsManager::Pair (eGameObjectID, mFound->second ());
 }

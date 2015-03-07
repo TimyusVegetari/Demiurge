@@ -39,6 +39,7 @@
 #include <Game/includes.hpp>
 #include <Game/GameEngine/RenderTargets/RenderTargetsManager.hpp>
 #include <Game/GameEngine/Textures2D/Textures2DManager.hpp>
+#include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
 #include "GameStates/StateIdentifiers.hpp"
 
 class StateStack;
@@ -64,8 +65,12 @@ class State {
 			RenderTargetsManager&	m_poRenderTargetsManager; ///< Pointer to the render targets manager of the game.
 			drimi::BmpFont&       m_poBmpFont;              ///< Pointer to the bitmap font of the game.
 			Textures2DManager*    m_poTextures2DManager;    ///< Pointer to the textures 2D manager of the game.
+			GameObjectsManager&   m_poGameObjectsManager;   ///< Pointer to the game objects manager.
 
-			ST_Context            ( RenderTargetsManager&	m_oRenderTargetsManager, drimi::BmpFont& oBmpFont, Textures2DManager& oTextures2DManager );
+			ST_Context            ( RenderTargetsManager&	m_oRenderTargetsManager,
+                              drimi::BmpFont& oBmpFont,
+                              Textures2DManager& oTextures2DManager,
+                              GameObjectsManager& oGameObjectsManager );
     };
 
   private :

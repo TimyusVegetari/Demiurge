@@ -39,6 +39,7 @@
 #include "RenderTargets/RenderTargetsManager.hpp"
 #include "Textures2D/Textures2DManager.hpp"
 #include "States/StateStack.hpp"
+#include "GameEngine/GameObjects/GameObjectsManager.hpp"
 
 ////////////////////////////////////////////////////////////
 /// \brief Class for elementary game system
@@ -69,6 +70,7 @@ class GameEngine {
     drimi::BmpFont        m_oBmpFont;           ///< Bitmap font of the game.
     Textures2DManager     m_oTextures2DManager; ///< Textures 2D of the game.
     StateStack            m_oStateStack;
+    GameObjectsManager    m_oGameObjectsManager;
 
 		GLboolean             m_bSleep;
 
@@ -248,6 +250,12 @@ class GameEngine {
     ///
     ////////////////////////////////////////////////////////////
     void RegisterRenderTargets ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Contains the registration of the game objects.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void RegisterGameObjects ( void );
 };
 
 #endif // GAMEENGINE_HPP__
