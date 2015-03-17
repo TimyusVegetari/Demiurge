@@ -255,7 +255,7 @@ class GameEngine {
     /// \brief Contains the registration of the game objects.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void RegisterGameObjects ( void );
+    virtual void RegisterGameObjects ( void ) = 0;
 };
 
 #endif // GAMEENGINE_HPP__

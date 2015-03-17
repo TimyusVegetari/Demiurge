@@ -60,7 +60,7 @@ class RenderTargetsManager : sf::NonCopyable {
     ////////////////////////////////////////////////////////////
     // Enumeration
     ////////////////////////////////////////////////////////////
-    enum ERROR {
+    enum Error {
       NONE,
       UNREGISTERED_OBJECT,
       UNCONSTRUCTED_OBJECT
@@ -201,7 +201,7 @@ template <typename T>
 T& RenderTargetsManager::GetRenderTargetObject ( RenderTargets::ID eRenderTargetID ) {
   auto mFound = m_mList.find (eRenderTargetID);
   if (mFound == m_mList.end ()) {
-    m_uiError = ERROR::UNCONSTRUCTED_OBJECT;
+    m_uiError = Error::UNCONSTRUCTED_OBJECT;
 
     AddRenderTarget ( eRenderTargetID );
     return static_cast<T&>(*m_mList[eRenderTargetID]);

@@ -31,7 +31,7 @@
 RenderTargetsManager::RenderTargetsManager ( void ) :
   m_mList       (),
   m_mFactories  (),
-  m_uiError     (ERROR::NONE)
+  m_uiError     (Error::NONE)
 {
 }
 
@@ -76,7 +76,7 @@ GLuint RenderTargetsManager::CheckError ( void ) {
 RenderTargetsManager::Pair RenderTargetsManager::CreateRenderTarget ( RenderTargets::ID eRenderTargetID ) {
   auto mFound = m_mFactories.find (eRenderTargetID);
   if (mFound == m_mFactories.end ()) {
-    m_uiError = ERROR::UNREGISTERED_OBJECT;
+    m_uiError = Error::UNREGISTERED_OBJECT;
 
     return RenderTargetsManager::Pair (RenderTargets::ID::None, nullptr);
   }

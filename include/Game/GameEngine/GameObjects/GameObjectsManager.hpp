@@ -49,7 +49,7 @@ class GameObjectsManager : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
     // Enumeration
     ////////////////////////////////////////////////////////////
-    enum ERROR {
+    enum Error {
       NONE,
       UNREGISTERED_OBJECT,
       UNCONSTRUCTED_OBJECT
@@ -192,7 +192,7 @@ template <typename T>
 T& GameObjectsManager::GetGameObject ( GameObjects::ID eGameObjectID ) {
   auto mFound = m_mList.find (eGameObjectID);
   if (mFound == m_mList.end ()) {
-    m_uiError = ERROR::UNCONSTRUCTED_OBJECT;
+    m_uiError = Error::UNCONSTRUCTED_OBJECT;
 
     AddGameObject ( eGameObjectID );
     return static_cast<T&>(*m_mList[eGameObjectID]);

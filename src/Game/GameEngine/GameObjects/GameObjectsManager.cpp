@@ -31,7 +31,7 @@
 GameObjectsManager::GameObjectsManager ( void ) :
   m_mList       (),
   m_mFactories  (),
-  m_uiError     (ERROR::NONE)
+  m_uiError     (Error::NONE)
 {
 }
 
@@ -76,7 +76,7 @@ GLuint GameObjectsManager::CheckError ( void ) {
 GameObjectsManager::Pair GameObjectsManager::CreateGameObject ( GameObjects::ID eGameObjectID ) {
   auto mFound = m_mFactories.find (eGameObjectID);
   if (mFound == m_mFactories.end ()) {
-    m_uiError = ERROR::UNREGISTERED_OBJECT;
+    m_uiError = Error::UNREGISTERED_OBJECT;
 
     return GameObjectsManager::Pair (GameObjects::ID::None, nullptr);
   }
