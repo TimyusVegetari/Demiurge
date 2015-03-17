@@ -38,6 +38,18 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+
+// Includes for Windows
+#if defined(_WIN32) || defined(WIN32)
+  #ifndef WIN32_LEAN_AND_MEAN
+  #define WIN32_LEAN_AND_MEAN
+  #endif
+
+  #include <windows.h>
+  #include <winsock2.h> // FreeImage is static and thus I have to add winsock2
+#endif
+
+#define FREEIMAGE_LIB
 #include <FreeImage.h>
 
 #include <iostream>

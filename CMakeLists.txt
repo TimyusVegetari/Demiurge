@@ -71,6 +71,11 @@ file(
 				include/*
 )
 
+# For FreeImage on Windows
+if(WIN32)
+	find_library(ws2_32_LIBRARY_PATH ws2_32)
+endif()
+
 # Compilation for Debug
 # Declaration of the executable
 add_executable(
@@ -80,7 +85,25 @@ add_executable(
 )
 
 # Configuration of the links edition
-target_link_libraries(
+if(WIN32)
+	target_link_libraries(
+        Debug
+				${ws2_32_LIBRARY_PATH}
+				${sfml_graphics_lib_name}-d
+				${sfml_window_lib_name}-d
+				${gdi32_lib_name}
+				${sfml_system_lib_name}-d
+				${winmm_lib_name}
+				${glew_lib_name}
+				${glu32_lib_name}
+				${opengl32_lib_name}
+				${freetype_lib_name}
+				${jpeg_lib_name}
+				${m_lib_name}
+				${freeimage_lib_name}d
+)
+else()
+	target_link_libraries(
         Debug
 				${sfml_graphics_lib_name}-d
 				${sfml_window_lib_name}-d
@@ -93,9 +116,9 @@ target_link_libraries(
 				${freetype_lib_name}
 				${jpeg_lib_name}
 				${m_lib_name}
-				${tinyxml2_lib_name}
-				${freeimage_lib_name}
+				${freeimage_lib_name}d
 )
+endif()
 
 # Configuration of the path of the program
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG bin/Debug/)
