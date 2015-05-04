@@ -1,0 +1,45 @@
+<h1>Code Style Guide for Demiurge</h1>
+
+<h2>Header Files</h2>
+
+<p>C++ header files have the extension .hpp and are structured as follows:</p>
+<ol>
+	<li>License block</li>
+	<li>Doxygen minimale class presentation</li>
+	<li>Opening include guard</li>
+	<li>Included headers</li>
+	<li>Opening namespace gm</li>
+	<li>One or more of the following:</li>
+	<ul>
+		<li>Class and type definitions</li>
+		<li>Global function declarations</li>
+		<li>Nested namespaces</li>
+	</ul>
+	<li>Closing namespace gm</li>
+	<li>Closing include guard</li>
+</ol>
+
+<code class="cpp">
+	<span class="comment">////////////////////////////////////////////////////////////</span>
+	<span class="comment">// </span>
+	<span class="comment">// License text...</span>
+	<span class="comment">// </span>
+	<span class="comment">////////////////////////////////////////////////////////////</span>
+	<span class="comment">////////////////////////////////////////////////////////////</span>
+	<span class="comment">// Description for Doxygen</span>
+	<span class="comment">////////////////////////////////////////////////////////////</span>
+	<span class="comment">/**</span>
+	<span class="comment"> * \file BmpText.hpp</span>
+	<span class="comment"> * \brief Class to define a bitmap text.</span>
+	<span class="comment"> * \author Anthony Acroute</span>
+	<span class="comment"> * \version 0.2</span>
+	<span class="comment"> * \date 2013-2015</span>
+	<span class="comment"> *</span>
+	<span class="comment"> */</span>
+	<span class="preprocessor">#ifndef GAME_FILENAME_HPP__</span>
+	<span class="preprocessor">#define GAME_FILENAME_HPP__</span>
+	<span class="comment">////////////////////////////////////////////////////////////</span>
+	<span class="comment">// Headers</span>
+	<span class="comment">////////////////////////////////////////////////////////////</span>
+	<span class="preprocessor">#include &lt;...&gt;</span>
+</code>

@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Demiurge.  If not, see <http://www.gnu.org/licenses/>.
 //
+// A little part of the code is inspired by the book "SFML Game Development".
+//
 ////////////////////////////////////////////////////////////
 
 #include <Game/includes.hpp>
