@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
-// This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// This file is part of DRIMI::Mathematics.
+// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,15 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef GAME_INCLUDES_HPP_
-#define GAME_INCLUDES_HPP_
-
-// Include SFML
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
-
-// Include STD
-#include <iostream>
-#include <memory>
-
-// Include DRIMI
-#include <DRIMI/BitmapFont/BmpFont.hpp>
-#include <DRIMI/BitmapFont/BmpText.hpp>
 #include <DRIMI/Mathematics/Config.hpp>
 
-#endif // GAME_INCLUDES_HPP_
+namespace drimi {
+
+  ////////////////////////////////////////////////////////////
+  std::string ToString ( const GLuint& uiValue ) {
+    std::ostringstream oss;
+    oss << uiValue;
+    return oss.str ();
+	}
+
+} // namespace drimi
