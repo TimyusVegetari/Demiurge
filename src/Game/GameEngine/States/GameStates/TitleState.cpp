@@ -40,18 +40,18 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
   // Loading of the textures 2D
-  stContext.m_poTextures2DManager->LoadTexture (Textures2D::ID::GameTitle, "datas/gameTitle/title.png");
-  stContext.m_poTextures2DManager->LoadTexture (Textures2D::ID::GameTitleBackground, "datas/gameTitle/background.png");
+  stContext.m_oTextures2DManager->LoadTexture (Textures2D::ID::GameTitle, "datas/gameTitle/title.png");
+  stContext.m_oTextures2DManager->LoadTexture (Textures2D::ID::GameTitleBackground, "datas/gameTitle/background.png");
 
   // Game Title Background
-  m_sfBackground.setTexture (stContext.m_poTextures2DManager->GetTexture (Textures2D::ID::GameTitleBackground));
+  m_sfBackground.setTexture (stContext.m_oTextures2DManager->GetTexture (Textures2D::ID::GameTitleBackground));
   // Game Title
-  m_sfTitle.setTexture  (stContext.m_poTextures2DManager->GetTexture (Textures2D::ID::GameTitle));
+  m_sfTitle.setTexture  (stContext.m_oTextures2DManager->GetTexture (Textures2D::ID::GameTitle));
 	m_sfTitle.setOrigin   (m_sfTitle.getLocalBounds ().width / 2.f, m_sfTitle.getLocalBounds ().height / 2.f);
 	m_sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
 
 	// Game version
-  m_oVersion.SetFont      (stContext.m_poBmpFont);
+  m_oVersion.SetFont      (stContext.m_oBmpFont);
   m_oVersion.SetString    (std::string (DEMIURGE_NAME)+
                            std::string (" ")+
                            std::string (DEMIURGE_VERSION));
@@ -60,7 +60,7 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
 	m_oVersion.SetOrigin    (0.f, m_oVersion.GetLocalBounds ().height);
 	m_oVersion.setPosition  (5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
 	// Game licence
-  m_oLicense.SetFont      (stContext.m_poBmpFont);
+  m_oLicense.SetFont      (stContext.m_oBmpFont);
   m_oLicense.SetString    (DEMIURGE_LICENSE);
   m_oLicense.SetColor     (sf::Color::Yellow);
 	m_oLicense.SetOrigin    (m_oLicense.GetLocalBounds ().width, m_oLicense.GetLocalBounds ().height);
@@ -104,5 +104,5 @@ GLboolean TitleState::HandleEvent ( const sf::Event& sfEvent ) {
 
 ////////////////////////////////////////////////////////////
 gm::RenderWindow& TitleState::GetMainWindow ( void ) {
-  return GetContext ().m_poRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
+  return GetContext ().m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
 }

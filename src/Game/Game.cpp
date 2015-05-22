@@ -32,21 +32,18 @@
 ////////////////////////////////////////////////////////////
 Game::Game ( void ) {
   // Initialization of the datas of the game engine
-  m_v2uSize       = sf::Vector2u (DEMIURGE_WIDTH, DEMIURGE_HEIGHT);
-  m_szTitle       = DEMIURGE_NAME;
-  m_szAuthor      = DEMIURGE_AUTHOR;
-  m_szVersion     = DEMIURGE_VERSION;
-  m_szCopyright   = DEMIURGE_LICENSE;
-  m_szDate        = DEMIURGE_DATE;
-  m_uiTickTrigger = 0;
+  m_v2uSize         = sf::Vector2u (DEMIURGE_WIDTH, DEMIURGE_HEIGHT);
+  m_szTitle         = DEMIURGE_NAME;
+  m_szAuthor        = DEMIURGE_AUTHOR;
+  m_szVersion       = DEMIURGE_VERSION;
+  m_szCopyright     = DEMIURGE_LICENSE;
+  m_szDate          = DEMIURGE_DATE;
+  m_uiTickTrigger   = 0;
 
   // Load the mini icon of the main window
   if (!m_sfIcon.loadFromFile ("./datas/icon.png")) {
     std::cout << "Error : the game's icon cannot be loaded !" << std::endl;
   }
-
-  // Set the tick rate of the game mecanic
-  SetTickRate (20);
 }
 
 
@@ -67,8 +64,13 @@ GLboolean Game::GameInit ( void ) {
   std::cout << "Program in C++, using OpenGL and SFML" << std::endl << std::endl;
 
   // Loading of the fonts of the game
-  m_oBmpFont.LoadFromFile ("datas/font.png", GL_FALSE);
-  m_oBmpFont.LoadFromFile ("datas/font_bold.png", GL_TRUE);
+  m_oBmpFont.LoadFromFile ("datas/fonts/font.png", GL_FALSE);
+  m_oBmpFont.LoadFromFile ("datas/fonts/font_bold.png", GL_TRUE);
+  if (!m_oBmpFont.LoadShaderFromFile ("datas/fonts/shaders/font_vertshader.glsl", "datas/fonts/shaders/font_fragshader.glsl")) {
+    std::cout << "Error during the loading of font's shaders !" << std::endl;
+
+    return GL_FALSE;
+  }
 
   // Render targets registration in the list
   RegisterRenderTargets ();
@@ -81,15 +83,14 @@ GLboolean Game::GameInit ( void ) {
   // Game objects registration
   RegisterGameObjects ();
 
-  // Create the OpenGL context with SFML
-  //sf::Context context (sf::ContextSettings (32), m_v2uSize.x, m_v2uSize.y);
+  // Set the tick rate of the game mecanic
+  SetTickRate (20);
 
-  // Activate the vertical synchronisation of the screen
-  gm::RenderWindow& sfMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  sfMainWindow.SetVerticalSyncEnabled (GL_TRUE);
-
-  // Restart the universal clock
-  m_sfClock.restart ();
+  // Initialize the 3D graphics engine
+  m_oGraphicsEngine.Configurate (m_v2uSize.x, m_v2uSize.y, 32);
+  if (!m_oGraphicsEngine.Initialize ())
+    return GL_FALSE;
+  m_oGraphicsEngine.SetFrameRate (60);
 
   return GL_TRUE;
 }
@@ -110,13 +111,16 @@ void Game::GameCycle ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Game::GamePaint ( void ) {
-  gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-  gmMainWindow.Clear ();
+  // Test de l'horloge pour déterminer si la durée pour une image est achevée
+  if (FrameClock ()) {
+    gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
+    gmMainWindow.Clear ();
 
-  // Draw of the game states, scenes, ...
-  m_oStateStack.Draw ();
+    // Draw of the game states, scenes, ...
+    m_oStateStack.Draw ();
 
-  gmMainWindow.Display ();
+    gmMainWindow.Display ();
+  }
 }
 
 ////////////////////////////////////////////////////////////
@@ -133,6 +137,7 @@ void Game::GameEnd ( void ) {
 ////////////////////////////////////////////////////////////
 void Game::SetTickRate ( GLuint uiTickRate ) {
   m_uiTickDelay = 1000 / uiTickRate;
+  m_uiTickTrigger = m_uiTickDelay;
 }
 
 ////////////////////////////////////////////////////////////
@@ -143,6 +148,16 @@ void Game::SetTickRate ( GLuint uiTickRate ) {
 GLboolean Game::TickClock ( void ) {
   if (m_uiElapsedTime > m_uiTickTrigger) {
     m_uiTickTrigger = m_uiElapsedTime + m_uiTickDelay;
+    return GL_TRUE;
+  }
+  return GL_FALSE;
+}
+
+////////////////////////////////////////////////////////////
+GLboolean Game::FrameClock ( void ) {
+  if (m_uiElapsedTime > m_oGraphicsEngine.GetFrameTrigger ()) {
+    m_oGraphicsEngine.SetFrameTrigger (m_uiElapsedTime);
+    m_oGraphicsEngine.ComputeFrameRate (m_uiElapsedTime);
     return GL_TRUE;
   }
   return GL_FALSE;

@@ -32,14 +32,16 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-State::ST_Context::ST_Context ( RenderTargetsManager&	m_oRenderTargetsManager,
+State::ST_Context::ST_Context ( RenderTargetsManager&	oRenderTargetsManager,
                                 drimi::BmpFont& oBmpFont,
                                 Textures2DManager& oTextures2DManager,
+                                GraphicsEngine& oGraphicsEngine,
                                 GameObjectsManager& oGameObjectsManager ) :
-  m_poRenderTargetsManager  (m_oRenderTargetsManager),
-  m_poBmpFont               (oBmpFont),
-  m_poTextures2DManager     (&oTextures2DManager),
-  m_poGameObjectsManager    (oGameObjectsManager)
+  m_oRenderTargetsManager   (oRenderTargetsManager),
+  m_oBmpFont                (oBmpFont),
+  m_oTextures2DManager      (&oTextures2DManager),
+  m_oGraphicsEngine         (oGraphicsEngine),
+  m_oGameObjectsManager     (oGameObjectsManager)
 {
 }
 

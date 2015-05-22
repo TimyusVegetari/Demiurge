@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2014 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,8 +42,9 @@ GameEngine::GameEngine ( void ) :
   m_uiElapsedTime         (0),
   m_oBmpFont              (),
   m_oTextures2DManager    (),
+  m_oGraphicsEngine       (),
   m_oGameObjectsManager   (),
-  m_oStateStack           (State::ST_Context (m_oRenderTargetsManager, m_oBmpFont, m_oTextures2DManager, m_oGameObjectsManager)),
+  m_oStateStack           (State::ST_Context (m_oRenderTargetsManager, m_oBmpFont, m_oTextures2DManager, m_oGraphicsEngine, m_oGameObjectsManager)),
   m_bSleep                (GL_FALSE)
 {
 }
@@ -68,6 +69,9 @@ GLboolean GameEngine::InitWinMain ( void ) {
   std::string szTitle (m_szTitle+" "+m_szVersion);
   gmMainWindow.Create (sf::VideoMode (m_v2uSize.x, m_v2uSize.y, 32), szTitle);
 
+  // Activate the vertical synchronisation of the screen
+  gmMainWindow.SetVerticalSyncEnabled (GL_TRUE);
+
   // Check if the main window is open
   if (!gmMainWindow.IsOpen ()) {
     std::cout << "Error : The main window cannot open !" << std::endl;
@@ -76,6 +80,9 @@ GLboolean GameEngine::InitWinMain ( void ) {
 
   // Compute the center of the main screen of the game
   ComputeWindowCenter ();
+
+  // Restart the universal clock
+  m_sfClock.restart ();
 
   return GL_TRUE;
 }

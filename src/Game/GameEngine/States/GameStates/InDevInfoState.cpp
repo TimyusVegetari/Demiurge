@@ -39,14 +39,14 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
 	// In development information title
-  m_oTitle.SetFont        (stContext.m_poBmpFont);
+  m_oTitle.SetFont        (stContext.m_oBmpFont);
   m_oTitle.SetString      ("Please note this is a pre-alpha version of Demiurge.");
   m_oTitle.SetStyle       (sf::Text::Style::Bold);
   m_oTitle.SetColor       (sf::Color::Yellow);
 	m_oTitle.SetOrigin      (m_oTitle.GetLocalBounds ().width / 2.f, 0.f);
 	m_oTitle.setPosition    (gmMainWindow.GetView ().getCenter ().x, 100.f);
 	// In development information contant
-  m_oContent.SetFont      (stContext.m_poBmpFont);
+  m_oContent.SetFont      (stContext.m_oBmpFont);
   m_oContent.SetString    (std::string ("It has only a fraction of the planned features\n")
                           +std::string ("and may contain bugs and be missing anims,\n")
                           +std::string ("sounds and other features.\n\n")
@@ -106,5 +106,5 @@ GLboolean InDevInfoState::HandleEvent ( const sf::Event& sfEvent ) {
 
 ////////////////////////////////////////////////////////////
 gm::RenderWindow& InDevInfoState::GetMainWindow ( void ) {
-  return GetContext ().m_poRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
+  return GetContext ().m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
 }

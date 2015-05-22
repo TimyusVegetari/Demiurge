@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,76 +16,57 @@
 // You should have received a copy of the GNU General Public License
 // along with Demiurge.  If not, see <http://www.gnu.org/licenses/>.
 //
-// A big part of the code in this file is inspired by the book
-// "SFML Game Development".
-//
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file State.hpp
- * \brief Class for the states of the game.
+ * \file GraphicsEngine.hpp
+ * \brief Class for the graphics engine of Demiurge.
  * \author Anthony Acroute
- * \version 0.2
- * \date 2014-2015
+ * \version 0.4
+ * \date 2013-2015
  *
  */
 
-#ifndef STATE_HPP__
-#define STATE_HPP__
+#ifndef GRAPHICSENGINE_HPP
+#define GRAPHICSENGINE_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/includes.hpp>
-#include <Game/GameEngine/RenderTargets/RenderTargetsManager.hpp>
-#include <Game/GameEngine/Textures2D/Textures2DManager.hpp>
-#include <Game/GameEngine/GraphicsEngine/GraphicsEngine.hpp>
-#include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
-#include "GameStates/StateIdentifiers.hpp"
+#include "OGLManager.hpp"
+#include "Renderer2D.hpp"
+#include "Renderer3D.hpp"
 
-class StateStack;
+#include <string>
+
+class GraphicsEngine;
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create states of the game like as the menu,
-/// game pause, current game session, cinematic, etc...
+/// \brief Class for initialising and manage the graphical objects and rendering.
 ///
 ////////////////////////////////////////////////////////////
-class State {
+class GraphicsEngine {
 
-  public :
-    ////////////////////////////////////////////////////////////
-    // Types
-    ////////////////////////////////////////////////////////////
-    typedef std::unique_ptr<State>  Ptr; ///< Unique pointer of state.
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Structure defining a unique ressources context.
-    ///
-    ////////////////////////////////////////////////////////////
-    struct ST_Context {
-			RenderTargetsManager&	m_oRenderTargetsManager;  ///< Reference of the render targets manager of the game.
-			drimi::BmpFont&       m_oBmpFont;               ///< Reference of the bitmap font of the game.
-			Textures2DManager*    m_oTextures2DManager;     ///< Reference of the textures 2D manager of the game.
-      GraphicsEngine&       m_oGraphicsEngine;        ///< Reference of the graphics engine of the game.
-			GameObjectsManager&   m_oGameObjectsManager;    ///< Reference of the game objects manager.
-
-			ST_Context            ( RenderTargetsManager&	oRenderTargetsManager,
-                              drimi::BmpFont& oBmpFont,
-                              Textures2DManager& oTextures2DManager,
-                              GraphicsEngine& oGraphicsEngine,
-                              GameObjectsManager& oGameObjectsManager );
-    };
-
-  private :
+  protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    StateStack&       m_poStack;
-    ST_Context        m_stContext;
+    OGLManager            m_oOGLManager;
+    Renderer2D            m_oRenderer2D;
+    Renderer3D            m_oRenderer3D;
 
+    // Time for the graphics mecanic
+		GLuint                m_uiPrevElapsedTime;
+		GLuint                m_uiFrameDelay;
+    GLfloat               m_fFrameDelayInSeconds;
+    GLuint                m_uiFrameRate;
+    std::string           m_szFrameRate;
+    GLuint                m_uiFrameTrigger;
+    GLuint                m_uiElapsedFrames;
   public :
     ////////////////////////////////////////////////////////////
     // Constructor(s)/Destructor
@@ -94,77 +75,108 @@ class State {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a state.
+    /// This constructor defines the graphics engine.
     ///
     ////////////////////////////////////////////////////////////
-    State ( StateStack& oStack, ST_Context stContext );
+    GraphicsEngine          ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the state.
+    /// Cleans up all the internal resources used by the graphics engine.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~State ( void );
+    virtual ~GraphicsEngine ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the state.
+    /// \brief Configurate OpenGL context of the graphics engine.
+    ///
+    /// \param fWidth   Width of the OpenGL context.
+    ///        fHeight  Height of the OpenGL context.
+    ///        uiDepth  Depth of the OpenGL context.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw ( void ) = 0;
+    void Configurate ( GLuint uiWidth, GLuint uiHeight, GLuint uiDepth );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Call all the update of the components of the state.
+    /// \brief Initialize all the composants of the graphics engine.
     ///
-    /// \return True to permit the other states to be updated, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean Update ( void ) = 0;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check the events for all the components of the state.
-    ///
-    /// \return True to permit the events of the other states to be checked, false else.
+    /// \return True if initializing succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const sf::Event& sfEvent ) = 0;
-
-  protected :
-    ////////////////////////////////////////////////////////////
-    /// \brief Add the state on the top of the stack.
-    ///
-    /// \param sStateID   Value to identify a specific state.
-    ///
-    ////////////////////////////////////////////////////////////
-    void RequestStackPush ( States::ID eStateID );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Remove the state of the stack.
-    ///
-    ////////////////////////////////////////////////////////////
-    void RequestStackPop ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Call the method to clean the stack.
-    ///
-    ////////////////////////////////////////////////////////////
-    void RequestStateClear ( void );
+    GLboolean Initialize ( void );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the unique ressources context of the game
+    /// \brief Set the frame delay for the graphics mecanic from the frame rate.
     ///
-    /// \return The unique ressources context
+    /// \param uiFrameRate   Frame rate of the graphics mecanic, in frames.
     ///
     ////////////////////////////////////////////////////////////
-    ST_Context GetContext ( void ) const;
+    void SetFrameRate ( GLuint uiFrameRate );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the frame delay in frames.
+    ///
+    /// \return Frame delay value, in frames.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLuint GetFrameDelay ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the frame delay in seconds.
+    ///
+    /// \return Frame delay value, in seconds.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLfloat GetFrameDelayInSeconds ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Compute the frame rate of the time of graphics mecanic.
+    ///
+    /// \param uiElapsedTime  Elapsed time to compute the frame rate of the graphics mecanic.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ComputeFrameRate ( GLuint uiElapsedTime );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the frame rate of the time of graphics mecanic.
+    ///
+    /// \return Frame rate value.
+    ///
+    ////////////////////////////////////////////////////////////
+    std::string GetFrameRate ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the frame trigger with the elapsed time.
+    ///
+    /// \param uiElapsedTime  Elapsed time to permit the update of the trigger.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetFrameTrigger ( GLuint uiElapsedTime );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the frame trigger.
+    ///
+    /// \return Frame trigger value.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLuint GetFrameTrigger ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the elapsed frames.
+    ///
+    /// \return Elapsed frame value.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLuint GetElapsedFrames ( void );
 };
 
-#endif // STATE_HPP__
+#endif // GRAPHICSENGINE_HPP

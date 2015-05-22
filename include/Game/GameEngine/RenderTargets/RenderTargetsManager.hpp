@@ -36,9 +36,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
-#include <memory>
+#include <Game/Includes.hpp>
 
 #include "RenderTargetsIdentifiers.hpp"
 #include "RenderTargetsDefinitions.hpp"

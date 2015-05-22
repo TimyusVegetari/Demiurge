@@ -22,6 +22,7 @@
 #define GAME_INCLUDES_HPP_
 
 // Include SFML
+#include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,77 +16,55 @@
 // You should have received a copy of the GNU General Public License
 // along with Demiurge.  If not, see <http://www.gnu.org/licenses/>.
 //
-// A big part of the code in this file is inspired by the book
-// "SFML Game Development".
-//
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file State.hpp
- * \brief Class for the states of the game.
+ * \file OGLManager.hpp
+ * \brief Class to manage the usage of OpenGL in the graphics engine.
  * \author Anthony Acroute
  * \version 0.2
- * \date 2014-2015
+ * \date 2013-2015
  *
  */
 
-#ifndef STATE_HPP__
-#define STATE_HPP__
+#ifndef OGLMANAGER_HPP_
+#define OGLMANAGER_HPP_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/includes.hpp>
-#include <Game/GameEngine/RenderTargets/RenderTargetsManager.hpp>
-#include <Game/GameEngine/Textures2D/Textures2DManager.hpp>
-#include <Game/GameEngine/GraphicsEngine/GraphicsEngine.hpp>
-#include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
-#include "GameStates/StateIdentifiers.hpp"
-
-class StateStack;
+#include <set>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create states of the game like as the menu,
-/// game pause, current game session, cinematic, etc...
+/// \brief Class to manage the usage of OpenGL in the graphics engine.
 ///
 ////////////////////////////////////////////////////////////
-class State {
+class OGLManager {
 
-  public :
+  public:
     ////////////////////////////////////////////////////////////
-    // Types
+    // Type struct
     ////////////////////////////////////////////////////////////
-    typedef std::unique_ptr<State>  Ptr; ///< Unique pointer of state.
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Structure defining a unique ressources context.
-    ///
-    ////////////////////////////////////////////////////////////
-    struct ST_Context {
-			RenderTargetsManager&	m_oRenderTargetsManager;  ///< Reference of the render targets manager of the game.
-			drimi::BmpFont&       m_oBmpFont;               ///< Reference of the bitmap font of the game.
-			Textures2DManager*    m_oTextures2DManager;     ///< Reference of the textures 2D manager of the game.
-      GraphicsEngine&       m_oGraphicsEngine;        ///< Reference of the graphics engine of the game.
-			GameObjectsManager&   m_oGameObjectsManager;    ///< Reference of the game objects manager.
-
-			ST_Context            ( RenderTargetsManager&	oRenderTargetsManager,
-                              drimi::BmpFont& oBmpFont,
-                              Textures2DManager& oTextures2DManager,
-                              GraphicsEngine& oGraphicsEngine,
-                              GameObjectsManager& oGameObjectsManager );
+    struct OGLConfig {
+      GLuint  uiWidth,
+              uiHeight,
+              uiDepth;
     };
 
-  private :
+  private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    StateStack&       m_poStack;
-    ST_Context        m_stContext;
+    OGLConfig             m_stOGLConfig;
+    sf::Context*          m_psfContext;
+    std::set<std::string> m_szExtensions;
+    GLboolean             m_bErrorGLExt;
 
-  public :
+  public:
     ////////////////////////////////////////////////////////////
     // Constructor(s)/Destructor
     ////////////////////////////////////////////////////////////
@@ -94,77 +72,88 @@ class State {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a state.
+    /// This constructor defines the OpenGL manager.
     ///
     ////////////////////////////////////////////////////////////
-    State ( StateStack& oStack, ST_Context stContext );
+    OGLManager ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the state.
+    /// Cleans up all the internal resources used by the OpenGL manager.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~State ( void );
+    ~OGLManager ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the state.
+    /// \brief Create the OpenGL context with SFML.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw ( void ) = 0;
+    void CreateOpenGLContext ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Call all the update of the components of the state.
+    /// \brief Initialize GLEW.
     ///
-    /// \return True to permit the other states to be updated, false else.
+    /// \return True if initializing succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean Update ( void ) = 0;
+    GLboolean InitializeGlew ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the events for all the components of the state.
+    /// \brief Check if OpenGL supports the expected version.
     ///
-    /// \return True to permit the events of the other states to be checked, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const sf::Event& sfEvent ) = 0;
-
-  protected :
-    ////////////////////////////////////////////////////////////
-    /// \brief Add the state on the top of the stack.
-    ///
-    /// \param sStateID   Value to identify a specific state.
+    /// \param dVersionLimit  The expected version.
     ///
     ////////////////////////////////////////////////////////////
-    void RequestStackPush ( States::ID eStateID );
+    GLboolean CheckGLversion ( const GLdouble dVersionLimit );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Remove the state of the stack.
+    /// \brief Check if OpenGL detected an error in a function.
+    ///
+    /// \param szExtension  Name of the OpenGL function.
+    ///
+    /// \return True if initializing succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    void RequestStackPop ( void );
+    GLboolean CheckError ( const std::string& szName );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Call the method to clean the stack.
+    /// \brief Initialize the OpenGL extensions.
+    ///
+    /// \return True if initializing succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    void RequestStateClear ( void );
+    GLboolean InitializeGLExtensions ( void );
 
     ////////////////////////////////////////////////////////////
-    // Accessor methods
+    /// \brief Check the support of an OpenGL extension.
+    ///        The OpenGL Manager store the error data.
+    ///        To get back it, see GetErrorGLExt.
+    ///
+    /// \param szExtension  Name of the extension.
+    ///
     ////////////////////////////////////////////////////////////
+    void CheckExtension ( const std::string& szExtension );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the unique ressources context of the game
+    /// \brief Return if no support problem of OpenGL extension was find.
     ///
-    /// \return The unique ressources context
+    /// \return True if initializing succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    ST_Context GetContext ( void ) const;
+    GLboolean GetErrorGLExt ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the OpenGL context configuration datas to edit it.
+    ///
+    /// \return OpenGL context configuration datas.
+    ///
+    ////////////////////////////////////////////////////////////
+    OGLConfig& GetConfig ( void );
 };
 
-#endif // STATE_HPP__
+#endif //OGLMANAGER_HPP_
