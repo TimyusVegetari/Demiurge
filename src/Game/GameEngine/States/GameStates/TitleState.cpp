@@ -40,13 +40,14 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
   // Loading of the textures 2D
-  stContext.m_oTextures2DManager->LoadTexture (Textures2D::ID::GameTitle, "datas/gameTitle/title.png");
-  stContext.m_oTextures2DManager->LoadTexture (Textures2D::ID::GameTitleBackground, "datas/gameTitle/background.png");
+  Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
+  oTextures2DManager.LoadTexture (Textures2D::ID::GameTitle, "datas/gameTitle/title.png");
+  oTextures2DManager.LoadTexture (Textures2D::ID::GameTitleBackground, "datas/gameTitle/background.png");
 
   // Game Title Background
-  m_sfBackground.setTexture (stContext.m_oTextures2DManager->GetTexture (Textures2D::ID::GameTitleBackground));
+  m_sfBackground.setTexture (oTextures2DManager.GetTexture (Textures2D::ID::GameTitleBackground));
   // Game Title
-  m_sfTitle.setTexture  (stContext.m_oTextures2DManager->GetTexture (Textures2D::ID::GameTitle));
+  m_sfTitle.setTexture  (oTextures2DManager.GetTexture (Textures2D::ID::GameTitle));
 	m_sfTitle.setOrigin   (m_sfTitle.getLocalBounds ().width / 2.f, m_sfTitle.getLocalBounds ().height / 2.f);
 	m_sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
 

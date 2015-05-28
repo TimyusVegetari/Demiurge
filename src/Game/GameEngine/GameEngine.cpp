@@ -41,10 +41,9 @@ GameEngine::GameEngine ( void ) :
   m_sfClock               (),
   m_uiElapsedTime         (0),
   m_oBmpFont              (),
-  m_oTextures2DManager    (),
   m_oGraphicsEngine       (),
   m_oGameObjectsManager   (),
-  m_oStateStack           (State::ST_Context (m_oRenderTargetsManager, m_oBmpFont, m_oTextures2DManager, m_oGraphicsEngine, m_oGameObjectsManager)),
+  m_oStateStack           (State::ST_Context (m_oRenderTargetsManager, m_oBmpFont, m_oGraphicsEngine, m_oGameObjectsManager)),
   m_bSleep                (GL_FALSE)
 {
 }

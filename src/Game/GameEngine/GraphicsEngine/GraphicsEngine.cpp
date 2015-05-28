@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 GraphicsEngine::GraphicsEngine ( void ) :
   m_oOGLManager           (),
+  m_oTextures2DManager    (),
   m_oRenderer2D           (),
   m_oRenderer3D           (),
   m_uiPrevElapsedTime     (0),
@@ -140,4 +141,8 @@ GLuint GraphicsEngine::GetFrameTrigger ( void ) {
 ////////////////////////////////////////////////////////////
 GLuint GraphicsEngine::GetElapsedFrames ( void ) {
   return m_uiElapsedFrames;
+}
+
+Textures2DManager& GraphicsEngine::GetTextures2DManager ( void ) {
+  return m_oTextures2DManager;
 }

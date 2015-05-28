@@ -38,7 +38,8 @@
 ////////////////////////////////////////////////////////////
 #include <Game/includes.hpp>
 #include "OGLManager.hpp"
-#include "Renderer2D.hpp"
+#include "Textures2D/Textures2DManager.hpp"
+#include "Renderer2D/Renderer2D.hpp"
 #include "Renderer3D.hpp"
 
 #include <string>
@@ -56,6 +57,7 @@ class GraphicsEngine {
     // Member data
     ////////////////////////////////////////////////////////////
     OGLManager            m_oOGLManager;
+    Textures2DManager     m_oTextures2DManager; ///< Textures 2D of the game.
     Renderer2D            m_oRenderer2D;
     Renderer3D            m_oRenderer3D;
 
@@ -177,6 +179,8 @@ class GraphicsEngine {
     ///
     ////////////////////////////////////////////////////////////
     GLuint GetElapsedFrames ( void );
+
+    Textures2DManager& GetTextures2DManager ( void );
 };
 
 #endif // GRAPHICSENGINE_HPP
