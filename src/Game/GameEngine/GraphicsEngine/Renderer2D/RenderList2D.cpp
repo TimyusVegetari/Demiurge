@@ -18,31 +18,24 @@
 //
 ////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////
-// Description for Doxygen
-////////////////////////////////////////////////////////////
-/**
- * \file Renderer2D.hpp
- * \brief Class for the renderer 2D of the graphics engine.
- * \author Anthony Acroute
- * \version 0.1
- * \date 2015
- *
- */
-
-#include <Game/GameEngine/GraphicsEngine/Renderer2D.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer2D/RenderList2D.hpp>
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-Renderer2D::Renderer2D ( void )
+RenderList2D::RenderList2D ( void ) :
+  m_lList           (),
+  m_mIndex          (),
+  m_uiIdAccumulator (0),
+  m_uiError         (Error::NONE)
 {
 }
 
 ////////////////////////////////////////////////////////////
-Renderer2D::~Renderer2D ( void ) {
+RenderList2D::~RenderList2D ( void ) {
+	m_lList.clear ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -50,17 +43,36 @@ Renderer2D::~Renderer2D ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GLboolean Renderer2D::Initialize ( void ) {
-  std::cout << "Renderer 2D : Initializing..." << std::endl;
-  GLboolean bSuccess = GL_TRUE;
+RenderList2D::Size_type RenderList2D::Erase ( const GLuint uiDrawableID ) {
+  m_lList.erase (m_mIndex[uiDrawableID]);
+  m_mIndex.erase (uiDrawableID);
 
-  if (bSuccess)
-    std::cout << "Renderer 2D : Initialization succeed" << std::endl;
-  else
-    std::cout << "Renderer 2D : Initialization failed" << std::endl;
-  return bSuccess;
+  return m_lList.size ();
 }
 
 ////////////////////////////////////////////////////////////
 // Accessor methods
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+GLboolean RenderList2D::IsEmpty ( void ) {
+	return m_lList.empty ();
+}
+
+////////////////////////////////////////////////////////////
+GLuint RenderList2D::CheckError ( void ) {
+	return m_uiError;
+}
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+void RenderList2D::CheckIDError ( GLuint uiDrawableID ) {
+  if (uiDrawableID > m_uiIdAccumulator) {
+    m_uiIdAccumulator = uiDrawableID;
+    m_uiError = Error::OVERFLOWED_OBJECT;
+  } else
+    m_uiError = Error::UNCONSTRUCTED_OBJECT;
+}
