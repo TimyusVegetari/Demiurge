@@ -68,16 +68,19 @@ class RenderList2D {
     typedef std::list<Drawable::Ptr>::size_type Size_type;  ///< std::map::size_type of the list of drawables pointers
     typedef std::pair<GLuint,
         std::list<Drawable::Ptr>::iterator>     Pair;       ///< std::pair of listed drawable pointers.
+  public :
+    typedef std::unique_ptr<RenderList2D>       Ptr;        ///< Unique pointer of render list 2D.
 
   protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::list<Drawable::Ptr>                m_lList;    ///< List of drawables pointers.
+    std::list<Drawable::Ptr>                m_lList;      ///< List of drawables pointers.
     std::map<GLuint,
-        std::list<Drawable::Ptr>::iterator> m_mIndex;   ///< Index of listed drawables pointers.
+        std::list<Drawable::Ptr>::iterator> m_mIndex;     ///< Index of listed drawables pointers.
+    std::list<Drawable::Ptr>::iterator      m_lListIter;  ///< Internal iterator to path the list of drawables pointers.
     GLuint                                  m_uiIdAccumulator;  ///< Greater identifier generated since the begin
-    GLuint                                  m_uiError;  ///< Error value if an error arose.
+    GLuint                                  m_uiError;    ///< Error value if an error arose.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -144,6 +147,22 @@ class RenderList2D {
     Size_type Erase ( const GLuint uiDrawableID );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Reset the internal iterator.
+    ///
+    /// \return True if the internal iterator isn't at the end of the list, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean Reset ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Increment the internal iterator.
+    ///
+    /// \return True if the internal iterator isn't at the end of the list, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean Advance ( void );
+
+    ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
@@ -165,6 +184,14 @@ class RenderList2D {
     ////////////////////////////////////////////////////////////
     template <typename T>
     T& GetDrawable ( GLuint uiDrawableID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current drawable in the internal iterator.
+    ///
+    /// \return Drawable in the internal iterator.
+    ///
+    ////////////////////////////////////////////////////////////
+    sf::Drawable& GetDrawable ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the value of an error.
@@ -197,7 +224,8 @@ template <typename T>
 GLuint RenderList2D::PushBack ( void ) {
   m_lList.push_back (Drawable::Ptr (new T ()));
   m_uiIdAccumulator++;
-  m_mIndex.insert (RenderList2D::Pair (m_uiIdAccumulator, m_lList.rend ()));
+  std::list<Drawable::Ptr>::iterator lListLast = --m_lList.end ();
+  m_mIndex.insert (RenderList2D::Pair (m_uiIdAccumulator, lListLast));
 
   return m_uiIdAccumulator;
 }
@@ -239,7 +267,8 @@ T& RenderList2D::GetDrawable ( GLuint uiDrawableID ) {
     CheckIDError (uiDrawableID);
 
     m_lList.push_back (Drawable::Ptr (new T ()));
-    m_mIndex.insert (RenderList2D::Pair (uiDrawableID, m_lList.rend ()));
+    std::list<Drawable::Ptr>::iterator lListLast = --m_lList.end ();
+    m_mIndex.insert (RenderList2D::Pair (uiDrawableID, lListLast));
     return static_cast<T&> (**m_mIndex[uiDrawableID]);
   }
   return static_cast<T&> (**mFound->second);
