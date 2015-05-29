@@ -49,7 +49,7 @@ State::ST_Context::ST_Context ( RenderTargetsManager&	oRenderTargetsManager,
 
 ////////////////////////////////////////////////////////////
 State::State ( StateStack& oStack, ST_Context stContext ) :
-  m_poStack   (oStack),
+  m_oStack   (oStack),
   m_stContext (stContext)
 {
 }
@@ -64,17 +64,17 @@ State::~State ( void ) {
 
 ////////////////////////////////////////////////////////////
 void State::RequestStackPush ( States::ID eStateID ) {
-  m_poStack.PushState (eStateID);
+  m_oStack.PushState (eStateID);
 }
 
 ////////////////////////////////////////////////////////////
 void State::RequestStackPop ( void ) {
-	m_poStack.PopState ();
+	m_oStack.PopState ();
 }
 
 ////////////////////////////////////////////////////////////
 void State::RequestStateClear ( void ) {
-	m_poStack.ClearStates ();
+	m_oStack.ClearStates ();
 }
 
 ////////////////////////////////////////////////////////////

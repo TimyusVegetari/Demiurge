@@ -51,10 +51,15 @@ class TitleState : public State {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::Sprite        m_sfTitle,
+    /*sf::Sprite        m_sfTitle,
                       m_sfBackground;
     drimi::BmpText    m_oVersion,
-                      m_oLicense;
+                      m_oLicense;*/
+    GLuint            m_uiRenderList2D_ID;
+    GLuint            m_uiBackground_ID,
+                      m_uiTitle_ID,
+                      m_uiVersion_ID,
+                      m_uiLicense_ID;
 
   public :
     ////////////////////////////////////////////////////////////

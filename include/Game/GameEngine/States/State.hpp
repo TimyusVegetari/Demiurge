@@ -76,11 +76,11 @@ class State {
                               GameObjectsManager& oGameObjectsManager );
     };
 
-  private :
+  protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    StateStack&       m_poStack;
+    StateStack&       m_oStack;
     ST_Context        m_stContext;
 
   public :
