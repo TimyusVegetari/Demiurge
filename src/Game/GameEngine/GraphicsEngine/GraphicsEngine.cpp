@@ -143,6 +143,12 @@ GLuint GraphicsEngine::GetElapsedFrames ( void ) {
   return m_uiElapsedFrames;
 }
 
+////////////////////////////////////////////////////////////
 Textures2DManager& GraphicsEngine::GetTextures2DManager ( void ) {
   return m_oTextures2DManager;
+}
+
+////////////////////////////////////////////////////////////
+Renderer2D& GraphicsEngine::GetRenderer2D ( void ) {
+  return m_oRenderer2D;
 }

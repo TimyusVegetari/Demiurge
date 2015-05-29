@@ -25,7 +25,9 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-Renderer2D::Renderer2D ( void )
+Renderer2D::Renderer2D ( void ) :
+  m_mRenderLists    (),
+  m_uiIdAccumulator (0)
 {
 }
 
@@ -50,5 +52,62 @@ GLboolean Renderer2D::Initialize ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+GLuint Renderer2D::CreateRenderList ( void ) {
+  m_uiIdAccumulator++;
+  m_mRenderLists.insert (Renderer2D::Pair (m_uiIdAccumulator, RenderList2D::Ptr (new RenderList2D ())));
+
+  return m_uiIdAccumulator;
+}
+
+////////////////////////////////////////////////////////////
+void Renderer2D::Render ( GLuint uiRenderListID, gm::RenderWindow& gmRenderWindow ) {
+  auto mFound = m_mRenderLists.find (uiRenderListID);
+  if (mFound == m_mRenderLists.end ()) {
+    CheckIDError (uiRenderListID);
+  } else {
+    if ((*mFound->second).Reset ()) {
+      do {
+        gmRenderWindow.Draw ((*mFound->second).GetDrawable ());
+      } while ((*mFound->second).Advance ());
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////
 // Accessor methods
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+GLboolean Renderer2D::IsEmpty ( void ) {
+	return m_mRenderLists.empty ();
+}
+
+////////////////////////////////////////////////////////////
+GLuint Renderer2D::CheckError ( void ) {
+	return m_uiError;
+}
+
+////////////////////////////////////////////////////////////
+RenderList2D& Renderer2D::GetRenderList ( GLuint uiRenderListID ) {
+  auto mFound = m_mRenderLists.find (uiRenderListID);
+  if (mFound == m_mRenderLists.end ()) {
+    CheckIDError (uiRenderListID);
+
+    m_mRenderLists.insert (Renderer2D::Pair (uiRenderListID, RenderList2D::Ptr (new RenderList2D ())));
+    return (*m_mRenderLists[uiRenderListID]);
+  }
+  return (*mFound->second);
+}
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+void Renderer2D::CheckIDError ( GLuint uiDrawableID ) {
+  if (uiDrawableID > m_uiIdAccumulator) {
+    m_uiIdAccumulator = uiDrawableID;
+    m_uiError = Error::OVERFLOWED_OBJECT;
+  } else
+    m_uiError = Error::UNCONSTRUCTED_OBJECT;
+}
