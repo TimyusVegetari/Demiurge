@@ -113,6 +113,14 @@ class Renderer2D {
     GLuint CreateRenderList ( void );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Erase a render list.
+    ///
+    /// \param uiRenderListID   Identifier of the render list.
+    ///
+    ////////////////////////////////////////////////////////////
+    void Erase ( GLuint uiRenderListID );
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create a render list and return its identifier.
     ///
     /// \param uiRenderListID   Identifier of the render list.
