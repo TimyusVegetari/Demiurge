@@ -60,7 +60,7 @@ GLuint Renderer2D::CreateRenderList ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void Erase ( GLuint uiRenderListID ) {
+void Renderer2D::Erase ( GLuint uiRenderListID ) {
   auto mFound = m_mRenderLists.find (uiRenderListID);
   if (mFound == m_mRenderLists.end ()) {
     CheckIDError (uiRenderListID);
