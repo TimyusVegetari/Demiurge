@@ -41,6 +41,7 @@
 ////////////////////////////////////////////////////////////
 #include <DRIMI/Mathematics/Config.hpp>
 #include <sstream>
+#include <memory>
 
 #define DISTMIN 16.f
 #define DISTMAX 32.f
@@ -65,10 +66,11 @@ class Camera {
     drimi::Vec3f    m_v3fFocalisation;
     drimi::Vec3f    m_v3fOrientation;
     drimi::Vec3f    m_v3fMoveVector;
-    GLuint          m_uiWidth, m_uiHeight;
-    GLdouble        m_dFovy, m_dRatio, m_dNear, m_dFar;
+    GLint           m_iViewportX, m_iViewportY;
+    GLsizei         m_iViewportWidth, m_iViewportHeight;
+    GLfloat         m_fFovy, m_fRatio, m_fNear, m_fFar;
     GLfloat         m_fPitch, m_fYaw;
-    drimi::Mat4x4f  m_m44Mvp, mm_m44Model, m_m44View, m_m44Projection;
+    drimi::Mat4x4f  m_m44Mvp, m_m44Model, m_m44View, m_m44Projection;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -175,16 +177,20 @@ class Camera {
     ///
     /// \param fAngle   Value of the angle of the rotation in radians.
     ///
+    /// \return True if the processing succeeded, false else.
+    ///
     ////////////////////////////////////////////////////////////
-    void RotationZXFirstPerson ( GLfloat fAngle );
+    GLboolean RotationZXFirstPerson ( GLfloat fAngle );
 
     ////////////////////////////////////////////////////////////
     /// \brief Turn the camera in the vertical for third person.
     ///
     /// \param fAngle   Value of the angle of the rotation in radians.
     ///
+    /// \return True if the processing succeeded, false else.
+    ///
     ////////////////////////////////////////////////////////////
-    void RotationZXThirdPerson ( GLfloat fAngle );
+    GLboolean RotationZXThirdPerson ( GLfloat fAngle );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
@@ -215,24 +221,25 @@ class Camera {
     void SetOrientation ( drimi::Vec3f v3fCoord );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Edit dimensions of the camera.
+    /// \brief Edit the viewport of the camera.
     ///
-    /// \param uiWidth    Width of the camera.
-    ///        uiHeight   Height of the camera.
+    /// \param uiX        X position of the viewport.
+    ///        uiY        Y position of the viewport.
+    ///        uiWidth    Width of the viewport.
+    ///        uiHeight   Height of the viewport.
     ///
     ////////////////////////////////////////////////////////////
-    void SetDimension ( GLuint uiWidth, GLuint uiHeight );
+    void SetViewport ( GLuint uiX, GLuint uiY, GLuint uiWidth = 16, GLuint uiHeight = 16 );
 
     ////////////////////////////////////////////////////////////
     /// \brief Edit perspective of the camera.
     ///
     /// \param dFovy    Fovy of the frustum.
-    ///        dRatio   Ratio of the frustum.
     ///        dNear    Nearest point of view.
     ///        dFar     Farest point of view.
     ///
     ////////////////////////////////////////////////////////////
-    void SetPerspective ( GLdouble dFovy, GLdouble dRatio, GLdouble dNear, GLdouble dFar );
+    void SetPerspective ( GLfloat fFovy, GLfloat fNear, GLfloat fFar );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get coordinates of the camera position.

@@ -40,48 +40,53 @@
 
 ////////////////////////////////////////////////////////////
 Camera::Camera ( void ) :
-  m_v3fPosition     (),
-  m_v3fFocalisation (coord + drimi::Vec3f (0.f, 0.f, DISTMAX)),
-  m_v3fOrientation  (drimi::Vec3f (0.f, 1.f, 0.f)),
-  m_v3fMoveVector   (),
-  m_uiWidth         (0),
-  m_uiHeight        (0),
-  m_dFovy           (0.0),
-  m_dRatio          (0.0),
-  m_dNear           (0.0),
-  m_dFar            (0.0),
-  m_fPitch          (0.f),
-  m_fYaw            (0.f),
-  m_m44Mvp          (),
-  mm_m44Model       (),
-  m_m44View         (),
-  m_m44Projection   (),
+  m_v3fPosition       (),
+  m_v3fFocalisation   (0.f, 0.f, DISTMAX),
+  m_v3fOrientation    (0.f, 1.f, 0.f),
+  m_v3fMoveVector     (),
+  m_iViewportX        (0),
+  m_iViewportY        (0),
+  m_iViewportWidth    (0),
+  m_iViewportHeight   (0),
+  m_fFovy             (0.0),
+  m_fRatio            (0.0),
+  m_fNear             (0.0),
+  m_fFar              (0.0),
+  m_fPitch            (0.f),
+  m_fYaw              (0.f),
+  m_m44Mvp            (),
+  m_m44Model          (),
+  m_m44View           (),
+  m_m44Projection     ()
 {
 }
 
 ////////////////////////////////////////////////////////////
 Camera::Camera ( drimi::Vec3f v3fCoord ) :
-  m_v3fPosition     (v3fCoord),
-  m_v3fFocalisation (v3fCoord + drimi::Vec3f (0.f, 0.f, DISTMAX)),
-  m_v3fOrientation  (drimi::Vec3f (0.f, 1.f, 0.f)),
-  m_v3fMoveVector   (),
-  m_uiWidth         (0),
-  m_uiHeight        (0),
-  m_dFovy           (0.0),
-  m_dRatio          (0.0),
-  m_dNear           (0.0),
-  m_dFar            (0.0),
-  m_fPitch          (0.f),
-  m_fYaw            (0.f),
-  m_m44Mvp          (),
-  mm_m44Model       (),
-  m_m44View         (),
-  m_m44Projection   (),
+  m_v3fPosition       (v3fCoord),
+  m_v3fFocalisation   (v3fCoord + drimi::Vec3f (0.f, 0.f, DISTMAX)),
+  m_v3fOrientation    (0.f, 1.f, 0.f),
+  m_v3fMoveVector     (),
+  m_iViewportX        (0),
+  m_iViewportY        (0),
+  m_iViewportWidth    (0),
+  m_iViewportHeight   (0),
+  m_fFovy             (0.0),
+  m_fRatio            (0.0),
+  m_fNear             (0.0),
+  m_fFar              (0.0),
+  m_fPitch            (0.f),
+  m_fYaw              (0.f),
+  m_m44Mvp            (),
+  m_m44Model          (),
+  m_m44View           (),
+  m_m44Projection     ()
 {
 }
 
 ////////////////////////////////////////////////////////////
-~Camera::Camera ( void );
+Camera::~Camera ( void ) {
+}
 
 ////////////////////////////////////////////////////////////
 // General methods
@@ -89,7 +94,7 @@ Camera::Camera ( drimi::Vec3f v3fCoord ) :
 
 ////////////////////////////////////////////////////////////
 void Camera::UseMVP ( void ) {
-  glViewport (0, 0, m_uiWidth, m_uiHeight);
+  glViewport (m_iViewportX, m_iViewportY, m_iViewportWidth, m_iViewportHeight);
   // Remember, matrix multiplication is the other way around
   m_m44Mvp = m_m44Projection * m_m44View * m_m44Model;
 }
@@ -114,6 +119,11 @@ void Camera::FocaliseThirdPerson ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Camera::MoveForwardAndBack ( GLfloat fDistance ) {
+  m_v3fMoveVector += drimi::Normalize (m_v3fFocalisation-m_v3fPosition) * fDistance;
+}
+
+////////////////////////////////////////////////////////////
+void Camera::MoveUpAndDown ( GLfloat fDistance ) {
   // Pseudo-rotation of the vector in ZX
   drimi::Vec3f v3fMoveVector (m_v3fFocalisation.x, m_v3fPosition.y, m_v3fFocalisation.z);
   // Computing of the perpendicular vector in the focus
@@ -121,16 +131,10 @@ void Camera::MoveForwardAndBack ( GLfloat fDistance ) {
 }
 
 ////////////////////////////////////////////////////////////
-void Camera::MoveUpAndDown ( GLfloat fDistance ) {
-  drimi::Vec3f v3fMoveVector (m_v3fFocalisation.x, m_v3fPosition.y, m_v3fFocalisation.z);
-  m_v3fMoveVector += drimi::Normalize (v3fMoveVector-m_v3fPosition) * fDistance;
-}
-
-////////////////////////////////////////////////////////////
 void Camera::MoveRightAndLeft ( GLfloat fDistance ) {
   drimi::Vec3f v3fMoveVector (m_v3fFocalisation.x, m_v3fPosition.y, m_v3fFocalisation.z);
-  drimi::Vec3f v3fYAxis(0.f, 1.f, 0.f);
-  m_v3fMoveVector += drimi::Cross(v3fYAxis, drimi::Normalize (v3fMoveVector-m_v3fPosition) * fDistance);
+  drimi::Vec3f v3fYAxis (0.f, 1.f, 0.f);
+  m_v3fMoveVector += drimi::Cross (v3fYAxis, drimi::Normalize (v3fMoveVector-m_v3fPosition) * fDistance);
 }
 
 ////////////////////////////////////////////////////////////
@@ -162,43 +166,52 @@ void Camera::RotationYThirdPerson ( GLfloat fAngle ) {
 }
 
 ////////////////////////////////////////////////////////////
-void Camera::RotationZXFirstPerson ( GLfloat fAngle ) {
+GLboolean Camera::RotationZXFirstPerson ( GLfloat fAngle ) {
   GLfloat fRadius;
   drimi::Vec3f P = m_v3fFocalisation - m_v3fPosition;
 
   // Computing of the radius [OP]
   fRadius = drimi::Length (P);
+  if (fRadius != 0.f) {
+    // Computing of the pitch (horizontal angle)
+    m_fPitch = drimi::Atan (P.z, P.x);
+    if (P.x < 0.f) m_fPitch = DRIMI_fPI + m_fPitch;
+    else if (P.z < 0.f) m_fPitch = 2.f*DRIMI_fPI + m_fPitch;
 
-  // Computing of the pitch (horizontal angle)
-  m_fPitch = drimi::Atan (P.z, P.x);
-  if (P.x < 0.f) m_fPitch = fPI + m_fPitch;
-  else if (P.z < 0.f) m_fPitch = 2.f*fPI + m_fPitch;
+    // Computing of the yaw (vertical angle)
+    m_fYaw = drimi::Asin (P.y/fRadius) + fAngle;
+    if (m_fYaw > DRIMI_fPI/2.f) m_fYaw = DRIMI_fPI/2.f;
+    else if (m_fYaw < -DRIMI_fPI/2.f) m_fYaw = -DRIMI_fPI/2.f;
 
-  // Computing of the yaw (vertical angle)
-  m_fYaw = drimi::Asin(P.y/fRadius) + fAngle;
-  if (m_fYaw > fPI/2.f) m_fYaw = fPI/2.f;
-  else if (m_fYaw < -fPI/2.f) m_fYaw = -fPI/2.f;
+    // Computing of P after rotation
+    P = fRadius * drimi::Vec3f (drimi::Cos (m_fPitch)*drimi::Cos (m_fYaw), drimi::Sin (m_fYaw), drimi::Sin (m_fPitch)*drimi::Cos (m_fYaw)) + m_v3fPosition;
+    m_v3fFocalisation = P;
 
-  // Computing of P after rotation
-  P = fRadius * drimi::Vec3f (drimi::Cos (m_fPitch)*drimi::Cos (m_fYaw), drimi::Sin (m_fYaw), drimi::Sin (m_fPitch)*drimi::Cos (m_fYaw)) + m_v3fPosition;
-  m_v3fFocalisation = P;
+    return GL_TRUE;
+  }
+  return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////
-void Camera::RotationZXThirdPerson ( GLfloat fAngle ) {
+GLboolean Camera::RotationZXThirdPerson ( GLfloat fAngle ) {
   GLfloat fRadius;
   drimi::Vec3f P = m_v3fPosition - m_v3fFocalisation;
 
   fRadius = drimi::Length (P);
-  m_fPitch = drimi::Acos (P.z/fRadius);
-  m_fYaw = drimi::Atan (P.y/P.x);
+  if (fRadius != 0.f && P.x != 0.f) {
+    m_fPitch = drimi::Acos (P.z/fRadius);
+    m_fYaw = drimi::Atan (P.y/P.x);
 
-  m_fPitch += fAngle;
-  if (m_fPitch <= 0.f) m_fPitch = 0.00001f;
-  else if (m_fPitch >= fPI) m_fPitch = fPI-0.00001f;
+    m_fPitch += fAngle;
+    if (m_fPitch <= 0.f) m_fPitch = 0.00001f;
+    else if (m_fPitch >= DRIMI_fPI) m_fPitch = DRIMI_fPI-0.00001f;
 
-  P = fRadius * drimi::Vec3f (drimi::Sin (m_fPitch)*drimi::Cos (m_fYaw), drimi::Sin (m_fPitch)*drimi::Sin (m_fYaw), drimi::Cos (m_fPitch)) + m_v3fFocalisation;
-  SetPosition (P);
+    P = fRadius * drimi::Vec3f (drimi::Sin (m_fPitch)*drimi::Cos (m_fYaw), drimi::Sin (m_fPitch)*drimi::Sin (m_fYaw), drimi::Cos (m_fPitch)) + m_v3fFocalisation;
+    SetPosition (P);
+
+    return GL_TRUE;
+  }
+  return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////
@@ -221,22 +234,38 @@ void Camera::SetOrientation ( drimi::Vec3f v3fCoord ) {
 }
 
 ////////////////////////////////////////////////////////////
-void Camera::SetDimension ( GLuint uiWidth, GLuint uiHeight ) {
-  m_uiWidth = uiWidth;
-  m_uiHheight = uiHeight;
+void Camera::SetViewport ( GLuint uiX, GLuint uiY, GLuint uiWidth, GLuint uiHeight ) {
+  if (uiWidth < 16)
+    m_iViewportWidth = 16;
+  else
+    m_iViewportWidth = static_cast<GLsizei> (uiWidth);
+  if (uiHeight < 16)
+    m_iViewportHeight = 16;
+  else
+    m_iViewportHeight = static_cast<GLsizei> (uiHeight);
+  m_iViewportX = static_cast<GLint> (uiX);
+  m_iViewportY = static_cast<GLint> (uiY);
 }
 
 ////////////////////////////////////////////////////////////
-void Camera::SetPerspective ( GLdouble dFovy, GLdouble dRatio, GLdouble dNear, GLdouble dFar ) {
-  m_dFovy   = dfovy;
-  m_dRatio  = dratio;
-  m_dNear   = dnear;
-  m_dFar    = dfar;
+void Camera::SetPerspective ( GLfloat fFovy, GLfloat fNear, GLfloat fFar ) {
+  if (fFovy <= 0.f || fFovy > 360.f)
+    m_fFovy = 45.f;
+  else
+    m_fFovy = fFovy;
+  if (fNear <= 0.f || fNear > fFar)
+    m_fNear = 1.f;
+  else
+    m_fNear = fNear;
+  if (fFar <= 0.f || fNear > fFar)
+    m_fFar = 100.f;
+  else
+    m_fFar = fFar;
 
   // Projection matrix : A° Field of View, B:C ratio, display range : D unit <-> E units
-  m_v3fProjection = drimi::Perspective (m_dFovy, m_dRatio, m_dNear, m_dFar);
+  m_m44Projection = drimi::Perspective (m_fFovy, static_cast<GLfloat> (m_iViewportWidth)/static_cast<GLfloat> (m_iViewportHeight), m_fNear, m_fFar);
   // Model matrix : an identity matrix (model will be at the origin)
-  m_m44Model      = drimi::Mat4x4f (1.0f); // Changes for each model !
+  m_m44Model    = drimi::Mat4x4f (1.0f); // Changes for each model !
 
   m_fPitch = 0.f;
   m_fYaw = 0.f;
@@ -245,6 +274,7 @@ void Camera::SetPerspective ( GLdouble dFovy, GLdouble dRatio, GLdouble dNear, G
 ////////////////////////////////////////////////////////////
 drimi::Vec3f& Camera::GetPosition ( void ) {
   return m_v3fPosition;
+}
 
 ////////////////////////////////////////////////////////////
 drimi::Vec3f& Camera::GetFocalisation ( void ) {
@@ -258,24 +288,21 @@ drimi::Vec3f& Camera::GetOrientation ( void ) {
 
 ////////////////////////////////////////////////////////////
 std::string Camera::ToStringPosition ( void ) {
-  // Flux de sortie pour créer la chaîne
   std::ostringstream oss;
   oss << m_v3fPosition.x << ", " << m_v3fPosition.y << ", " << m_v3fPosition.z;
-  return oss.str();
+  return oss.str ();
 }
 
 ////////////////////////////////////////////////////////////
 std::string Camera::ToStringFocalisation ( void ) {
-  // Flux de sortie pour créer la chaîne
   std::ostringstream oss;
   oss << m_v3fFocalisation.x << ", " << m_v3fFocalisation.y << ", " << m_v3fFocalisation.z;
-  return oss.str();
+  return oss.str ();
 }
 
 ////////////////////////////////////////////////////////////
 std::string Camera::ToStringOrientation ( void ) {
-  // Flux de sortie pour créer la chaîne
   std::ostringstream oss;
   oss << m_v3fOrientation.x << ", " << m_v3fOrientation.y << ", " << m_v3fOrientation.z;
-  return oss.str();
+  return oss.str ();
 }
