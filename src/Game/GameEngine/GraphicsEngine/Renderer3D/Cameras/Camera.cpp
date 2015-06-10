@@ -306,3 +306,8 @@ std::string Camera::ToStringOrientation ( void ) {
   oss << m_v3fOrientation.x << ", " << m_v3fOrientation.y << ", " << m_v3fOrientation.z;
   return oss.str ();
 }
+
+////////////////////////////////////////////////////////////
+drimi::Vec3f& Camera::GetMoveVector ( void ) {
+  return m_v3fMoveVector;
+}
