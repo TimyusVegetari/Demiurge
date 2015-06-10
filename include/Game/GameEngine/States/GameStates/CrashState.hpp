@@ -51,8 +51,9 @@ class CrashState : public State {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    drimi::BmpText    m_oError,
-                      m_oDetails;
+    GLuint            m_uiRenderList2D_ID;
+    GLuint            m_uiError_ID,
+                      m_uiDetails_ID;
 
   public :
     ////////////////////////////////////////////////////////////

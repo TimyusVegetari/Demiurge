@@ -51,8 +51,9 @@ class InDevInfoState : public State {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    drimi::BmpText    m_oTitle,
-                      m_oContent;
+    GLuint            m_uiRenderList2D_ID;
+    GLuint            m_uiTitle_ID,
+                      m_uiContent_ID;
     GLuint            m_uiTickTrigger,
                       m_uiElapsedTicks;
 

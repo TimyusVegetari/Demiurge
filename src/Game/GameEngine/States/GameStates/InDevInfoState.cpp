@@ -30,38 +30,50 @@
 ////////////////////////////////////////////////////////////
 InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
   State ( oStack, stContext ),
-  m_oTitle          (),
-  m_oContent        (),
-  m_uiTickTrigger   (500),
-  m_uiElapsedTicks  (0)
+  m_uiRenderList2D_ID (0),
+  m_uiTitle_ID        (0),
+  m_uiContent_ID      (0),
+  m_uiTickTrigger     (500),
+  m_uiElapsedTicks    (0)
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
+  // Create a render list 2D
+  Renderer2D& oRenderer2D = stContext.m_oGraphicsEngine.GetRenderer2D ();
+  m_uiRenderList2D_ID = oRenderer2D.CreateRenderList ();
+  RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
+
 	// In development information title
-  m_oTitle.SetFont        (stContext.m_oBmpFont);
-  m_oTitle.SetString      ("Please note this is a pre-alpha version of Demiurge.");
-  m_oTitle.SetStyle       (sf::Text::Style::Bold);
-  m_oTitle.SetColor       (sf::Color::Yellow);
-	m_oTitle.SetOrigin      (m_oTitle.GetLocalBounds ().width / 2.f, 0.f);
-	m_oTitle.setPosition    (gmMainWindow.GetView ().getCenter ().x, 100.f);
+  m_uiTitle_ID            = oRenderList2D.PushBack<drimi::BmpText> ();
+  drimi::BmpText& oTitle  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiTitle_ID);
+  oTitle.SetFont        (stContext.m_oBmpFont);
+  oTitle.SetString      ("Please note this is a pre-alpha version of Demiurge.");
+  oTitle.SetStyle       (sf::Text::Style::Bold);
+  oTitle.SetColor       (sf::Color::Yellow);
+	oTitle.SetOrigin      (oTitle.GetLocalBounds ().width / 2.f, 0.f);
+	oTitle.setPosition    (gmMainWindow.GetView ().getCenter ().x, 100.f);
 	// In development information contant
-  m_oContent.SetFont      (stContext.m_oBmpFont);
-  m_oContent.SetString    (std::string ("It has only a fraction of the planned features\n")
-                          +std::string ("and may contain bugs and be missing anims,\n")
-                          +std::string ("sounds and other features.\n\n")
-                          +std::string ("This does not reflect the quality, wealth or\n")
-                          +std::string ("feature set of the imagined project.\n")
-                          +std::string ("It is the beginning of a long-term work, intended to\n")
-                          +std::string ("evolve during the years.\n\n")
-                          +std::string ("Thank you for your understanding and good game !"));
-  m_oContent.SetColor     (sf::Color::Green);
-	m_oContent.SetOrigin    (m_oContent.GetLocalBounds ().width / 2.f, 0.f);
-	m_oContent.setPosition  (gmMainWindow.GetView ().getCenter ().x, 130.f);
+  m_uiContent_ID            = oRenderList2D.PushBack<drimi::BmpText> ();
+  drimi::BmpText& oContent  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiContent_ID);
+  oContent.SetFont          (stContext.m_oBmpFont);
+  oContent.SetString        (std::string ("It has only a fraction of the planned features\n")
+                            +std::string ("and may contain bugs and be missing anims,\n")
+                            +std::string ("sounds and other features.\n\n")
+                            +std::string ("This does not reflect the quality, wealth or\n")
+                            +std::string ("feature set of the imagined project.\n")
+                            +std::string ("It is the beginning of a long-term work, intended to\n")
+                            +std::string ("evolve during the years.\n\n")
+                            +std::string ("Thank you for your understanding and good game !"));
+  oContent.SetColor         (sf::Color::Green);
+	oContent.SetOrigin        (oContent.GetLocalBounds ().width / 2.f, 0.f);
+	oContent.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
 }
 
 ////////////////////////////////////////////////////////////
 InDevInfoState::~InDevInfoState ( void ) {
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  oRenderer2D.Erase (m_uiRenderList2D_ID);
 }
 
 ////////////////////////////////////////////////////////////
@@ -71,8 +83,8 @@ InDevInfoState::~InDevInfoState ( void ) {
 ////////////////////////////////////////////////////////////
 void InDevInfoState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
-	gmMainWindow.Draw (m_oTitle);
-	gmMainWindow.Draw (m_oContent);
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
 }
 
 ////////////////////////////////////////////////////////////

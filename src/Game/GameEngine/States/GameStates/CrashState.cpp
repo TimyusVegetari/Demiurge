@@ -30,29 +30,41 @@
 ////////////////////////////////////////////////////////////
 CrashState::CrashState ( StateStack& oStack, ST_Context stContext ) :
   State ( oStack, stContext ),
-  m_oError (),
-  m_oDetails ()
+  m_uiRenderList2D_ID (0),
+  m_uiError_ID        (0),
+  m_uiDetails_ID      (0)
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
+  // Create a render list 2D
+  Renderer2D& oRenderer2D = stContext.m_oGraphicsEngine.GetRenderer2D ();
+  m_uiRenderList2D_ID = oRenderer2D.CreateRenderList ();
+  RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
+
   // Error message
-  m_oError.SetFont        (stContext.m_oBmpFont);
-  m_oError.SetString      ("A critical error of unknown origin arose and caused the stop of the game.");
-  m_oError.SetStyle       (sf::Text::Style::Bold);
-  m_oError.SetColor       (sf::Color::Red);
-	m_oError.SetOrigin      (m_oError.GetLocalBounds ().width / 2.f, 0.f);
-	m_oError.setPosition    (gmMainWindow.GetView ().getCenter ().x, 100.f);
+  m_uiError_ID            = oRenderList2D.PushBack<drimi::BmpText> ();
+  drimi::BmpText& oError  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiError_ID);
+  oError.SetFont          (stContext.m_oBmpFont);
+  oError.SetString        ("A critical error of unknown origin arose and caused the stop of the game.");
+  oError.SetStyle         (sf::Text::Style::Bold);
+  oError.SetColor         (sf::Color::Red);
+	oError.SetOrigin        (oError.GetLocalBounds ().width / 2.f, 0.f);
+	oError.setPosition      (gmMainWindow.GetView ().getCenter ().x, 100.f);
 	//Error details
-  m_oDetails.SetFont      (stContext.m_oBmpFont);
-  m_oDetails.SetString    ("There is no detail available.");
-  m_oDetails.SetColor     (sf::Color::Yellow);
-	m_oDetails.SetOrigin    (m_oDetails.GetLocalBounds ().width / 2.f, 0.f);
-	m_oDetails.setPosition  (gmMainWindow.GetView ().getCenter ().x, 130.f);
+  m_uiDetails_ID            = oRenderList2D.PushBack<drimi::BmpText> ();
+  drimi::BmpText& oDetails  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiDetails_ID);
+  oDetails.SetFont          (stContext.m_oBmpFont);
+  oDetails.SetString        ("There is no detail available.");
+  oDetails.SetColor         (sf::Color::Yellow);
+	oDetails.SetOrigin        (oDetails.GetLocalBounds ().width / 2.f, 0.f);
+	oDetails.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
 }
 
 ////////////////////////////////////////////////////////////
 CrashState::~CrashState ( void ) {
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  oRenderer2D.Erase (m_uiRenderList2D_ID);
 }
 
 ////////////////////////////////////////////////////////////
@@ -62,8 +74,8 @@ CrashState::~CrashState ( void ) {
 ////////////////////////////////////////////////////////////
 void CrashState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
-	gmMainWindow.Draw (m_oError);
-	gmMainWindow.Draw (m_oDetails);
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
 }
 
 ////////////////////////////////////////////////////////////
