@@ -40,7 +40,7 @@
 #include "OGLManager.hpp"
 #include "Textures2D/Textures2DManager.hpp"
 #include "Renderer2D/Renderer2D.hpp"
-#include "Renderer3D.hpp"
+#include "Renderer3D/Renderer3D.hpp"
 
 #include <string>
 
@@ -195,6 +195,14 @@ class GraphicsEngine {
     ///
     ////////////////////////////////////////////////////////////
     Renderer2D& GetRenderer2D ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the renderer 3D.
+    ///
+    /// \return Instance of the renderer 3D.
+    ///
+    ////////////////////////////////////////////////////////////
+    Renderer3D& GetRenderer3D ( void );
 };
 
 #endif // GRAPHICSENGINE_HPP

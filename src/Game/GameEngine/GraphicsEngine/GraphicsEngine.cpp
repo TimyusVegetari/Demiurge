@@ -152,3 +152,8 @@ Textures2DManager& GraphicsEngine::GetTextures2DManager ( void ) {
 Renderer2D& GraphicsEngine::GetRenderer2D ( void ) {
   return m_oRenderer2D;
 }
+
+////////////////////////////////////////////////////////////
+Renderer3D& GraphicsEngine::GetRenderer3D ( void ) {
+  return m_oRenderer3D;
+}
