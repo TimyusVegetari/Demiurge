@@ -80,6 +80,28 @@ class GameObject {
     ///
     ////////////////////////////////////////////////////////////
     virtual ~GameObject ( void );
+
+    ////////////////////////////////////////////////////////////
+    // General methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check the events for all the components of the game object.
+    ///
+    /// \param sfEvent  System which get events of the window, keyboard, etc...
+    ///
+    /// \return True to permit the events of the other game objects to be checked, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual GLboolean HandleEvent ( const sf::Event& sfEvent ) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check the inputs for all the components of the game object.
+    ///
+    /// \return True to permit the inputs of the other game objects to be checked, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual GLboolean HandleInput ( void ) = 0;
 };
 
 #endif // GAMEOBJECT_HPP__
