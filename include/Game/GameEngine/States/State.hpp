@@ -125,10 +125,20 @@ class State {
     ////////////////////////////////////////////////////////////
     /// \brief Check the events for all the components of the state.
     ///
+    /// \param sfEvent  System which get events of the window, keyboard, etc...
+    ///
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
     virtual GLboolean HandleEvent ( const sf::Event& sfEvent ) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check the inputs for all the components of the state.
+    ///
+    /// \return True to permit the inputs of the other states to be checked, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual GLboolean HandleInput ( void ) = 0;
 
   protected :
     ////////////////////////////////////////////////////////////
