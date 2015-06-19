@@ -97,10 +97,21 @@ class CrashState : public State {
     ////////////////////////////////////////////////////////////
     /// \brief Check the events for all the components of the state.
     ///
+    /// \param eEventType   The current event type.
+    ///        sfKeyCode    The current keyboard key code.
+    ///
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const sf::Event& sfEvent );
+    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check the inputs for all the components of the state.
+    ///
+    /// \return True to permit the inputs of the other states to be checked, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual GLboolean HandleInput ( void );
 
     ////////////////////////////////////////////////////////////
     // Internal methods

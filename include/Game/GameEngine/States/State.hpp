@@ -43,6 +43,7 @@
 #include <Game/GameEngine/RenderTargets/RenderTargetsManager.hpp>
 #include <Game/GameEngine/GraphicsEngine/GraphicsEngine.hpp>
 #include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
+#include <Game/EventTypes.hpp>
 #include "GameStates/StateIdentifiers.hpp"
 
 class StateStack;
@@ -125,12 +126,13 @@ class State {
     ////////////////////////////////////////////////////////////
     /// \brief Check the events for all the components of the state.
     ///
-    /// \param sfEvent  System which get events of the window, keyboard, etc...
+    /// \param eEventType   The current event type.
+    ///        sfKeyCode    The current keyboard key code.
     ///
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const sf::Event& sfEvent ) = 0;
+    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the inputs for all the components of the state.

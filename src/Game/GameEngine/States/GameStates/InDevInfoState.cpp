@@ -102,14 +102,20 @@ GLboolean InDevInfoState::Update ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean InDevInfoState::HandleEvent ( const sf::Event& sfEvent ) {
-	if (sfEvent.type == sf::Event::KeyPressed) {
-    if (sfEvent.key.code == sf::Keyboard::Key::Return) {
+GLboolean InDevInfoState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+	if (eEventType == Event::Type::KeyPressed) {
+    if (sfKeyCode == sf::Keyboard::Key::Return) {
       RequestStackPop ();
       RequestStackPush (States::ID::Title);
     }
 	}
 	return GL_TRUE;
+}
+
+////////////////////////////////////////////////////////////
+GLboolean InDevInfoState::HandleInput ( void ) {
+
+	return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////

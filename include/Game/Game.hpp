@@ -27,7 +27,7 @@
  * \file Game.hpp
  * \brief Class for the game engine of Demiurge.
  * \author Anthony Acroute
- * \version 0.3
+ * \version 0.4
  * \date 2013-2015
  *
  */
@@ -39,6 +39,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "GameEngine/GameEngine.hpp"
+#include "EventTypes.hpp"
 #include "gamedev_info.hpp"
 
 ////////////////////////////////////////////////////////////
@@ -51,10 +52,11 @@ class Game : public GameEngine {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-
     // Time for the game mecanic
-    GLuint          m_uiTickDelay;
-    GLuint          m_uiTickTrigger;
+    GLuint            m_uiTickDelay;
+    GLuint            m_uiTickTrigger;
+    // Events system of the game
+    GLboolean         m_bPassMouseMoved;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -131,6 +133,14 @@ class Game : public GameEngine {
     ///
     ////////////////////////////////////////////////////////////
     GLboolean TickClock ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get if the frame delay is elapsed and update the frame trigger.
+    ///
+    /// \return True if the frame delay is elapsed, False else.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean FrameClock ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Contains the registration of the states of the game.

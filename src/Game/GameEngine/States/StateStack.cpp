@@ -71,14 +71,23 @@ void StateStack::Draw ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void StateStack::HandleEvent ( const sf::Event& sfEvent ) {
+void StateStack::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
 	// Iterate from top to bottom, stop as soon as HandleEvent () returns false
 	for (auto rit = m_vStack.rbegin () ; rit != m_vStack.rend () ; ++rit) {
-		if (!(*rit)->HandleEvent (sfEvent))
+		if (!(*rit)->HandleEvent (eEventType, sfKeyCode))
 			break;
 	}
 
 	ApplyPendingChanges ();
+}
+
+////////////////////////////////////////////////////////////
+void StateStack::HandleInput ( void ) {
+	// Iterate from top to bottom, stop as soon as HandleInput () returns false
+	for (auto rit = m_vStack.rbegin () ; rit != m_vStack.rend () ; ++rit) {
+		if (!(*rit)->HandleInput ())
+			break;
+	}
 }
 
 ////////////////////////////////////////////////////////////

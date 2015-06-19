@@ -133,10 +133,17 @@ class StateStack : private sf::NonCopyable {
     /// \brief Call all the events of the states in the stack and
     /// execute the changes in the stack.
     ///
-    /// \param sfEvent  The events got back by the game.
+    /// \param eEventType   The current event type.
+    ///        sfKeyCode    The current keyboard key code.
     ///
     ////////////////////////////////////////////////////////////
-    void HandleEvent ( const sf::Event& sfEvent );
+    void HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Call all the inputs of the states in the stack.
+    ///
+    ////////////////////////////////////////////////////////////
+    void HandleInput ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a state on the top of the stack.

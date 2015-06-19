@@ -34,6 +34,7 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   m_uiRenderList2D_ID  (0),
   m_uiBackground_ID   (0),
   m_uiTitle_ID        (0),
+  m_uiPressEnter_ID   (0),
   m_uiVersion_ID      (0),
   m_uiLicense_ID      (0)
 {
@@ -60,6 +61,14 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   sfTitle.setTexture  (oTextures2DManager.GetTexture (Textures2D::ID::GameTitle));
 	sfTitle.setOrigin   (sfTitle.getLocalBounds ().width / 2.f, sfTitle.getLocalBounds ().height / 2.f);
 	sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
+	// Game Press Enter
+  m_uiPressEnter_ID = oRenderList2D.PushBack<drimi::BmpText> ();
+  drimi::BmpText& oPressEnter = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiPressEnter_ID);
+  oPressEnter.SetFont      (stContext.m_oBmpFont);
+  oPressEnter.SetString    ("- Press Enter to continue -");
+  oPressEnter.SetColor     (sf::Color::Green);
+	oPressEnter.SetOrigin    (oPressEnter.GetLocalBounds ().width / 2.f, oPressEnter.GetLocalBounds ().height / 2.f);
+	oPressEnter.setPosition  (gmMainWindow.GetView ().getCenter ().x, gmMainWindow.GetView ().getCenter ().y);
 
 	// Game version
   m_uiVersion_ID = oRenderList2D.PushBack<drimi::BmpText> ();
@@ -106,11 +115,23 @@ GLboolean TitleState::Update ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean TitleState::HandleEvent ( const sf::Event& sfEvent ) {
-  if (sfEvent.type == sf::Event::KeyPressed) {
-    // Soon...
+GLboolean TitleState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+  if (eEventType == Event::Type::KeyPressed) {
+    if (sfKeyCode == sf::Keyboard::Key::Escape) {
+      gm::RenderWindow& gmMainWindow = GetMainWindow ();
+      gmMainWindow.Close ();
+    } else if (sfKeyCode == sf::Keyboard::Key::Return) {
+      RequestStackPop ();
+      RequestStackPush (States::ID::World);
+    }
 	}
 	return GL_TRUE;
+}
+
+////////////////////////////////////////////////////////////
+GLboolean TitleState::HandleInput ( void ) {
+
+	return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////

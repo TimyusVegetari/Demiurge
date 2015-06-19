@@ -51,13 +51,10 @@ class TitleState : public State {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    /*sf::Sprite        m_sfTitle,
-                      m_sfBackground;
-    drimi::BmpText    m_oVersion,
-                      m_oLicense;*/
     GLuint            m_uiRenderList2D_ID;
     GLuint            m_uiBackground_ID,
                       m_uiTitle_ID,
+                      m_uiPressEnter_ID,
                       m_uiVersion_ID,
                       m_uiLicense_ID;
 
@@ -103,10 +100,21 @@ class TitleState : public State {
     ////////////////////////////////////////////////////////////
     /// \brief Check the events for all the components of the state.
     ///
+    /// \param eEventType   The current event type.
+    ///        sfKeyCode    The current keyboard key code.
+    ///
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const sf::Event& sfEvent );
+    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check the inputs for all the components of the state.
+    ///
+    /// \return True to permit the inputs of the other states to be checked, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual GLboolean HandleInput ( void );
 
     ////////////////////////////////////////////////////////////
     // Internal methods

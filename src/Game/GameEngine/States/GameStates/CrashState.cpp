@@ -84,13 +84,19 @@ GLboolean CrashState::Update ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean CrashState::HandleEvent ( const sf::Event& sfEvent ) {
-	if (sfEvent.type == sf::Event::KeyPressed) {
-    if (sfEvent.key.code == sf::Keyboard::Key::Escape) {
+GLboolean CrashState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+	if (eEventType == Event::Type::KeyPressed) {
+    if (sfKeyCode == sf::Keyboard::Key::Escape) {
       gm::RenderWindow& gmMainWindow = GetMainWindow ();
       gmMainWindow.Close ();
     }
 	}
+	return GL_FALSE;
+}
+
+////////////////////////////////////////////////////////////
+GLboolean CrashState::HandleInput ( void ) {
+
 	return GL_FALSE;
 }
 
