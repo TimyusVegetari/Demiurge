@@ -25,7 +25,7 @@
  * \file StateIdentifiers.hpp
  * \brief Enumeration of IDs for the states of the game.
  * \author Anthony Acroute
- * \version 0.1
+ * \version 0.3
  * \date 2015
  *
  */
@@ -42,7 +42,8 @@ namespace States {
 enum ID {
   None,
   InDevInfo,
-  Title
+  Title,
+  World
 };
 
 }

@@ -25,7 +25,7 @@
  * \file StateDefinitions.hpp
  * \brief Definitions of specifics states of the game.
  * \author Anthony Acroute
- * \version 0.1
+ * \version 0.3
  * \date 2015
  *
  */
@@ -36,5 +36,6 @@
 #include "CrashState.hpp"
 #include "InDevInfoState.hpp"
 #include "TitleState.hpp"
+#include "WorldState.hpp"
 
 #endif // STATEDEFINITIONS_HPP__

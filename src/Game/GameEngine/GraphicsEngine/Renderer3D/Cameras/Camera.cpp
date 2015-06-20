@@ -141,6 +141,7 @@ void Camera::MoveRightAndLeft ( GLfloat fDistance ) {
 void Camera::ApplyMove ( void ) {
   m_v3fPosition     += m_v3fMoveVector;
   m_v3fFocalisation += m_v3fMoveVector;
+  m_v3fMoveVector    = drimi::Vec3f ();
 }
 
 ////////////////////////////////////////////////////////////
