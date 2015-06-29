@@ -92,7 +92,7 @@ GLboolean Game::GameInit ( void ) {
   m_oGraphicsEngine.Configurate (m_v2uSize.x, m_v2uSize.y, 32);
   if (!m_oGraphicsEngine.Initialize ())
     return GL_FALSE;
-  m_oGraphicsEngine.SetFrameRate (60);
+  m_oGraphicsEngine.SetFrameRate (30);
 
   return GL_TRUE;
 }

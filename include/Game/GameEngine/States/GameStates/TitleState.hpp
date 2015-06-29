@@ -54,9 +54,12 @@ class TitleState : public State {
     GLuint            m_uiRenderList2D_ID;
     GLuint            m_uiBackground_ID,
                       m_uiTitle_ID,
+                      m_uiTitleLogo_ID,
                       m_uiPressEnter_ID,
                       m_uiVersion_ID,
                       m_uiLicense_ID;
+    GLint             m_iTitleLogoFrameX,
+                      m_iTitleLogoFrameY;
 
   public :
     ////////////////////////////////////////////////////////////

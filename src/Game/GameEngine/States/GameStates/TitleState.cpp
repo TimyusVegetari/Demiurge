@@ -31,12 +31,15 @@
 ////////////////////////////////////////////////////////////
 TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   State ( oStack, stContext ),
-  m_uiRenderList2D_ID  (0),
+  m_uiRenderList2D_ID (0),
   m_uiBackground_ID   (0),
   m_uiTitle_ID        (0),
+  m_uiTitleLogo_ID    (0),
   m_uiPressEnter_ID   (0),
   m_uiVersion_ID      (0),
-  m_uiLicense_ID      (0)
+  m_uiLicense_ID      (0),
+	m_iTitleLogoFrameX  (128*32), ///< Initialization of the title logo animation
+	m_iTitleLogoFrameY  (128*16)
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
@@ -44,6 +47,7 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   // Loading of the textures 2D
   Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
   oTextures2DManager.LoadTexture (Textures2D::ID::GameTitle, "datas/gameTitle/title.png");
+  oTextures2DManager.LoadTexture (Textures2D::ID::GameTitleLogo, "datas/gameTitle/titlelogo.png");
   oTextures2DManager.LoadTexture (Textures2D::ID::GameTitleBackground, "datas/gameTitle/background.png");
 
   // Create a render list 2D
@@ -61,6 +65,13 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   sfTitle.setTexture  (oTextures2DManager.GetTexture (Textures2D::ID::GameTitle));
 	sfTitle.setOrigin   (sfTitle.getLocalBounds ().width / 2.f, sfTitle.getLocalBounds ().height / 2.f);
 	sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
+  // Game Title Logo
+  m_uiTitleLogo_ID = oRenderList2D.PushBack<sf::Sprite> ();
+  sf::Sprite& sfTitleLogo = oRenderList2D.GetDrawable<sf::Sprite> (m_uiTitleLogo_ID);
+  sfTitleLogo.setTexture      (oTextures2DManager.GetTexture (Textures2D::ID::GameTitleLogo));
+  sfTitleLogo.setTextureRect  (sf::IntRect (0, 0, 128, 128));
+	sfTitleLogo.setOrigin       (sfTitleLogo.getLocalBounds ().width / 2.f, sfTitleLogo.getLocalBounds ().height / 2.f);
+	sfTitleLogo.setPosition     (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f - 3.f));
 	// Game Press Enter
   m_uiPressEnter_ID = oRenderList2D.PushBack<drimi::BmpText> ();
   drimi::BmpText& oPressEnter = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiPressEnter_ID);
@@ -105,6 +116,19 @@ TitleState::~TitleState ( void ) {
 void TitleState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+
+  // Animated title logo
+  m_iTitleLogoFrameX += 128;
+  if (m_iTitleLogoFrameX >= 128*32) {
+    m_iTitleLogoFrameX = 0;
+    m_iTitleLogoFrameY += 128;
+    if (m_iTitleLogoFrameY >= 128*16)
+      m_iTitleLogoFrameY = 0;
+  }
+  RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
+  sf::Sprite& sfTitleLogo = oRenderList2D.GetDrawable<sf::Sprite> (m_uiTitleLogo_ID);
+  sfTitleLogo.setTextureRect  (sf::IntRect (m_iTitleLogoFrameX, m_iTitleLogoFrameY, 128, 128));
+
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
 }
 
@@ -116,13 +140,21 @@ GLboolean TitleState::Update ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean TitleState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
-  if (eEventType == Event::Type::KeyPressed) {
-    if (sfKeyCode == sf::Keyboard::Key::Escape) {
-      gm::RenderWindow& gmMainWindow = GetMainWindow ();
-      gmMainWindow.Close ();
-    } else if (sfKeyCode == sf::Keyboard::Key::Return) {
-      RequestStackPop ();
-      RequestStackPush (States::ID::World);
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+
+  if (eEventType == Event::Type::Closed) {
+    gmMainWindow.Close ();
+	} else if (eEventType == Event::Type::KeyPressed) {
+    switch (sfKeyCode) {
+      case sf::Keyboard::Key::Escape :
+        gmMainWindow.Close ();
+        break;
+      case sf::Keyboard::Key::Return :
+        RequestStackPop ();
+        RequestStackPush (States::ID::World);
+        break;
+      default :
+        break;
     }
 	}
 	return GL_TRUE;

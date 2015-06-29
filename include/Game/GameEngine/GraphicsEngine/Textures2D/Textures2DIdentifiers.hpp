@@ -42,7 +42,8 @@ namespace Textures2D {
 enum ID {
   None,
   GameTitleBackground,
-  GameTitle
+  GameTitle,
+  GameTitleLogo
 };
 
 }
