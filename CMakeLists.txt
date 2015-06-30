@@ -17,6 +17,11 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 # Declaration of the project
 project(Demiurge)
 
+set(Demiurge_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/src)
+set(Demiurge_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include)
+set(Demiurge_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/datas)
+set(Demiurge_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/bin)
+
 # Specific compiler options
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
@@ -121,8 +126,8 @@ else()
 endif()
 
 # Configuration of the path of the program
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG bin/Debug/)
-set_target_properties( Debug PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin/Debug/ )
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${Demiurge_BINARY_DIR}/Debug/)
+set_target_properties( Debug PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Demiurge_BINARY_DIR}/Debug/ )
 set_target_properties( Debug PROPERTIES RUNTIME_OUTPUT_NAME demiurge_dbg )
 set_target_properties( Debug PROPERTIES COMPILE_FLAGS "-O0 -g3" )
 
@@ -152,7 +157,7 @@ target_link_libraries(
 )
 
 # Configuration of the path of the program
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE bin/Release/)
-set_target_properties( Release PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin/Release/ )
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${Demiurge_BINARY_DIR}/Release/)
+set_target_properties( Release PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Demiurge_BINARY_DIR}/Release/ )
 set_target_properties( Release PROPERTIES RUNTIME_OUTPUT_NAME demiurge )
 set_target_properties( Release PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG" )
