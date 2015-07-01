@@ -63,14 +63,18 @@ class Camera {
     // Member data
     ////////////////////////////////////////////////////////////
     drimi::Vec3f    m_v3fPosition;
-    drimi::Vec3f    m_v3fFocalisation;
+    drimi::Vec3f    m_v3fLocalFocalisation;
+    drimi::Vec3f    m_v3fGlobalFocalisation;
     drimi::Vec3f    m_v3fOrientation;
     drimi::Vec3f    m_v3fMoveVector;
     GLint           m_iViewportX, m_iViewportY;
     GLsizei         m_iViewportWidth, m_iViewportHeight;
     GLfloat         m_fFovy, m_fRatio, m_fNear, m_fFar;
     GLfloat         m_fPitch, m_fYaw;
-    drimi::Mat4x4f  m_m44Mvp, m_m44Model, m_m44View, m_m44Projection;
+    drimi::Mat4x4f  m_m44LocalMvp, m_m44GlobalMvp,
+                    m_m44Model,
+                    m_m44LocalView, m_m44GlobalView,
+                    m_m44Projection;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -177,20 +181,16 @@ class Camera {
     ///
     /// \param fAngle   Value of the angle of the rotation in radians.
     ///
-    /// \return True if the processing succeeded, false else.
-    ///
     ////////////////////////////////////////////////////////////
-    GLboolean RotationZXFirstPerson ( GLfloat fAngle );
+    void RotationZXFirstPerson ( GLfloat fAngle );
 
     ////////////////////////////////////////////////////////////
     /// \brief Turn the camera in the vertical for third person.
     ///
     /// \param fAngle   Value of the angle of the rotation in radians.
     ///
-    /// \return True if the processing succeeded, false else.
-    ///
     ////////////////////////////////////////////////////////////
-    GLboolean RotationZXThirdPerson ( GLfloat fAngle );
+    void RotationZXThirdPerson ( GLfloat fAngle );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
@@ -296,6 +296,22 @@ class Camera {
     ///
     ////////////////////////////////////////////////////////////
     drimi::Vec3f& GetMoveVector ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get global MVP matrix.
+    ///
+    /// \return Computed global MVP matrix.
+    ///
+    ////////////////////////////////////////////////////////////
+    drimi::Mat4x4f& GetGlobalMVP ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get local MVP matrix.
+    ///
+    /// \return Computed local MVP matrix.
+    ///
+    ////////////////////////////////////////////////////////////
+    drimi::Mat4x4f& GetLocalMVP ( void );
 };
 
 #endif // CAMERA_HPP__
