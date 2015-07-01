@@ -72,11 +72,11 @@ namespace drimi {
 	DRIMI_VECTORIZE_VEC(Acos)
 
   ////////////////////////////////////////////////////////////
-	GLfloat Atan ( GLfloat const & fY, GLfloat const & fX ) {
+	GLfloat Atan2 ( GLfloat const & fY, GLfloat const & fX ) {
 		return std::atan2 (fY, fX);
 	}
 
-	DRIMI_VECTORIZE_VEC_VEC(Atan)
+	DRIMI_VECTORIZE_VEC_VEC(Atan2)
 
   ////////////////////////////////////////////////////////////
 	GLfloat Atan ( GLfloat const & fX ) {
