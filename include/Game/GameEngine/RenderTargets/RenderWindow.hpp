@@ -25,7 +25,7 @@
  * \file RenderWindow.hpp
  * \brief Class to upgrade a sf::RenderWindow.
  * \author Anthony Acroute
- * \version 0.1
+ * \version 0.2
  * \date 2015
  *
  */
@@ -53,6 +53,7 @@ class RenderWindow : public sf::RenderWindow {
     ////////////////////////////////////////////////////////////
 
     sf::Image   m_sfScreenCapture;
+    GLboolean   m_bSFMLEnabled;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -334,6 +335,33 @@ class RenderWindow : public sf::RenderWindow {
     ///
     ////////////////////////////////////////////////////////////
     inline void Display ( void ) { display (); };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Push and reset OpenGL state for SFML.
+    ///
+    /// This function is typically called before use SFML, after OpenGL.
+    ///
+    ////////////////////////////////////////////////////////////
+    inline void EnableSFML ( void ) {
+      if (!m_bSFMLEnabled) {
+        pushGLStates ();
+        resetGLStates ();
+        m_bSFMLEnabled = GL_TRUE;
+      }
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Pop OpenGL state for SFML.
+    ///
+    /// This function is typically called after use SFML, before OpenGL.
+    ///
+    ////////////////////////////////////////////////////////////
+    inline void DisableSFML ( void ) {
+      if (m_bSFMLEnabled) {
+        popGLStates ();
+        m_bSFMLEnabled = GL_FALSE;
+      }
+    };
 };
 
 }

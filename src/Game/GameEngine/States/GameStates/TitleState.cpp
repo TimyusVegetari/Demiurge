@@ -43,6 +43,7 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  gmMainWindow.EnableSFML ();
 
   // Loading of the textures 2D
   Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
@@ -100,6 +101,8 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   oLicense.SetColor     (sf::Color::Yellow);
 	oLicense.SetOrigin    (oLicense.GetLocalBounds ().width, oLicense.GetLocalBounds ().height);
 	oLicense.setPosition  (static_cast<GLfloat> (gmMainWindow.GetWidth ()) - 5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
+
+  gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -115,6 +118,8 @@ TitleState::~TitleState ( void ) {
 ////////////////////////////////////////////////////////////
 void TitleState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  gmMainWindow.EnableSFML ();
+	
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
 
   // Animated title logo
@@ -130,6 +135,8 @@ void TitleState::Draw ( void ) {
   sfTitleLogo.setTextureRect  (sf::IntRect (m_iTitleLogoFrameX, m_iTitleLogoFrameY, 128, 128));
 
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
+	
+  gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////

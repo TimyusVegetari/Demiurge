@@ -36,6 +36,7 @@ CrashState::CrashState ( StateStack& oStack, ST_Context stContext ) :
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  gmMainWindow.EnableSFML ();
 
   // Create a render list 2D
   Renderer2D& oRenderer2D = stContext.m_oGraphicsEngine.GetRenderer2D ();
@@ -59,6 +60,8 @@ CrashState::CrashState ( StateStack& oStack, ST_Context stContext ) :
   oDetails.SetColor         (sf::Color::Yellow);
 	oDetails.SetOrigin        (oDetails.GetLocalBounds ().width / 2.f, 0.f);
 	oDetails.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
+
+  gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -74,8 +77,12 @@ CrashState::~CrashState ( void ) {
 ////////////////////////////////////////////////////////////
 void CrashState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  gmMainWindow.EnableSFML ();
+	
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
+	
+  gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////

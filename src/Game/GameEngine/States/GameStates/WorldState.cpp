@@ -34,7 +34,8 @@ WorldState::WorldState ( StateStack& oStack, ST_Context stContext ) :
   m_uiRenderList2D_ID       (0),
   m_uiSimpleInformations_ID (0),
   m_uiCamera_ID             (0),
-  m_bMoved                  (GL_FALSE)
+  m_bMoved                  (GL_FALSE),
+  m_oSkybox                 ()
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
@@ -45,7 +46,16 @@ WorldState::WorldState ( StateStack& oStack, ST_Context stContext ) :
   Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
   // Initialize the camera 3D
   oCamera.SetViewport (0, 0, gmMainWindow.GetWidth (), gmMainWindow.GetHeight ());
-  oCamera.SetPerspective (60.f, 1.f, 100.f);
+  oCamera.SetPerspective (69.f, 0.1f, 128.f);
+
+	// Skybox test
+  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors activated by SFML.
+  glEnable (GL_TEXTURE_CUBE_MAP);
+	m_oSkybox.InitializeCubeMap ();
+  glDisable (GL_TEXTURE_CUBE_MAP);
+	m_oSkybox.InitializeCubeVBO ();
+
+  gmMainWindow.EnableSFML ();
 
   // Create a render list 2D
   Renderer2D& oRenderer2D = stContext.m_oGraphicsEngine.GetRenderer2D ();
@@ -59,6 +69,8 @@ WorldState::WorldState ( StateStack& oStack, ST_Context stContext ) :
   oSimpleInformations.SetColor        (sf::Color::Green);
 	oSimpleInformations.SetOrigin       (0.f, 0.f);
 	oSimpleInformations.setPosition     (0.f, 0.f);
+
+  gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -78,8 +90,33 @@ WorldState::~WorldState ( void ) {
 ////////////////////////////////////////////////////////////
 void WorldState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+  gluPerspective (60.0, static_cast<GLdouble> (gmMainWindow.GetWidth ())/static_cast<GLdouble> (gmMainWindow.GetHeight ()), 0.5, 100.0);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+	// Skybox test
+	glPushMatrix ();
+  glLoadIdentity ();
+
+  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+	m_oSkybox.UpdateMVP (oCamera.GetPosition (), oCamera.GetFocalisation (), oCamera.GetOrientation ());
+  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors at the place of SFML.
+  glDepthMask (GL_FALSE);   ///< Disable drawing in the depth buffer
+  glEnable (GL_TEXTURE_CUBE_MAP);
+	m_oSkybox.Draw ();
+  glDisable (GL_TEXTURE_CUBE_MAP);
+  glDepthMask (GL_TRUE);    ///< Enable drawing in the depth buffer
+
+	glPopMatrix ();
+
+  gmMainWindow.EnableSFML ();
+	
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
+	
+  gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -94,6 +131,9 @@ GLboolean WorldState::Update ( void ) {
   oCamera.FocaliseFirstPerson ();
   oCamera.UseMVP ();
 
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  gmMainWindow.EnableSFML ();
+	
   // Update simple informations for debug
   RenderList2D& oRenderList2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ().GetRenderList (m_uiRenderList2D_ID);
   drimi::BmpText& oSimpleInformations = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiSimpleInformations_ID);
@@ -101,7 +141,8 @@ GLboolean WorldState::Update ( void ) {
                                       +std::string ("\nPlayer position : ")+oCamera.ToStringPosition ()
                                       +std::string ("\n       orientation : ")+oCamera.ToStringOrientation ()
                                       +std::string ("\n       focalisation : ")+oCamera.ToStringFocalisation ());
-
+																			
+  gmMainWindow.DisableSFML ();
 	return GL_FALSE;
 }
 
@@ -116,8 +157,8 @@ GLboolean WorldState::HandleEvent ( const Event::Type eEventType, const sf::Keyb
     GLfloat fRelMouseX = static_cast<GLfloat> (sf::Mouse::getPosition (gmMainWindow).x) - gmMainWindow.GetView ().getCenter ().x;
     GLfloat fRelMouseY = static_cast<GLfloat> (sf::Mouse::getPosition (gmMainWindow).y) - gmMainWindow.GetView ().getCenter ().y;
     // Rotate the camera 3D
-    oCamera.RotationZXFirstPerson (-fRelMouseY/8.f);
-    oCamera.RotationYFirstPerson (fRelMouseX/8.f);
+    oCamera.RotationZXFirstPerson (-drimi::Radians (fRelMouseY/8.f));
+    oCamera.RotationYFirstPerson (drimi::Radians (fRelMouseX/8.f));
     sf::Mouse::setPosition (sf::Vector2i (static_cast<GLint> (gmMainWindow.GetWidth ()/2), static_cast<GLint> (gmMainWindow.GetHeight ()/2)), gmMainWindow);
   }
 

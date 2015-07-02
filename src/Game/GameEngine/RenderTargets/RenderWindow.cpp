@@ -29,7 +29,8 @@
 
 ////////////////////////////////////////////////////////////
 gm::RenderWindow::RenderWindow ( void ) : sf::RenderWindow (),
-	m_sfScreenCapture ()
+	m_sfScreenCapture (),
+	m_bSFMLEnabled    (GL_FALSE)
 {
 }
 
