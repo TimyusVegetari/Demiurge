@@ -47,9 +47,9 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
 
   // Loading of the textures 2D
   Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
-  oTextures2DManager.LoadTexture (Textures2D::ID::GameTitle, "datas/gameTitle/title.png");
-  oTextures2DManager.LoadTexture (Textures2D::ID::GameTitleLogo, "datas/gameTitle/titlelogo.png");
-  oTextures2DManager.LoadTexture (Textures2D::ID::GameTitleBackground, "datas/gameTitle/background.png");
+  GLuint  uiTitleTexID      = oTextures2DManager.LoadTexture (Textures2DManager::TexType::SFML_TEXTURE, "datas/gameTitle/title", "png"),
+          uiLogoTexID       = oTextures2DManager.LoadTexture (Textures2DManager::TexType::SFML_TEXTURE, "datas/gameTitle/titlelogo", "png"),
+          uiBackgroundTexID = oTextures2DManager.LoadTexture (Textures2DManager::TexType::SFML_TEXTURE, "datas/gameTitle/background", "png");
 
   // Create a render list 2D
   Renderer2D& oRenderer2D = stContext.m_oGraphicsEngine.GetRenderer2D ();
@@ -59,17 +59,17 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   // Game Title Background
   m_uiBackground_ID = oRenderList2D.PushBack<sf::Sprite> ();
   sf::Sprite& sfBackground = oRenderList2D.GetDrawable<sf::Sprite> (m_uiBackground_ID);
-  sfBackground.setTexture (oTextures2DManager.GetTexture (Textures2D::ID::GameTitleBackground));
+  sfBackground.setTexture (oTextures2DManager.GetSFMLTexture (uiBackgroundTexID));
   // Game Title
   m_uiTitle_ID = oRenderList2D.PushBack<sf::Sprite> ();
   sf::Sprite& sfTitle = oRenderList2D.GetDrawable<sf::Sprite> (m_uiTitle_ID);
-  sfTitle.setTexture  (oTextures2DManager.GetTexture (Textures2D::ID::GameTitle));
+  sfTitle.setTexture  (oTextures2DManager.GetSFMLTexture (uiTitleTexID));
 	sfTitle.setOrigin   (sfTitle.getLocalBounds ().width / 2.f, sfTitle.getLocalBounds ().height / 2.f);
 	sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
   // Game Title Logo
   m_uiTitleLogo_ID = oRenderList2D.PushBack<sf::Sprite> ();
   sf::Sprite& sfTitleLogo = oRenderList2D.GetDrawable<sf::Sprite> (m_uiTitleLogo_ID);
-  sfTitleLogo.setTexture      (oTextures2DManager.GetTexture (Textures2D::ID::GameTitleLogo));
+  sfTitleLogo.setTexture      (oTextures2DManager.GetSFMLTexture (uiLogoTexID));
   sfTitleLogo.setTextureRect  (sf::IntRect (0, 0, 128, 128));
 	sfTitleLogo.setOrigin       (sfTitleLogo.getLocalBounds ().width / 2.f, sfTitleLogo.getLocalBounds ().height / 2.f);
 	sfTitleLogo.setPosition     (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f - 3.f));
@@ -119,7 +119,7 @@ TitleState::~TitleState ( void ) {
 void TitleState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
   gmMainWindow.EnableSFML ();
-	
+
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
 
   // Animated title logo
@@ -135,7 +135,7 @@ void TitleState::Draw ( void ) {
   sfTitleLogo.setTextureRect  (sf::IntRect (m_iTitleLogoFrameX, m_iTitleLogoFrameY, 128, 128));
 
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
-	
+
   gmMainWindow.DisableSFML ();
 }
 

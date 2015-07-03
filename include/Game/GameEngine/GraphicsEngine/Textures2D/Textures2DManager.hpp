@@ -25,7 +25,7 @@
  * \file Textures2DManager.hpp
  * \brief Class to manage the textures 2D.
  * \author Anthony Acroute
- * \version 0.1
+ * \version 0.2
  * \date 2015
  *
  */
@@ -40,6 +40,17 @@
 #include "Textures2DIdentifiers.hpp"
 
 ////////////////////////////////////////////////////////////
+// Precompilator data
+////////////////////////////////////////////////////////////
+#define GL_TEXTURE_CUBE_MAP             0x8513
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X  0x8515
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X  0x8516
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y  0x8517
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y  0x8518
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z  0x8519
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z  0x851A
+
+////////////////////////////////////////////////////////////
 // Types
 ////////////////////////////////////////////////////////////
 namespace Texture2D {
@@ -52,12 +63,22 @@ namespace Texture2D {
 ////////////////////////////////////////////////////////////
 class Textures2DManager : sf::NonCopyable {
 
+  public :
+    ////////////////////////////////////////////////////////////
+    // Enumeration
+    ////////////////////////////////////////////////////////////
+    enum TexType {
+      NONE,
+      SFML_TEXTURE,
+      CUBEMAP_TEXTURE
+    };
+
   private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::map<Textures2D::ID,
-              Texture2D::Ptr> m_mTextureMap;  ///< List of functions to store the textures 2D.
+    std::map<GLuint, Texture2D::Ptr>  m_mTextureMap;    ///< List of pointer to store the SFML textures.
+    std::map<GLuint, GLuint>          m_mTextureIDMap;  ///< List of OpenGL textures identifiers.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -85,34 +106,47 @@ class Textures2DManager : sf::NonCopyable {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load a texture 2D in the list.
+    /// \brief Load a texture 2D in OpenGL.
     ///
-    /// \param eTextureID ID of the texture 2D.
+    /// \param eType      Type of the texture
+    ///        szFileName Name of the file. An extra can be added
+    ///                   if the type of the texture requires it.
+    ///        szFileExt  Extension of the file.
     ///
     ////////////////////////////////////////////////////////////
-    void LoadTexture ( Textures2D::ID eTextureID, const std::string& szFileName );
+    GLuint LoadTexture ( TexType eType, const std::string& szFileName, const std::string& szFileExt );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Remove a texture 2D in the list.
+    /// \brief Remove a texture 2D in OpenGL.
     ///
-    /// \param eTextureID ID of the identified texture 2D.
+    /// \param eType        Type of the texture
+    ///        uiTextureID  ID of the identified texture 2D.
     ///
     ////////////////////////////////////////////////////////////
-    void DeleteTexture ( Textures2D::ID eTextureID );
+    void DeleteTexture ( TexType eType, GLuint uiTextureID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Bind the texture for OpenGL.
+    ///
+    /// \param eType        Type of the texture
+    ///        uiTextureID  ID of the identified texture 2D.
+    ///
+    ////////////////////////////////////////////////////////////
+    void BindTexture ( Textures2DManager::TexType eType, GLuint uiTextureID );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the identified texture 2D.
+    /// \brief Get the identified SFML texture.
     ///
-    /// \param eTextureID ID of the texture 2D.
+    /// \param uiTextureID  ID of the texture 2D.
     ///
-    /// \return the identified sf::Texture or a default sf::Texture.
+    /// \return The identified sf::Texture or a default sf::Texture.
     ///
     ////////////////////////////////////////////////////////////
-    const sf::Texture& GetTexture ( Textures2D::ID eTextureID );
+    const sf::Texture& GetSFMLTexture ( GLuint uiTextureID );
 };
 
 #endif // TEXTURES2DMANAGER_HPP__
