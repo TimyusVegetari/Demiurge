@@ -43,7 +43,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -pedantic -Wconver
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin/)
 
-# Definitions flags to compile with dependencies 
+# Definitions flags to compile with dependencies
 add_definitions(-DGLEW_STATIC -DSFML_STATIC)
 
 # Inclusion of the dependencies
@@ -61,7 +61,7 @@ link_directories(
 )
 
 # Inclusion of the headers
-include_directories("${Demiurge_SOURCE_DIR}//include")
+include_directories("${Demiurge_INCLUDE_DIR}")
 
 # Generation of the sources files list
 file(

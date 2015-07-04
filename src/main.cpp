@@ -24,6 +24,11 @@
 #include <Game/Game.hpp>
 
 int main ( void ) {
+  // Initialize FreeImage
+#ifdef FREEIMAGE_LIB
+  FreeImage_Initialise ();
+#endif
+
   Game oGame;
 
   // Initialisation of the game
@@ -41,11 +46,20 @@ int main ( void ) {
     oGame.GameEnd ();
 
     // Freeing of the ressources...
+    // DeInitialize FreeImage
+  #ifdef FREEIMAGE_LIB
+    FreeImage_DeInitialise ();
+  #endif
 
     std::cout << "Press 'Enter' to quit..." << std::endl;
     std::cin.get();
     return EXIT_SUCCESS;
   }
+  // DeInitialize FreeImage
+#ifdef FREEIMAGE_LIB
+  FreeImage_DeInitialise ();
+#endif
+
   std::cout << "Error : The main window cannot be open !" << std::endl;
   std::cout << "Press 'Enter' to quit..." << std::endl;
   std::cin.get ();

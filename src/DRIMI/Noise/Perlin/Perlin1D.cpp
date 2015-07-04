@@ -37,7 +37,7 @@ Perlin1D::Perlin1D ( void ) :
   m_dWaveLength   (0.0),
   m_uiOctaves     (0),
   m_dRand         (),
-  m_dDatas        (NULL)
+  m_dDatas        ()
 {
 }
 
@@ -129,17 +129,19 @@ GLdouble Perlin1D::GeneratePerlin ( GLdouble dX, GLdouble dPersistance, Perlin1D
 GLdouble Perlin1D::GenerateNoise ( GLdouble dX, Perlin1D::Mode eMode ) {
   GLdouble dIndex = dX / m_dWaveLength;
   GLuint uiIndex = static_cast<GLuint> (dIndex)+1;
+	GLdouble dInterpolation = 0.0;
 
   if (eMode == Perlin1D::Mode::LINEAR ) {
-    return interpolation::Linear1D (m_dRand[uiIndex], m_dRand[uiIndex+1], fmod (dIndex, 1.0));
+    dInterpolation = interpolation::Linear1D (m_dRand[uiIndex], m_dRand[uiIndex+1], fmod (dIndex, 1.0));
   } else if (eMode == Perlin1D::Mode::COSINE ) {
-    return interpolation::Cosine1D (m_dRand[uiIndex], m_dRand[uiIndex+1], fmod (dIndex, 1.0));
+    dInterpolation = interpolation::Cosine1D (m_dRand[uiIndex], m_dRand[uiIndex+1], fmod (dIndex, 1.0));
   } else if (eMode == Perlin1D::Mode::CUBIC ) {
-    GLdouble dInterpolation = interpolation::Cubic1D (m_dRand[uiIndex-1], m_dRand[uiIndex], m_dRand[uiIndex+1], m_dRand[uiIndex+2], fmod (dIndex, 1.0));
+    dInterpolation = interpolation::Cubic1D (m_dRand[uiIndex-1], m_dRand[uiIndex], m_dRand[uiIndex+1], m_dRand[uiIndex+2], fmod (dIndex, 1.0));
     if (dInterpolation < 0.0) dInterpolation = 0.0;
     else if (dInterpolation > 1.0) dInterpolation = 1.0;
-    return dInterpolation;
   }
+
+  return dInterpolation;
 }
 
 } // namespace noise

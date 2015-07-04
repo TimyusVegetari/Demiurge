@@ -48,7 +48,7 @@ Perlin3D::Perlin3D ( void ) :
   m_dWaveLengthZ  (0.0),
   m_uiOctaves     (0),
   m_dRand         (),
-  m_dDatas        (NULL)
+  m_dDatas        ()
 {
 }
 
@@ -250,41 +250,43 @@ GLdouble Perlin3D::GenerateNoise ( GLdouble dX, GLdouble dY, GLdouble dZ, Perlin
          uiIndexX_1 = uiIndexX-1, uiIndexX1 = uiIndexX+1, uiIndexX2 = uiIndexX+2,
          uiIndexY_1 = uiIndexY-1, uiIndexY1 = uiIndexY+1, uiIndexY2 = uiIndexY+2,
          uiIndexZ_1 = uiIndexZ-1, uiIndexZ1 = uiIndexZ+1, uiIndexZ2 = uiIndexZ+2;
+	GLdouble dInterpolation = 0.0;
 
   if (eMode == Perlin3D::Mode::LINEAR ) {
-    return interpolation::Linear3D (GetRand (uiIndexX, uiIndexY , uiIndexZ ), GetRand (uiIndexX1, uiIndexY , uiIndexZ ),
-                                    GetRand (uiIndexX, uiIndexY1, uiIndexZ ), GetRand (uiIndexX1, uiIndexY1, uiIndexZ ),
-                                    GetRand (uiIndexX, uiIndexY , uiIndexZ1), GetRand (uiIndexX1, uiIndexY , uiIndexZ1),
-                                    GetRand (uiIndexX, uiIndexY1, uiIndexZ1), GetRand (uiIndexX1, uiIndexY1, uiIndexZ1),
-                                    fmod (dIndexX, 1.0), fmod (dIndexY, 1.0), fmod (dIndexZ, 1.0));
+    dInterpolation = interpolation::Linear3D (GetRand (uiIndexX, uiIndexY , uiIndexZ ), GetRand (uiIndexX1, uiIndexY , uiIndexZ ),
+																							GetRand (uiIndexX, uiIndexY1, uiIndexZ ), GetRand (uiIndexX1, uiIndexY1, uiIndexZ ),
+																							GetRand (uiIndexX, uiIndexY , uiIndexZ1), GetRand (uiIndexX1, uiIndexY , uiIndexZ1),
+																							GetRand (uiIndexX, uiIndexY1, uiIndexZ1), GetRand (uiIndexX1, uiIndexY1, uiIndexZ1),
+																							fmod (dIndexX, 1.0), fmod (dIndexY, 1.0), fmod (dIndexZ, 1.0));
   } else if (eMode == Perlin3D::Mode::COSINE ) {
-    return interpolation::Cosine3D (GetRand (uiIndexX, uiIndexY , uiIndexZ ), GetRand (uiIndexX1, uiIndexY , uiIndexZ ),
-                                    GetRand (uiIndexX, uiIndexY1, uiIndexZ ), GetRand (uiIndexX1, uiIndexY1, uiIndexZ ),
-                                    GetRand (uiIndexX, uiIndexY , uiIndexZ1), GetRand (uiIndexX1, uiIndexY , uiIndexZ1),
-                                    GetRand (uiIndexX, uiIndexY1, uiIndexZ1), GetRand (uiIndexX1, uiIndexY1, uiIndexZ1),
-                                    fmod (dIndexX, 1.0), fmod (dIndexY, 1.0), fmod (dIndexZ, 1.0));
+    dInterpolation = interpolation::Cosine3D (GetRand (uiIndexX, uiIndexY , uiIndexZ ), GetRand (uiIndexX1, uiIndexY , uiIndexZ ),
+																							GetRand (uiIndexX, uiIndexY1, uiIndexZ ), GetRand (uiIndexX1, uiIndexY1, uiIndexZ ),
+																							GetRand (uiIndexX, uiIndexY , uiIndexZ1), GetRand (uiIndexX1, uiIndexY , uiIndexZ1),
+																							GetRand (uiIndexX, uiIndexY1, uiIndexZ1), GetRand (uiIndexX1, uiIndexY1, uiIndexZ1),
+																							fmod (dIndexX, 1.0), fmod (dIndexY, 1.0), fmod (dIndexZ, 1.0));
   } else if (eMode == Perlin3D::Mode::CUBIC ) {
-    GLdouble dInterpolation = interpolation::Cubic3D (GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ_1), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ_1), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ_1), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ_1),
-                                                      GetRand (uiIndexX_1, uiIndexY  , uiIndexZ_1), GetRand (uiIndexX  , uiIndexY  , uiIndexZ_1), GetRand (uiIndexX1, uiIndexY  , uiIndexZ_1), GetRand (uiIndexX2, uiIndexY  , uiIndexZ_1),
-                                                      GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ_1), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ_1), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ_1), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ_1),
-                                                      GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ_1), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ_1), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ_1), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ_1),
-                                                      GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ  ), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ  ), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ  ), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ  ),
-                                                      GetRand (uiIndexX_1, uiIndexY  , uiIndexZ  ), GetRand (uiIndexX  , uiIndexY  , uiIndexZ  ), GetRand (uiIndexX1, uiIndexY  , uiIndexZ  ), GetRand (uiIndexX2, uiIndexY  , uiIndexZ  ),
-                                                      GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ  ), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ  ), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ  ), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ  ),
-                                                      GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ  ), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ  ), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ  ), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ  ),
-                                                      GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ1 ),
-                                                      GetRand (uiIndexX_1, uiIndexY  , uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY  , uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY  , uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY  , uiIndexZ1 ),
-                                                      GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ1 ),
-                                                      GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ1 ),
-                                                      GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ2 ),
-                                                      GetRand (uiIndexX_1, uiIndexY  , uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY  , uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY  , uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY  , uiIndexZ2 ),
-                                                      GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ2 ),
-                                                      GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ2 ),
-                                                      fmod (dIndexX, 1.0), fmod (dIndexY, 1.0), fmod (dIndexZ, 1.0));
+    dInterpolation = interpolation::Cubic3D (GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ_1), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ_1), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ_1), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ_1),
+																						 GetRand (uiIndexX_1, uiIndexY  , uiIndexZ_1), GetRand (uiIndexX  , uiIndexY  , uiIndexZ_1), GetRand (uiIndexX1, uiIndexY  , uiIndexZ_1), GetRand (uiIndexX2, uiIndexY  , uiIndexZ_1),
+																						 GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ_1), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ_1), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ_1), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ_1),
+																						 GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ_1), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ_1), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ_1), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ_1),
+																						 GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ  ), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ  ), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ  ), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ  ),
+																						 GetRand (uiIndexX_1, uiIndexY  , uiIndexZ  ), GetRand (uiIndexX  , uiIndexY  , uiIndexZ  ), GetRand (uiIndexX1, uiIndexY  , uiIndexZ  ), GetRand (uiIndexX2, uiIndexY  , uiIndexZ  ),
+																						 GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ  ), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ  ), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ  ), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ  ),
+																						 GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ  ), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ  ), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ  ), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ  ),
+																						 GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ1 ),
+																						 GetRand (uiIndexX_1, uiIndexY  , uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY  , uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY  , uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY  , uiIndexZ1 ),
+																						 GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ1 ),
+																						 GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ1 ), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ1 ), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ1 ), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ1 ),
+																						 GetRand (uiIndexX_1, uiIndexY_1, uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY_1, uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY_1, uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY_1, uiIndexZ2 ),
+																						 GetRand (uiIndexX_1, uiIndexY  , uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY  , uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY  , uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY  , uiIndexZ2 ),
+																						 GetRand (uiIndexX_1, uiIndexY1 , uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY1 , uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY1 , uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY1 , uiIndexZ2 ),
+																						 GetRand (uiIndexX_1, uiIndexY2 , uiIndexZ2 ), GetRand (uiIndexX  , uiIndexY2 , uiIndexZ2 ), GetRand (uiIndexX1, uiIndexY2 , uiIndexZ2 ), GetRand (uiIndexX2, uiIndexY2 , uiIndexZ2 ),
+																						 fmod (dIndexX, 1.0), fmod (dIndexY, 1.0), fmod (dIndexZ, 1.0));
     if (dInterpolation < 0.0) dInterpolation = 0.0;
     else if (dInterpolation > 1.0) dInterpolation = 1.0;
-    return dInterpolation;
   }
+	
+	return dInterpolation;
 }
 
 } // namespace noise
