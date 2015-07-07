@@ -22,40 +22,49 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file CGDatas.hpp
- * \brief Class to define datas for VBOs.
+ * \file VertexBufferObject.hpp
+ * \brief Class to define a VBO.
  * \author Anthony Acroute
- * \version 0.2
- * \date 2014-2015
+ * \version 0.3
+ * \date 2013-2015
  *
  */
 
-#ifndef CGDATAS_HPP__
-#define CGDATAS_HPP__
+#ifndef VERTEXBUFFEROBJECT_HPP__
+#define VERTEXBUFFEROBJECT_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/includes.hpp>
+#include "CGDatas.hpp"
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to store and manipulate the datas of the VBOs.
+// Precompilator data
+////////////////////////////////////////////////////////////
+#define VBO_NORMALES  0x1
+#define VBO_COLORS    0x2
+#define VBO_TEXTURES  0x4
+
+////////////////////////////////////////////////////////////
+/// \brief Class to define the base of the VBOs.
 ///
 ////////////////////////////////////////////////////////////
-template <typename T>
-class CGDatas {
+class VertexBufferObject {
 
-  private :
+  protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint  m_uiBufferID;
-    T*      m_tDatasArray;
-    GLuint  m_uiDatasArraySize;
-    GLint   m_iStep;
-    GLenum  m_eTarget;
+    std::string       m_szTypeName;   ///< A name to display the type of VBO
+                                      ///  if is necessary (ex. Cube, Sphere, etc...).
+    CGDatas<GLfloat>  m_oVertex,
+                      m_oNormales,
+                      m_oColors,
+                      m_oTextures;
+    CGDatas<GLuint>   m_oIndex;
 
-  public :
+  public:
     ////////////////////////////////////////////////////////////
     // Constructor(s)/Destructor
     ////////////////////////////////////////////////////////////
@@ -63,124 +72,111 @@ class CGDatas {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a CGDatas.
+    /// This constructor defines a VBO.
     ///
     ////////////////////////////////////////////////////////////
-    CGDatas ( void );
+    VertexBufferObject          ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the CGDatas.
+    /// Cleans up all the internal resources used by the VBO.
     ///
     ////////////////////////////////////////////////////////////
-    ~CGDatas ( void );
+    virtual ~VertexBufferObject ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Generate and store an OpenGL buffer identifier.
+    /// \brief Initialize the VBO datas (Vertex, normale, etc...).
     ///
     /// \return True if generation succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean GenBufferID ( void );
+    virtual void InitializeDatas ( void ) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Bind the OpenGL buffer.
+    /// \brief Initialize the OpenGL buffers.
     ///
-    /// \return True if binding succeeded, false if it failed.
+    /// \return True if initialization succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean BindBuffer ( void );
+    GLboolean InitializeBuffers ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the datas of the buffer object.
+    /// \brief Render the VBO.
     ///
-    /// \param tDatasArray      Datas Array.
-    ///        uiDatasArraySize Size of the datas array.
-    ///        iStep            Number of subdatas by datas
-    ///                         (ex. Vertex (X,Y,Z) : iStep=3 for 3 floats).
-    ///        eTarget          OpenGL buffer target (ex. GL_ARRAY_BUFFER).
+    /// \param uiMask   Bits mask to active one or many type of datas
+    ///                 used in the VBO to render.
     ///
     ////////////////////////////////////////////////////////////
-    void SetDatas ( T* tDatasArray, GLuint iDatasArraySize, GLint iStep, GLenum eTarget );
+    void Render ( GLuint uiMask );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Send the datas to the OpenGL buffer.
-    ///
-    /// \return True if sending succeeded, false if it failed.
+    /// \brief Delete the OpenGL buffers.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean SendDatas ( void );
+    void DeleteBuffers ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Delete the datas array of the memory.
+    /// \brief Delete the VBO datas.
     ///
     ////////////////////////////////////////////////////////////
     void DeleteDatas ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Delete the OpenGL buffer.
+    /// \brief Active the vertex pointer of OpenGL.
+    ///
+    /// \return True if activation succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    void DeleteBuffer ( void );
+    GLboolean ActiveVertexPointer ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Active the normale pointer of OpenGL.
+    ///
+    /// \return True if activation succeeded, false if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean ActiveNormalesPointer ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Active the colors pointer of OpenGL.
+    ///
+    /// \return True if activation succeeded, false if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean ActiveColorsPointer ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Active the textures pointer of OpenGL.
+    ///
+    /// \return True if activation succeeded, false if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean ActiveTexturesPointer ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Bind the index of the VBO.
+    ///
+    /// \return The index datas size if binding succeeded, 0 if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLsizei BindIndex ( void );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenGL buffer identifier.
+    /// \brief Get the type name of the VBO.
     ///
-    /// \return The OpenGL buffer identifier.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLuint GetBufferID ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the datas array size.
-    ///
-    /// \return Datas array size.
+    /// \return The Type name of the VBO.
     ///
     ////////////////////////////////////////////////////////////
-    GLuint GetDatasLength ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the datas array.
-    ///
-    /// \return Datas array.
-    ///
-    ////////////////////////////////////////////////////////////
-    T* GetDatas ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the size of datas.
-    ///
-    /// \return Size of datas in a step.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLsizei GetDatasSize ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the number of subdatas.
-    ///
-    /// \return Number of subdatas.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLint GetStep ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenGL buffer target.
-    ///
-    /// \return Target of the OpenGL buffer.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLenum GetTarget ( void );
+    std::string GetTypeName ( void );
 };
 
-#include "CGDatas.inl"
-
-#endif // CGDATAS_HPP__
+#endif // VERTEXBUFFEROBJECT_HPP__

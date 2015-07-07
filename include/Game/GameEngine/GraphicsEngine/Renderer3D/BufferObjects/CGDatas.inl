@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,11 +19,6 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/CGDatas.hpp>
-
-////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
 ////////////////////////////////////////////////////////////
 
@@ -31,8 +26,8 @@
 template <typename T>
 CGDatas<T>::CGDatas ( void ) :
   m_uiBufferID        (0),
-  m_uiDatasArraySize  (0),
   m_tDatasArray       (NULL),
+  m_uiDatasArraySize  (0),
   m_iStep             (0),
   m_eTarget           (GL_ARRAY_BUFFER)
 {
@@ -90,7 +85,7 @@ GLboolean CGDatas<T>::SendDatas ( void ) {
   if (m_uiBufferID != 0) {
     glBindBuffer (m_eTarget, m_uiBufferID);
     if (m_uiDatasArraySize != 0 && m_tDatasArray != NULL) {
-      glBufferData (m_eTarget, m_uiDatasArraySize * sizeof (GLfloat), m_tDatasArray, GL_STATIC_DRAW);
+      glBufferData (m_eTarget, static_cast<GLsizeiptr> (m_uiDatasArraySize * sizeof (GLfloat)), m_tDatasArray, GL_STATIC_DRAW);
       // Debug : It will be necessary to check OpenGL error, in the future.
       return GL_TRUE;
     }
@@ -143,7 +138,7 @@ T* CGDatas<T>::GetDatas ( void ) {
 ////////////////////////////////////////////////////////////
 template <typename T>
 GLsizei CGDatas<T>::GetDatasSize ( void ) {
-  return m_iStep * sizeof (T);
+  return m_iStep * static_cast<GLint> (sizeof (T));
 }
 
 ////////////////////////////////////////////////////////////
