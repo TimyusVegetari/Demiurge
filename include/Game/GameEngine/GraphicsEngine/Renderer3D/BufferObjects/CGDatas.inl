@@ -27,7 +27,7 @@ template <typename T>
 CGDatas<T>::CGDatas ( void ) :
   m_uiBufferID        (0),
   m_tDatasArray       (NULL),
-  m_uiDatasArraySize  (0),
+  m_iDatasArraySize   (0),
   m_iStep             (0),
   m_eTarget           (GL_ARRAY_BUFFER)
 {
@@ -72,8 +72,8 @@ GLboolean CGDatas<T>::BindBuffer ( void ) {
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-void CGDatas<T>::SetDatas ( T* tDatasArray, GLuint uiDatasArraySize, GLint iStep, GLenum eTarget ) {
-  m_uiDatasArraySize  = uiDatasArraySize;
+void CGDatas<T>::SetDatas ( T* tDatasArray, GLsizei iDatasArraySize, GLint iStep, GLenum eTarget ) {
+  m_iDatasArraySize   = iDatasArraySize;
   m_tDatasArray       = tDatasArray;
   m_iStep             = iStep;
   m_eTarget           = eTarget;
@@ -84,8 +84,8 @@ template <typename T>
 GLboolean CGDatas<T>::SendDatas ( void ) {
   if (m_uiBufferID != 0) {
     glBindBuffer (m_eTarget, m_uiBufferID);
-    if (m_uiDatasArraySize != 0 && m_tDatasArray != NULL) {
-      glBufferData (m_eTarget, static_cast<GLsizeiptr> (m_uiDatasArraySize * sizeof (GLfloat)), m_tDatasArray, GL_STATIC_DRAW);
+    if (m_iDatasArraySize != 0 && m_tDatasArray != NULL) {
+      glBufferData (m_eTarget, m_iDatasArraySize * static_cast<GLsizei> (sizeof (T)), m_tDatasArray, GL_STATIC_DRAW);
       // Debug : It will be necessary to check OpenGL error, in the future.
       return GL_TRUE;
     }
@@ -98,8 +98,9 @@ template <typename T>
 void CGDatas<T>::DeleteDatas ( void ) {
   if (m_tDatasArray != NULL) {
     delete[] m_tDatasArray;
+    m_tDatasArray       = NULL;
   }
-  m_uiDatasArraySize  = 0;
+  m_iDatasArraySize   = 0;
   m_iStep             = 0;
 }
 
@@ -125,8 +126,8 @@ GLuint CGDatas<T>::GetBufferID ( void ) {
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-GLuint CGDatas<T>::GetDatasLength ( void ) {
-  return m_uiDatasArraySize;
+GLsizei CGDatas<T>::GetDatasLength ( void ) {
+  return m_iDatasArraySize;
 }
 
 ////////////////////////////////////////////////////////////

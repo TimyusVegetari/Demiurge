@@ -48,7 +48,7 @@ VertexBufferObject::~VertexBufferObject ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean VertexBufferObject::InitializeBuffers ( void ) {
-  GLint iNoError = 0;
+  GLint iNoError = 1;
 
   // Génération des ids
   iNoError &= m_oVertex.GenBufferID ();
@@ -82,18 +82,33 @@ GLboolean VertexBufferObject::InitializeBuffers ( void ) {
 void VertexBufferObject::Render ( GLuint uiMask ) {
   // Enable buffers
   if (m_oVertex.GetStep () != 0) {
-    m_oVertex.BindBuffer ();
-    if ((uiMask & VBO_NORMALES) == 1)
-      m_oNormales.BindBuffer ();
-    if ((uiMask & VBO_COLORS) == 2)
-      m_oColors.BindBuffer ();
-    if ((uiMask & VBO_TEXTURES) == 4)
-      m_oTextures.BindBuffer ();
+    glEnableClientState (GL_VERTEX_ARRAY);          ///< Activate vertex coords array
+    ActiveVertexPointer ();
+    if ((uiMask & VBO_NORMALES) == 1) {
+      glEnableClientState (GL_NORMAL_ARRAY);        ///< Activate normal coords array
+      ActiveNormalesPointer ();
+    }
+    if ((uiMask & VBO_COLORS) == 2) {
+      glEnableClientState (GL_COLOR_ARRAY);         ///< Activate color coords array
+      ActiveColorsPointer ();
+    }
+    if ((uiMask & VBO_TEXTURES) == 4) {
+      glEnableClientState (GL_TEXTURE_COORD_ARRAY); ///< Activate texture coords array
+      ActiveTexturesPointer ();
+    }
 
     // Draw with index
     GLsizei iIndexArraySize = BindIndex ();
     if (iIndexArraySize != 0)
       glDrawElements (GL_QUADS, iIndexArraySize, GL_UNSIGNED_INT, 0);
+
+    if ((uiMask & VBO_TEXTURES) == 4)
+      glDisableClientState (GL_TEXTURE_COORD_ARRAY);  ///< Deactivate texture coords array
+    if ((uiMask & VBO_COLORS) == 2)
+      glDisableClientState (GL_COLOR_ARRAY);          ///< Deactivate color coords array
+    if ((uiMask & VBO_NORMALES) == 1)
+      glDisableClientState (GL_NORMAL_ARRAY);         ///< Deactivate normal coords array
+    glDisableClientState (GL_VERTEX_ARRAY);         ///< Deactivate vertex array
 
     // Disable buffers
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -122,11 +137,11 @@ void VertexBufferObject::DeleteDatas ( void ) {
 ////////////////////////////////////////////////////////////
 GLboolean VertexBufferObject::ActiveVertexPointer ( void ) {
   if (m_oVertex.BindBuffer ()) {
-    GLint uiVertexStep = m_oVertex.GetStep ();
+    GLint iVertexStep = m_oVertex.GetStep ();
     GLsizei iDatasSize = m_oVertex.GetDatasSize ();
 
-    if (uiVertexStep != 0 && iDatasSize != 0) {
-      glVertexPointer (uiVertexStep, GL_FLOAT, iDatasSize, 0);
+    if (iVertexStep != 0 && iDatasSize != 0) {
+      glVertexPointer (iVertexStep, GL_FLOAT, iDatasSize, 0);
       // Debug : It will be necessary to check OpenGL error, in the future.
       return GL_TRUE;
     }
@@ -151,11 +166,11 @@ GLboolean VertexBufferObject::ActiveNormalesPointer ( void ) {
 ////////////////////////////////////////////////////////////
 GLboolean VertexBufferObject::ActiveColorsPointer ( void ) {
   if (m_oColors.BindBuffer ()) {
-    GLint uiColorsStep = m_oColors.GetStep ();
+    GLint iColorsStep = m_oColors.GetStep ();
     GLsizei iDatasSize = m_oColors.GetDatasSize ();
 
-    if (uiColorsStep != 0 && iDatasSize != 0) {
-      glColorPointer (uiColorsStep, GL_FLOAT, iDatasSize, 0);
+    if (iColorsStep != 0 && iDatasSize != 0) {
+      glColorPointer (iColorsStep, GL_FLOAT, iDatasSize, 0);
       // Debug : It will be necessary to check OpenGL error, in the future.
       return GL_TRUE;
     }
@@ -166,11 +181,11 @@ GLboolean VertexBufferObject::ActiveColorsPointer ( void ) {
 ////////////////////////////////////////////////////////////
 GLboolean VertexBufferObject::ActiveTexturesPointer ( void ) {
   if (m_oTextures.BindBuffer ()) {
-    GLint uiTexturesStep = m_oTextures.GetStep ();
+    GLint iTexturesStep = m_oTextures.GetStep ();
     GLsizei iDatasSize = m_oTextures.GetDatasSize ();
 
-    if (uiTexturesStep != 0 && iDatasSize != 0) {
-      glTexCoordPointer (uiTexturesStep, GL_FLOAT, iDatasSize, 0);
+    if (iTexturesStep != 0 && iDatasSize != 0) {
+      glTexCoordPointer (iTexturesStep, GL_FLOAT, iDatasSize, 0);
       // Debug : It will be necessary to check OpenGL error, in the future.
       return GL_TRUE;
     }
@@ -181,7 +196,7 @@ GLboolean VertexBufferObject::ActiveTexturesPointer ( void ) {
 ////////////////////////////////////////////////////////////
 GLsizei VertexBufferObject::BindIndex ( void ) {
   if (m_oIndex.BindBuffer ()) {
-    return m_oIndex.GetDatasSize ();
+    return m_oIndex.GetDatasLength ();
   }
   return 0;
 }

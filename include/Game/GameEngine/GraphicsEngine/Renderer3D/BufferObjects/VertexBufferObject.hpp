@@ -92,8 +92,6 @@ class VertexBufferObject {
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the VBO datas (Vertex, normale, etc...).
     ///
-    /// \return True if generation succeeded, false if it failed.
-    ///
     ////////////////////////////////////////////////////////////
     virtual void InitializeDatas ( void ) = 0;
 

@@ -22,40 +22,37 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file CGDatas.hpp
- * \brief Class to define datas for VBOs.
+ * \file Box.hpp
+ * \brief Class to define the VBO of a box.
  * \author Anthony Acroute
- * \version 0.2
- * \date 2014-2015
+ * \version 0.3
+ * \date 2013-2015
  *
  */
 
-#ifndef CGDATAS_HPP__
-#define CGDATAS_HPP__
+#ifndef VBO_BOX_HPP__
+#define VBO_BOX_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/includes.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexBufferObject.hpp>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to store and manipulate the datas of the VBOs.
+/// \brief Class to define the VBO of a box.
 ///
 ////////////////////////////////////////////////////////////
-template <typename T>
-class CGDatas {
+class Box : public VertexBufferObject {
 
   private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint  m_uiBufferID;
-    T*      m_tDatasArray;
-    GLsizei m_iDatasArraySize;
-    GLint   m_iStep;
-    GLenum  m_eTarget;
+    GLfloat m_fWidth,
+            m_fHeight,
+            m_fDepth;
 
-  public :
+  public:
     ////////////////////////////////////////////////////////////
     // Constructor(s)/Destructor
     ////////////////////////////////////////////////////////////
@@ -63,124 +60,80 @@ class CGDatas {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a CGDatas.
+    /// This constructor defines a box.
     ///
     ////////////////////////////////////////////////////////////
-    CGDatas ( void );
+    Box ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the CGDatas.
+    /// Cleans up all the internal resources used by the box.
     ///
     ////////////////////////////////////////////////////////////
-    ~CGDatas ( void );
+    virtual ~Box ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Generate and store an OpenGL buffer identifier.
-    ///
-    /// \return True if generation succeeded, false if it failed.
+    /// \brief Initialize the VBO datas (Vertex, normale, etc...).
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean GenBufferID ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Bind the OpenGL buffer.
-    ///
-    /// \return True if binding succeeded, false if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean BindBuffer ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the datas of the buffer object.
-    ///
-    /// \param tDatasArray      Datas Array.
-    ///        iDatasArraySize  Size of the datas array.
-    ///        iStep            Number of subdatas by datas
-    ///                         (ex. Vertex (X,Y,Z) : iStep=3 for 3 floats).
-    ///        eTarget          OpenGL buffer target (ex. GL_ARRAY_BUFFER).
-    ///
-    ////////////////////////////////////////////////////////////
-    void SetDatas ( T* tDatasArray, GLsizei iDatasArraySize, GLint iStep, GLenum eTarget );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Send the datas to the OpenGL buffer.
-    ///
-    /// \return True if sending succeeded, false if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean SendDatas ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Delete the datas array of the memory.
-    ///
-    ////////////////////////////////////////////////////////////
-    void DeleteDatas ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Delete the OpenGL buffer.
-    ///
-    ////////////////////////////////////////////////////////////
-    void DeleteBuffer ( void );
+    virtual void  InitializeDatas ( void );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenGL buffer identifier.
-    ///
-    /// \return The OpenGL buffer identifier.
+    /// \brief Set the dimensions of the box.
     ///
     ////////////////////////////////////////////////////////////
-    GLuint GetBufferID ( void );
+    void SetDimensions ( GLfloat fWidth, GLfloat fHeight, GLfloat fDepth );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the datas array size.
-    ///
-    /// \return Datas array size.
+    /// \brief Set the width of the box.
     ///
     ////////////////////////////////////////////////////////////
-    GLsizei GetDatasLength ( void );
+    void SetWidth ( GLfloat fWidth );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the datas array.
-    ///
-    /// \return Datas array.
+    /// \brief Set the height of the box.
     ///
     ////////////////////////////////////////////////////////////
-    T* GetDatas ( void );
+    void SetHeight ( GLfloat fHeight );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the size of datas.
-    ///
-    /// \return Size of datas in a step.
+    /// \brief Set the depth of the box.
     ///
     ////////////////////////////////////////////////////////////
-    GLsizei GetDatasSize ( void );
+    void SetDepth ( GLfloat fDepth );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the number of subdatas.
+    /// \brief Get the width of the box.
     ///
-    /// \return Number of subdatas.
+    /// \return Width of the box.
     ///
     ////////////////////////////////////////////////////////////
-    GLint GetStep ( void );
+    GLfloat GetWidth ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenGL buffer target.
+    /// \brief Get the height of the box.
     ///
-    /// \return Target of the OpenGL buffer.
+    /// \return Height of the box.
     ///
     ////////////////////////////////////////////////////////////
-    GLenum GetTarget ( void );
+    GLfloat GetHeight ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the depth of the box.
+    ///
+    /// \return Depth of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLfloat GetDepth ( void );
 };
 
-#include "CGDatas.inl"
-
-#endif // CGDATAS_HPP__
+#endif // VBO_BOX_HPP__
