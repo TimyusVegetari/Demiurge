@@ -136,17 +136,14 @@ void Camera::MoveForwardAndBack ( GLfloat fDistance ) {
 
 ////////////////////////////////////////////////////////////
 void Camera::MoveUpAndDown ( GLfloat fDistance ) {
-  // Pseudo-rotation of the vector in ZX
-  drimi::Vec3f v3fMoveVector (m_v3fLocalFocalisation.x, 0.f, m_v3fLocalFocalisation.z);
-  // Computing of the perpendicular vector in the focus
-  m_v3fMoveVector += drimi::Normalize (v3fMoveVector) * fDistance;
+  m_v3fMoveVector += m_v3fOrientation * fDistance;
 }
 
 ////////////////////////////////////////////////////////////
 void Camera::MoveRightAndLeft ( GLfloat fDistance ) {
   drimi::Vec3f v3fMoveVector (m_v3fLocalFocalisation.x, 0.f, m_v3fLocalFocalisation.z);
-  drimi::Vec3f v3fYAxis (0.f, 1.f, 0.f);
-  m_v3fMoveVector += drimi::Cross (v3fYAxis, drimi::Normalize (v3fMoveVector) * fDistance);
+  drimi::Vec3f v3fVerticalAxis (m_v3fOrientation.x, m_v3fOrientation.y, m_v3fOrientation.z);
+  m_v3fMoveVector += drimi::Cross (v3fVerticalAxis, drimi::Normalize (v3fMoveVector) * fDistance);
 }
 
 ////////////////////////////////////////////////////////////
