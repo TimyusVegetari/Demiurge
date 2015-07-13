@@ -32,34 +32,48 @@
 TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   State ( oStack, stContext ),
   m_uiRenderList2D_ID (0),
-  m_uiBackground_ID   (0),
   m_uiTitle_ID        (0),
   m_uiTitleLogo_ID    (0),
   m_uiPressEnter_ID   (0),
   m_uiVersion_ID      (0),
   m_uiLicense_ID      (0),
 	m_iTitleLogoFrameX  (128*32), ///< Initialization of the title logo animation
-	m_iTitleLogoFrameY  (128*16)
+	m_iTitleLogoFrameY  (128*16),
+  m_uiCamera_ID       (0),
+  m_oSkybox           ()
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
+
+  // Create a camera 3D
+  CameraManager& oCameraManager = stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  m_uiCamera_ID = oCameraManager.CreateCamera ();
+  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+  // Initialize the camera 3D
+  oCamera.SetViewport (0, 0, gmMainWindow.GetWidth (), gmMainWindow.GetHeight ());
+  oCamera.SetPerspective (69.f, 0.1f, 128.f);
+
+	// Skybox test
+  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors activated by SFML.
+  glEnable (GL_TEXTURE_CUBE_MAP);
+	m_oSkybox.SetCubeMapID (oTextures2DManager.LoadTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, "./datas/skybox/skybox", "png"));
+  glDisable (GL_TEXTURE_CUBE_MAP);
+	if (!m_oSkybox.InitializeCubeVBO ()) {
+    // Debug : It will be necessary to process the errors, in the future.
+  }
+
   gmMainWindow.EnableSFML ();
 
   // Loading of the textures 2D
-  Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
   GLuint  uiTitleTexID      = oTextures2DManager.LoadTexture (Textures2DManager::TexType::SFML_TEXTURE, "datas/gameTitle/title", "png"),
-          uiLogoTexID       = oTextures2DManager.LoadTexture (Textures2DManager::TexType::SFML_TEXTURE, "datas/gameTitle/titlelogo", "png"),
-          uiBackgroundTexID = oTextures2DManager.LoadTexture (Textures2DManager::TexType::SFML_TEXTURE, "datas/gameTitle/background", "png");
+          uiLogoTexID       = oTextures2DManager.LoadTexture (Textures2DManager::TexType::SFML_TEXTURE, "datas/gameTitle/titlelogo", "png");
 
   // Create a render list 2D
   Renderer2D& oRenderer2D = stContext.m_oGraphicsEngine.GetRenderer2D ();
   m_uiRenderList2D_ID = oRenderer2D.CreateRenderList ();
   RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
 
-  // Game Title Background
-  m_uiBackground_ID = oRenderList2D.PushBack<sf::Sprite> ();
-  sf::Sprite& sfBackground = oRenderList2D.GetDrawable<sf::Sprite> (m_uiBackground_ID);
-  sfBackground.setTexture (oTextures2DManager.GetSFMLTexture (uiBackgroundTexID));
   // Game Title
   m_uiTitle_ID = oRenderList2D.PushBack<sf::Sprite> ();
   sf::Sprite& sfTitle = oRenderList2D.GetDrawable<sf::Sprite> (m_uiTitle_ID);
@@ -107,6 +121,10 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
 
 ////////////////////////////////////////////////////////////
 TitleState::~TitleState ( void ) {
+  // Delete the camera 3D
+  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  oCameraManager.Erase (m_uiCamera_ID);
+  // Delete the render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Erase (m_uiRenderList2D_ID);
 }
@@ -118,6 +136,27 @@ TitleState::~TitleState ( void ) {
 ////////////////////////////////////////////////////////////
 void TitleState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+  gluPerspective (69.0, static_cast<GLdouble> (gmMainWindow.GetWidth ())/static_cast<GLdouble> (gmMainWindow.GetHeight ()), 0.1, 128.0);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+
+  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+	// Skybox test
+	glPushMatrix ();
+  glLoadIdentity ();
+	m_oSkybox.UpdateMVP (oCamera.GetPosition (), oCamera.GetFocalisation (), oCamera.GetOrientation ());
+  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors at the place of SFML.
+  glDepthMask (GL_FALSE);   ///< Disable drawing in the depth buffer
+  glEnable (GL_TEXTURE_CUBE_MAP);
+	m_oSkybox.Draw (m_stContext.m_oGraphicsEngine.GetTextures2DManager ());
+  glDisable (GL_TEXTURE_CUBE_MAP);
+  glDepthMask (GL_TRUE);    ///< Enable drawing in the depth buffer
+	glPopMatrix ();
+
   gmMainWindow.EnableSFML ();
 
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
@@ -141,6 +180,14 @@ void TitleState::Draw ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean TitleState::Update ( void ) {
+  // Update the camera 3D
+  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+  // Rotate the camera 3D
+  oCamera.RotationYFirstPerson (drimi::Radians (1.f/4.f));
+  oCamera.ApplyMove ();
+  oCamera.FocaliseFirstPerson ();
+  oCamera.UseMVP ();
 
 	return GL_FALSE;
 }

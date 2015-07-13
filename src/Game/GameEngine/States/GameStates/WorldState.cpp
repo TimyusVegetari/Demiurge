@@ -34,7 +34,9 @@ WorldState::WorldState ( StateStack& oStack, ST_Context stContext ) :
   m_uiRenderList2D_ID       (0),
   m_uiSimpleInformations_ID (0),
   m_uiCamera_ID             (0),
-  m_bMoved                  (GL_FALSE)
+  m_bMoved                  (GL_FALSE),
+  m_oSkybox                 (),
+  m_oBox                    ()
 {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
@@ -46,6 +48,20 @@ WorldState::WorldState ( StateStack& oStack, ST_Context stContext ) :
   // Initialize the camera 3D
   oCamera.SetViewport (0, 0, gmMainWindow.GetWidth (), gmMainWindow.GetHeight ());
   oCamera.SetPerspective (69.f, 0.1f, 128.f);
+
+	// Skybox test
+  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors activated by SFML.
+  glEnable (GL_TEXTURE_CUBE_MAP);
+  Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
+	m_oSkybox.SetCubeMapID (oTextures2DManager.LoadTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, "./datas/skybox/skybox", "png"));
+  glDisable (GL_TEXTURE_CUBE_MAP);
+	if (!m_oSkybox.InitializeCubeVBO ()) {
+    // Debug : It will be necessary to process the errors, in the future.
+  }
+
+	m_oBox.SetDimensions (1.f, 1.f, 1.f);
+	m_oBox.InitializeDatas ();
+	m_oBox.InitializeBuffers (VBO_NORMALES | VBO_COLORS);
 
   gmMainWindow.EnableSFML ();
 
@@ -73,6 +89,9 @@ WorldState::~WorldState ( void ) {
   // Delete the render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Erase (m_uiRenderList2D_ID);
+
+  m_oBox.DeleteBuffers ();
+  m_oBox.DeleteDatas ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -82,6 +101,34 @@ WorldState::~WorldState ( void ) {
 ////////////////////////////////////////////////////////////
 void WorldState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+  gluPerspective (69.0, static_cast<GLdouble> (gmMainWindow.GetWidth ())/static_cast<GLdouble> (gmMainWindow.GetHeight ()), 0.1, 128.0);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+
+  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+	// Skybox test
+	glPushMatrix ();
+  glLoadIdentity ();
+	m_oSkybox.UpdateMVP (oCamera.GetPosition (), oCamera.GetFocalisation (), oCamera.GetOrientation ());
+  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors at the place of SFML.
+  glDepthMask (GL_FALSE);   ///< Disable drawing in the depth buffer
+  glEnable (GL_TEXTURE_CUBE_MAP);
+	m_oSkybox.Draw (m_stContext.m_oGraphicsEngine.GetTextures2DManager ());
+  glDisable (GL_TEXTURE_CUBE_MAP);
+  glDepthMask (GL_TRUE);    ///< Enable drawing in the depth buffer
+	glPopMatrix ();
+
+  gluLookAt (oCamera.GetPosition ().x, oCamera.GetPosition ().y, oCamera.GetPosition ().z,
+             oCamera.GetFocalisation ().x, oCamera.GetFocalisation ().y, oCamera.GetFocalisation ().z,
+             oCamera.GetOrientation ().x, oCamera.GetOrientation ().y, oCamera.GetOrientation ().z);
+  glEnable (GL_DEPTH_TEST);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  m_oBox.Render (VBO_NORMALES | VBO_COLORS, GL_QUADS);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glDisable (GL_DEPTH_TEST);
 
   gmMainWindow.EnableSFML ();
 
@@ -153,22 +200,24 @@ GLboolean WorldState::HandleInput ( void ) {
 
   // Move the camera 3D
   if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Up)) {
-    oCamera.MoveForwardAndBack (1.f);
+    oCamera.MoveForwardAndBack (0.3f);
     m_bMoved = GL_TRUE;
   } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Down)) {
-    oCamera.MoveForwardAndBack (-1.f);
+    oCamera.MoveForwardAndBack (-0.3f);
     m_bMoved = GL_TRUE;
-  } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Right)) {
-    oCamera.MoveRightAndLeft (1.f);
+  }
+  if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Right)) {
+    oCamera.MoveRightAndLeft (-0.3f);
     m_bMoved = GL_TRUE;
   } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Left)) {
-    oCamera.MoveRightAndLeft (-1.f);
+    oCamera.MoveRightAndLeft (0.3f);
     m_bMoved = GL_TRUE;
-  } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Numpad9)) {
-    oCamera.MoveUpAndDown (1.f);
+  }
+  if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Numpad9)) {
+    oCamera.MoveUpAndDown (0.3f);
     m_bMoved = GL_TRUE;
   } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Numpad3)) {
-    oCamera.MoveUpAndDown (-1.f);
+    oCamera.MoveUpAndDown (-0.3f);
     m_bMoved = GL_TRUE;
   }
 

@@ -22,46 +22,35 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file TitleState.hpp
- * \brief Class to define the title state of the game.
+ * \file Skybox.hpp
+ * \brief Class to define a skybox.
  * \author Anthony Acroute
- * \version 0.1
- * \date 2015
+ * \version 0.2
+ * \date 2012-2015
  *
  */
 
-#ifndef TITLESTATE_HPP__
-#define TITLESTATE_HPP__
+#ifndef SKYBOX_HPP__
+#define SKYBOX_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../State.hpp"
 #include <Game/includes.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/Skybox/Skybox.hpp>
+#include <Game/GameEngine/GraphicsEngine/Textures2D/Textures2DManager.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexBufferObject.hpp>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create the title state of the game.
-/// This state contain the title of the game and the menu to play, or
-/// for the options, etc...
+/// \brief Class to create a sky around the player.
 ///
 ////////////////////////////////////////////////////////////
-class TitleState : public State {
+class Skybox : private VertexBufferObject {
 
   public :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint            m_uiRenderList2D_ID;
-    GLuint            m_uiTitle_ID,
-                      m_uiTitleLogo_ID,
-                      m_uiPressEnter_ID,
-                      m_uiVersion_ID,
-                      m_uiLicense_ID;
-    GLint             m_iTitleLogoFrameX,
-                      m_iTitleLogoFrameY;
-    GLuint            m_uiCamera_ID;
-    Skybox            m_oSkybox;
+    GLuint    m_uiCubeMapID;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -71,67 +60,60 @@ class TitleState : public State {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a title state.
+    /// This constructor defines a skybox.
     ///
     ////////////////////////////////////////////////////////////
-    TitleState ( StateStack& oStack, ST_Context stContext );
+    Skybox ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the state.
+    /// Cleans up all the internal resources used by the skybox.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~TitleState ( void );
+    ~Skybox ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the state.
+    /// \brief Set the identifier of the cube map texture.
+    ///
+    /// \param uiTextureID  Identifier of the texture.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw ( void );
+    void SetCubeMapID ( const GLuint uiTextureID );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Call all the update of the components of the state.
-    ///
-    /// \return True to permit the other states to be updated, false else.
+    /// \brief Initialize the VBO datas (Vertex and textures coordinates).
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean Update ( void );
+    virtual void InitializeDatas ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the events for all the components of the state.
+    /// \brief Initialize the cube vbo.
     ///
-    /// \param eEventType   The current event type.
-    ///        sfKeyCode    The current keyboard key code.
-    ///
-    /// \return True to permit the events of the other states to be checked, false else.
+    /// \return True if initialization succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+    GLboolean InitializeCubeVBO ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the inputs for all the components of the state.
+    /// \brief Update the mvp matrix.
     ///
-    /// \return True to permit the inputs of the other states to be checked, false else.
+    /// \param
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleInput ( void );
+    void UpdateMVP ( const drimi::Vec3f& v3fCamPosition, const drimi::Vec3f& v3fCamFocalisation, const drimi::Vec3f& v3fCamOrientation );
 
     ////////////////////////////////////////////////////////////
-    // Internal methods
-    ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the main render window of the game.
+    /// \brief Draw all the composants of the skybox.
     ///
-    /// \return The main render window of the game
+    /// \param
     ///
     ////////////////////////////////////////////////////////////
-    gm::RenderWindow& GetMainWindow ( void );
+    void Draw ( Textures2DManager& oTextures2DManager );
 };
 
-#endif // TITLESTATE_HPP__
+#endif // SKYBOX_HPP__
