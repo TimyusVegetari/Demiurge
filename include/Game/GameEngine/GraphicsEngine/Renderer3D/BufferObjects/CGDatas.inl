@@ -87,6 +87,9 @@ GLboolean CGDatas<T>::SendDatas ( void ) {
     if (m_iDatasArraySize != 0 && m_tDatasArray != NULL) {
       glBufferData (m_eTarget, m_iDatasArraySize * static_cast<GLsizei> (sizeof (T)), m_tDatasArray, GL_STATIC_DRAW);
       // Debug : It will be necessary to check OpenGL error, in the future.
+      delete[] m_tDatasArray;
+      m_tDatasArray = NULL;
+
       return GL_TRUE;
     }
   }
@@ -98,7 +101,7 @@ template <typename T>
 void CGDatas<T>::DeleteDatas ( void ) {
   if (m_tDatasArray != NULL) {
     delete[] m_tDatasArray;
-    m_tDatasArray       = NULL;
+    m_tDatasArray = NULL;
   }
   m_iDatasArraySize   = 0;
   m_iStep             = 0;

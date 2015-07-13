@@ -47,21 +47,27 @@ VertexBufferObject::~VertexBufferObject ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GLboolean VertexBufferObject::InitializeBuffers ( void ) {
+GLboolean VertexBufferObject::InitializeBuffers ( GLuint uiMask ) {
   GLint iNoError = 1;
 
   // Génération des ids
   iNoError &= m_oVertex.GenBufferID ();
-  iNoError &= m_oNormales.GenBufferID ();
-  iNoError &= m_oColors.GenBufferID ();
-  iNoError &= m_oTextures.GenBufferID ();
+  if ((uiMask & VBO_NORMALES) == 1)
+    iNoError &= m_oNormales.GenBufferID ();
+  if ((uiMask & VBO_COLORS) == 2)
+    iNoError &= m_oColors.GenBufferID ();
+  if ((uiMask & VBO_TEXTURES) == 4)
+    iNoError &= m_oTextures.GenBufferID ();
   iNoError &= m_oIndex.GenBufferID ();
 
   if (iNoError == 1) {
     iNoError &= m_oVertex.SendDatas ();
-    iNoError &= m_oNormales.SendDatas ();
-    iNoError &= m_oColors.SendDatas ();
-    iNoError &= m_oTextures.SendDatas ();
+    if ((uiMask & VBO_NORMALES) == 1)
+      iNoError &= m_oNormales.SendDatas ();
+    if ((uiMask & VBO_COLORS) == 2)
+      iNoError &= m_oColors.SendDatas ();
+    if ((uiMask & VBO_TEXTURES) == 4)
+      iNoError &= m_oTextures.SendDatas ();
     iNoError &= m_oIndex.SendDatas ();
     if (iNoError == 0) {
       std::cout << "Error in VBO : Sending of datas for " << m_szTypeName << " to the graphics card impossible !" << std::endl;
@@ -79,7 +85,7 @@ GLboolean VertexBufferObject::InitializeBuffers ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void VertexBufferObject::Render ( GLuint uiMask ) {
+void VertexBufferObject::Render ( GLuint uiMask, GLenum eMode ) {
   // Enable buffers
   if (m_oVertex.GetStep () != 0) {
     glEnableClientState (GL_VERTEX_ARRAY);          ///< Activate vertex coords array
@@ -100,7 +106,7 @@ void VertexBufferObject::Render ( GLuint uiMask ) {
     // Draw with index
     GLsizei iIndexArraySize = BindIndex ();
     if (iIndexArraySize != 0)
-      glDrawElements (GL_QUADS, iIndexArraySize, GL_UNSIGNED_INT, 0);
+      glDrawElements (eMode, iIndexArraySize, GL_UNSIGNED_INT, 0);
 
     if ((uiMask & VBO_TEXTURES) == 4)
       glDisableClientState (GL_TEXTURE_COORD_ARRAY);  ///< Deactivate texture coords array

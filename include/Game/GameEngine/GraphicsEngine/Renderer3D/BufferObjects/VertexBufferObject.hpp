@@ -98,19 +98,25 @@ class VertexBufferObject {
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the OpenGL buffers.
     ///
+    /// \param uiMask   Bits mask to active one or many type of datas
+    ///                 used in the VBO to render.
+    ///
     /// \return True if initialization succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean InitializeBuffers ( void );
+    GLboolean InitializeBuffers ( GLuint uiMask );
 
     ////////////////////////////////////////////////////////////
     /// \brief Render the VBO.
     ///
     /// \param uiMask   Bits mask to active one or many type of datas
     ///                 used in the VBO to render.
+    ///        eMode    Specifies what kind of primitives to render.
+    ///                 Symbolic constants : GL_POINTS, GL_LINE_STRIP,
+    ///                 GL_TRIANGLE_STRIP, GL_QUADS, etc...
     ///
     ////////////////////////////////////////////////////////////
-    void Render ( GLuint uiMask );
+    void Render ( GLuint uiMask, GLenum eMode );
 
     ////////////////////////////////////////////////////////////
     /// \brief Delete the OpenGL buffers.
