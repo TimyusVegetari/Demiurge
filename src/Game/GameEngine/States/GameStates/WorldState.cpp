@@ -79,6 +79,8 @@ WorldState::WorldState ( StateStack& oStack, ST_Context stContext ) :
 	oSimpleInformations.setPosition     (0.f, 0.f);
 
   gmMainWindow.DisableSFML ();
+
+  gmMainWindow.SetMouseVisibility (GL_FALSE);
 }
 
 ////////////////////////////////////////////////////////////
@@ -97,6 +99,19 @@ WorldState::~WorldState ( void ) {
 ////////////////////////////////////////////////////////////
 // General methods
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+void WorldState::ResizeView ( void ) {
+  // Getting of the main window
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+
+  // Get the camera 3D
+  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+  // Initialize the camera 3D
+  oCamera.SetViewport (0, 0, gmMainWindow.GetWidth (), gmMainWindow.GetHeight ());
+  oCamera.SetPerspective (69.f, 0.1f, 128.f);
+}
 
 ////////////////////////////////////////////////////////////
 void WorldState::Draw ( void ) {
@@ -176,12 +191,14 @@ GLboolean WorldState::HandleEvent ( const Event::Type eEventType, const sf::Keyb
     GLfloat fRelMouseX = static_cast<GLfloat> (sf::Mouse::getPosition (gmMainWindow).x) - gmMainWindow.GetView ().getCenter ().x;
     GLfloat fRelMouseY = static_cast<GLfloat> (sf::Mouse::getPosition (gmMainWindow).y) - gmMainWindow.GetView ().getCenter ().y;
     // Rotate the camera 3D
-    oCamera.RotationZXFirstPerson (-drimi::Radians (fRelMouseY/8.f));
-    oCamera.RotationYFirstPerson (drimi::Radians (fRelMouseX/8.f));
+    oCamera.RotationZXFirstPerson (-drimi::Atan (fRelMouseY)/18.f);
+    oCamera.RotationYFirstPerson (drimi::Atan (fRelMouseX)/18.f);
     sf::Mouse::setPosition (sf::Vector2i (static_cast<GLint> (gmMainWindow.GetWidth ()/2), static_cast<GLint> (gmMainWindow.GetHeight ()/2)), gmMainWindow);
   }
 
-  if (eEventType == Event::Type::KeyPressed) {
+	if (eEventType == Event::Type::Resized) {
+    ResizeView ();
+  } else if (eEventType == Event::Type::KeyPressed) {
     switch (sfKeyCode) {
       case sf::Keyboard::Key::Escape :
         gmMainWindow.Close ();
@@ -200,24 +217,24 @@ GLboolean WorldState::HandleInput ( void ) {
 
   // Move the camera 3D
   if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Up)) {
-    oCamera.MoveForwardAndBack (0.3f);
+    oCamera.MoveForwardAndBack (0.1f);
     m_bMoved = GL_TRUE;
   } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Down)) {
-    oCamera.MoveForwardAndBack (-0.3f);
+    oCamera.MoveForwardAndBack (-0.1f);
     m_bMoved = GL_TRUE;
   }
   if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Right)) {
-    oCamera.MoveRightAndLeft (-0.3f);
+    oCamera.MoveRightAndLeft (-0.1f);
     m_bMoved = GL_TRUE;
   } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Left)) {
-    oCamera.MoveRightAndLeft (0.3f);
+    oCamera.MoveRightAndLeft (0.1f);
     m_bMoved = GL_TRUE;
   }
   if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Numpad9)) {
-    oCamera.MoveUpAndDown (0.3f);
+    oCamera.MoveUpAndDown (0.1f);
     m_bMoved = GL_TRUE;
   } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Numpad3)) {
-    oCamera.MoveUpAndDown (-0.3f);
+    oCamera.MoveUpAndDown (-0.1f);
     m_bMoved = GL_TRUE;
   }
 

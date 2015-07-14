@@ -84,13 +84,34 @@ InDevInfoState::~InDevInfoState ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
+void InDevInfoState::ResizeView ( void ) {
+  // Getting of the main window
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+
+  gmMainWindow.EnableSFML ();
+
+  // Get the render list 2D
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
+
+	// In development information title
+  drimi::BmpText& oTitle  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiTitle_ID);
+	oTitle.setPosition    (gmMainWindow.GetView ().getCenter ().x, 100.f);
+	// In development information contant
+  drimi::BmpText& oContent  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiContent_ID);
+	oContent.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
+
+  gmMainWindow.DisableSFML ();
+}
+
+////////////////////////////////////////////////////////////
 void InDevInfoState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
   gmMainWindow.EnableSFML ();
-	
+
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
-	
+
   gmMainWindow.DisableSFML ();
 }
 
@@ -110,7 +131,9 @@ GLboolean InDevInfoState::Update ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean InDevInfoState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
-	if (eEventType == Event::Type::KeyPressed) {
+	if (eEventType == Event::Type::Resized) {
+    ResizeView ();
+	} else if (eEventType == Event::Type::KeyPressed) {
     if (sfKeyCode == sf::Keyboard::Key::Return) {
       RequestStackPop ();
       RequestStackPush (States::ID::Title);

@@ -187,14 +187,22 @@ class RenderWindow : public sf::RenderWindow {
     inline void SetIcon ( GLuint uiWidth, GLuint uiHeight, const sf::Uint8* puiPixels ) { setIcon (uiWidth, uiHeight, puiPixels); }
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the size of the rendering region of the window.
+    ///
+    /// \param sfSize   New size, in pixels.
+    ///
+    ////////////////////////////////////////////////////////////
+    inline void SetSize ( sf::Vector2u sfSize ) { setSize (sfSize); }
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the width of the rendering region of the window.
     ///
     /// \param uiWidth  New width, in pixels.
     ///
-    /// \see SetWidth
+    /// \see GetWidth
     ///
     ////////////////////////////////////////////////////////////
-    inline void SetWidth ( GLuint uiWidth ) { return setSize (sf::Vector2u (uiWidth, getSize ().y)); }
+    inline void SetWidth ( GLuint uiWidth ) { setSize (sf::Vector2u (uiWidth, getSize ().y)); }
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the width of the rendering region of the window.
@@ -214,10 +222,10 @@ class RenderWindow : public sf::RenderWindow {
     ///
     /// \param uiHeight New height, in pixels.
     ///
-    /// \see SetHeight
+    /// \see GetHeight
     ///
     ////////////////////////////////////////////////////////////
-    inline void SetHeight ( GLuint uiHeight ) { return setSize (sf::Vector2u (getSize ().x, uiHeight)); }
+    inline void SetHeight ( GLuint uiHeight ) { setSize (sf::Vector2u (getSize ().x, uiHeight)); }
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the height of the rendering region of the window.

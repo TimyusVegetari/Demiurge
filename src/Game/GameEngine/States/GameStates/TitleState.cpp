@@ -94,7 +94,7 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   oPressEnter.SetString    ("- Press Enter to continue -");
   oPressEnter.SetColor     (sf::Color::Green);
 	oPressEnter.SetOrigin    (oPressEnter.GetLocalBounds ().width / 2.f, oPressEnter.GetLocalBounds ().height / 2.f);
-	oPressEnter.setPosition  (gmMainWindow.GetView ().getCenter ().x, gmMainWindow.GetView ().getCenter ().y);
+	oPressEnter.setPosition  (gmMainWindow.GetView ().getCenter ().x, sfTitleLogo.getPosition ().y+sfTitleLogo.getLocalBounds ().height);
 
 	// Game version
   m_uiVersion_ID = oRenderList2D.PushBack<drimi::BmpText> ();
@@ -132,6 +132,44 @@ TitleState::~TitleState ( void ) {
 ////////////////////////////////////////////////////////////
 // General methods
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+void TitleState::ResizeView ( void ) {
+  // Getting of the main window
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+
+  // Get the camera 3D
+  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+  // Initialize the camera 3D
+  oCamera.SetViewport (0, 0, gmMainWindow.GetWidth (), gmMainWindow.GetHeight ());
+  oCamera.SetPerspective (69.f, 0.1f, 128.f);
+
+  gmMainWindow.EnableSFML ();
+
+  // Get the render list 2D
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
+
+  // Game Title
+  sf::Sprite& sfTitle = oRenderList2D.GetDrawable<sf::Sprite> (m_uiTitle_ID);
+	sfTitle.setPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
+  // Game Title Logo
+  sf::Sprite& sfTitleLogo = oRenderList2D.GetDrawable<sf::Sprite> (m_uiTitleLogo_ID);
+	sfTitleLogo.setPosition     (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f - 3.f));
+	// Game Press Enter
+  drimi::BmpText& oPressEnter = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiPressEnter_ID);
+	oPressEnter.setPosition  (gmMainWindow.GetView ().getCenter ().x, sfTitleLogo.getPosition ().y+sfTitleLogo.getLocalBounds ().height);
+
+	// Game version
+  drimi::BmpText& oVersion = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiVersion_ID);
+	oVersion.setPosition  (5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
+	// Game licence
+  drimi::BmpText& oLicense = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiLicense_ID);
+	oLicense.setPosition  (static_cast<GLfloat> (gmMainWindow.GetWidth ()) - 5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
+
+  gmMainWindow.DisableSFML ();
+}
 
 ////////////////////////////////////////////////////////////
 void TitleState::Draw ( void ) {
@@ -198,6 +236,8 @@ GLboolean TitleState::HandleEvent ( const Event::Type eEventType, const sf::Keyb
 
   if (eEventType == Event::Type::Closed) {
     gmMainWindow.Close ();
+	} else if (eEventType == Event::Type::Resized) {
+    ResizeView ();
 	} else if (eEventType == Event::Type::KeyPressed) {
     switch (sfKeyCode) {
       case sf::Keyboard::Key::Escape :

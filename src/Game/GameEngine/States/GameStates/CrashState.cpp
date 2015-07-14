@@ -75,13 +75,34 @@ CrashState::~CrashState ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
+void CrashState::ResizeView ( void ) {
+  // Getting of the main window
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+
+  gmMainWindow.EnableSFML ();
+
+  // Get the render list 2D
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
+
+  // Error message
+  drimi::BmpText& oError  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiError_ID);
+	oError.setPosition      (gmMainWindow.GetView ().getCenter ().x, 100.f);
+	//Error details
+  drimi::BmpText& oDetails  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiDetails_ID);
+	oDetails.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
+
+  gmMainWindow.DisableSFML ();
+}
+
+////////////////////////////////////////////////////////////
 void CrashState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
   gmMainWindow.EnableSFML ();
-	
+
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
-	
+
   gmMainWindow.DisableSFML ();
 }
 
@@ -92,7 +113,9 @@ GLboolean CrashState::Update ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean CrashState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
-	if (eEventType == Event::Type::KeyPressed) {
+	if (eEventType == Event::Type::Resized) {
+    ResizeView ();
+	} else if (eEventType == Event::Type::KeyPressed) {
     if (sfKeyCode == sf::Keyboard::Key::Escape) {
       gm::RenderWindow& gmMainWindow = GetMainWindow ();
       gmMainWindow.Close ();

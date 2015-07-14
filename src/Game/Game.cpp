@@ -116,7 +116,11 @@ void Game::GamePaint ( void ) {
   // Test of the clock to determine if the frame delay is passed
   if (FrameClock ()) {
     gm::RenderWindow& gmMainWindow = GetWindow (RenderTargets::ID::MainWindow);
-    gmMainWindow.Clear ();
+    //gmMainWindow.Clear ();
+
+    glClearDepth (1.f);
+    glClearColor (0.f, 0.f, 0.f, 0.f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw of the game states, scenes, ...
     m_oStateStack.Draw ();
@@ -190,6 +194,7 @@ void Game::ProcessInput ( void ) {
       // Resize window :
       case sf::Event::Resized :
         gmMainWindow.SetView (sf::View (sf::FloatRect (0.f, 0.f, static_cast<GLfloat> (sfEvent.size.width), static_cast<GLfloat> (sfEvent.size.height))));
+        gmMainWindow.SetSize (sf::Vector2u (sfEvent.size.width, sfEvent.size.height));
         ComputeWindowCenter ();
         eEventType = Event::Type::Resized;
         break;
