@@ -37,6 +37,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Cameras/Camera.hpp>
+//#define GLM_SWIZZLE
+//#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> // glm::lookAt, glm::perspective
+#include <glm/geometric.hpp> // glm::cross, glm::normalize
+#include <glm/trigonometric.hpp> // glm::cos, glm::sin, glm::acos, glm::asin, glm::atan
 
 ////////////////////////////////////////////////////////////
 Camera::Camera ( void ) :
@@ -65,9 +70,9 @@ Camera::Camera ( void ) :
 }
 
 ////////////////////////////////////////////////////////////
-Camera::Camera ( drimi::Vec3f v3fCoord ) :
+Camera::Camera ( glm::vec3 v3fCoord ) :
   m_v3fPosition       (v3fCoord),
-  m_v3fLocalFocalisation  (drimi::Vec3f (0.f, 0.f, DISTMAX)),
+  m_v3fLocalFocalisation  (glm::vec3 (0.f, 0.f, DISTMAX)),
   m_v3fGlobalFocalisation (v3fCoord + m_v3fLocalFocalisation),
   m_v3fOrientation    (0.f, 1.f, 0.f),
   m_v3fMoveVector     (),
@@ -108,21 +113,21 @@ void Camera::UseMVP ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Camera::FocaliseFirstPerson ( void ) {
-  m_m44GlobalView = drimi::LookAt (
+  m_m44GlobalView = glm::lookAt (
       m_v3fPosition,            // Camera position in World Space
       m_v3fGlobalFocalisation,  // and looks at the origin
       m_v3fOrientation          // Head is up (set to 0,-1,0 to look upside-down)
   );
-  m_m44LocalView = drimi::LookAt (
-      drimi::Vec3f (0.f, 0.f, 0.f), // Camera position to zero
-      m_v3fLocalFocalisation,       // and looks at the origin
-      m_v3fOrientation              // Head is up (set to 0,-1,0 to look upside-down)
+  m_m44LocalView = glm::lookAt (
+      glm::vec3 (0.f, 0.f, 0.f),  // Camera position to zero
+      m_v3fLocalFocalisation,     // and looks at the origin
+      m_v3fOrientation            // Head is up (set to 0,-1,0 to look upside-down)
   );
 }
 
 ////////////////////////////////////////////////////////////
 void Camera::FocaliseThirdPerson ( void ) {
-  m_m44GlobalView = drimi::LookAt (
+  m_m44GlobalView = glm::lookAt (
       -m_v3fGlobalFocalisation, // Camera position behind the observer
       m_v3fPosition,            // and looks at the observer
       m_v3fOrientation          // Head is up (set to 0,-1,0 to look upside-down)
@@ -131,7 +136,7 @@ void Camera::FocaliseThirdPerson ( void ) {
 
 ////////////////////////////////////////////////////////////
 void Camera::MoveForwardAndBack ( GLfloat fDistance ) {
-  m_v3fMoveVector += drimi::Normalize (m_v3fLocalFocalisation) * fDistance;
+  m_v3fMoveVector += glm::normalize (m_v3fLocalFocalisation) * fDistance;
 }
 
 ////////////////////////////////////////////////////////////
@@ -141,39 +146,38 @@ void Camera::MoveUpAndDown ( GLfloat fDistance ) {
 
 ////////////////////////////////////////////////////////////
 void Camera::MoveRightAndLeft ( GLfloat fDistance ) {
-  drimi::Vec3f v3fMoveVector (m_v3fLocalFocalisation.x, 0.f, m_v3fLocalFocalisation.z);
-  drimi::Vec3f v3fVerticalAxis (m_v3fOrientation.x, m_v3fOrientation.y, m_v3fOrientation.z);
-  m_v3fMoveVector += drimi::Cross (v3fVerticalAxis, drimi::Normalize (v3fMoveVector) * fDistance);
+  glm::vec3 v3fMoveVector (m_v3fLocalFocalisation.x, 0.f, m_v3fLocalFocalisation.z);
+  glm::vec3 v3fVerticalAxis (m_v3fOrientation.x, m_v3fOrientation.y, m_v3fOrientation.z);
+  m_v3fMoveVector += glm::cross (v3fVerticalAxis, glm::normalize (v3fMoveVector) * fDistance);
 }
 
 ////////////////////////////////////////////////////////////
 void Camera::ApplyMove ( void ) {
   m_v3fPosition           += m_v3fMoveVector;
   m_v3fGlobalFocalisation += m_v3fMoveVector;
-  m_v3fLocalFocalisation  += m_v3fMoveVector;
-  m_v3fMoveVector         = drimi::Vec3f ();
+  m_v3fMoveVector         = glm::vec3 ();
 }
 
 ////////////////////////////////////////////////////////////
 void Camera::RotationYFirstPerson ( GLfloat fAngle ) {
-  SetFocalisation (drimi::Vec3f (((m_v3fLocalFocalisation.x)*drimi::Cos (fAngle) -
-                                  (m_v3fLocalFocalisation.z)*drimi::Sin (fAngle))+
-                                 m_v3fPosition.x,
-                                 m_v3fGlobalFocalisation.y,
-                                 ((m_v3fLocalFocalisation.x)*drimi::Sin (fAngle) +
-                                  (m_v3fLocalFocalisation.z)*drimi::Cos (fAngle))+
-                                 m_v3fPosition.z));
+  SetFocalisation (glm::vec3 (((m_v3fLocalFocalisation.x)*glm::cos (fAngle) -
+                               (m_v3fLocalFocalisation.z)*glm::sin (fAngle))+
+                              m_v3fPosition.x,
+                              m_v3fGlobalFocalisation.y,
+                              ((m_v3fLocalFocalisation.x)*glm::sin (fAngle) +
+                               (m_v3fLocalFocalisation.z)*glm::cos (fAngle))+
+                              m_v3fPosition.z));
 }
 
 ////////////////////////////////////////////////////////////
 void Camera::RotationYThirdPerson ( GLfloat fAngle ) {
-  SetPosition (drimi::Vec3f (((m_v3fPosition.x-m_v3fGlobalFocalisation.x)*drimi::Cos (fAngle) -
-                              (m_v3fPosition.z-m_v3fGlobalFocalisation.z)*drimi::Sin (fAngle))+
-                             m_v3fGlobalFocalisation.x,
-                             m_v3fPosition.y,
-                             ((m_v3fPosition.x-m_v3fGlobalFocalisation.x)*drimi::Sin (fAngle) +
-                              (m_v3fPosition.z-m_v3fGlobalFocalisation.z)*drimi::Cos (fAngle))+
-                             m_v3fGlobalFocalisation.z));
+  SetPosition (glm::vec3 (((m_v3fPosition.x-m_v3fGlobalFocalisation.x)*glm::cos (fAngle) -
+                           (m_v3fPosition.z-m_v3fGlobalFocalisation.z)*glm::sin (fAngle))+
+                          m_v3fGlobalFocalisation.x,
+                          m_v3fPosition.y,
+                          ((m_v3fPosition.x-m_v3fGlobalFocalisation.x)*glm::sin (fAngle) +
+                           (m_v3fPosition.z-m_v3fGlobalFocalisation.z)*glm::cos (fAngle))+
+                          m_v3fGlobalFocalisation.z));
 }
 
 ////////////////////////////////////////////////////////////
@@ -181,42 +185,42 @@ void Camera::RotationZXFirstPerson ( GLfloat fAngle ) {
   GLfloat fRadius;
 
   // Computing of the radius of the local focalisation
-  fRadius = drimi::Length (m_v3fLocalFocalisation);
+  fRadius = glm::length (m_v3fLocalFocalisation);
   // Computing of the pitch (horizontal angle)
   if (m_v3fLocalFocalisation.x == 0.f)
     m_fPitch = 1.f;
   else
-    m_fPitch = drimi::Atan (m_v3fLocalFocalisation.z/m_v3fLocalFocalisation.x);
+    m_fPitch = glm::atan (m_v3fLocalFocalisation.z/m_v3fLocalFocalisation.x);
   if (m_v3fLocalFocalisation.x < 0.f) m_fPitch += DRIMI_fPI;
   else if (m_v3fLocalFocalisation.z < 0.f) m_fPitch += 2.f*DRIMI_fPI;
 
   // Computing of the yaw (vertical angle)
-  m_fYaw = drimi::Asin (m_v3fLocalFocalisation.y/fRadius) + fAngle;
+  m_fYaw = glm::asin (m_v3fLocalFocalisation.y/fRadius) + fAngle;
   if (m_fYaw > DRIMI_fPI/2.f) m_fYaw = DRIMI_fPI/2.f;
   else if (m_fYaw < -DRIMI_fPI/2.f) m_fYaw = -DRIMI_fPI/2.f;
 
   // Computing of P after rotation
-  m_v3fLocalFocalisation = fRadius * drimi::Vec3f (drimi::Cos (m_fPitch)*drimi::Cos (m_fYaw), drimi::Sin (m_fYaw), drimi::Sin (m_fPitch)*drimi::Cos (m_fYaw));
+  m_v3fLocalFocalisation = fRadius * glm::vec3 (glm::cos (m_fPitch)*glm::cos (m_fYaw), glm::sin (m_fYaw), glm::sin (m_fPitch)*glm::cos (m_fYaw));
   m_v3fGlobalFocalisation = m_v3fLocalFocalisation + m_v3fPosition;
 }
 
 ////////////////////////////////////////////////////////////
 void Camera::RotationZXThirdPerson ( GLfloat fAngle ) {
   GLfloat fRadius;
-  drimi::Vec3f P = m_v3fPosition - m_v3fGlobalFocalisation;
+  glm::vec3 P = m_v3fPosition - m_v3fGlobalFocalisation;
 
-  fRadius = drimi::Length (P);
-  m_fPitch = drimi::Acos (P.z/fRadius);
+  fRadius = glm::length (P);
+  m_fPitch = glm::acos (P.z/fRadius);
   if (P.x == 0.f)
     m_fYaw = 1.f;
   else
-    m_fYaw = drimi::Atan (P.y/P.x);
+    m_fYaw = glm::atan (P.y/P.x);
 
   m_fPitch += fAngle;
   if (m_fPitch <= 0.f) m_fPitch = 0.00001f;
   else if (m_fPitch >= DRIMI_fPI) m_fPitch = DRIMI_fPI-0.00001f;
 
-  P = fRadius * drimi::Vec3f (drimi::Sin (m_fPitch)*drimi::Cos (m_fYaw), drimi::Sin (m_fPitch)*drimi::Sin (m_fYaw), drimi::Cos (m_fPitch)) + m_v3fGlobalFocalisation;
+  P = fRadius * glm::vec3 (glm::sin (m_fPitch)*glm::cos (m_fYaw), glm::sin (m_fPitch)*glm::sin (m_fYaw), glm::cos (m_fPitch)) + m_v3fGlobalFocalisation;
   SetPosition (P);
 }
 
@@ -225,18 +229,18 @@ void Camera::RotationZXThirdPerson ( GLfloat fAngle ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-void Camera::SetPosition ( drimi::Vec3f v3fCoord ) {
+void Camera::SetPosition ( glm::vec3 v3fCoord ) {
   m_v3fPosition = v3fCoord;
 }
 
 ////////////////////////////////////////////////////////////
-void Camera::SetFocalisation ( drimi::Vec3f v3fCoord ) {
+void Camera::SetFocalisation ( glm::vec3 v3fCoord ) {
   m_v3fGlobalFocalisation = v3fCoord;
   m_v3fLocalFocalisation = m_v3fGlobalFocalisation - m_v3fPosition;
 }
 
 ////////////////////////////////////////////////////////////
-void Camera::SetOrientation ( drimi::Vec3f v3fCoord ) {
+void Camera::SetOrientation ( glm::vec3 v3fCoord ) {
   m_v3fOrientation = v3fCoord;
 }
 
@@ -270,26 +274,31 @@ void Camera::SetPerspective ( GLfloat fFovy, GLfloat fNear, GLfloat fFar ) {
     m_fFar = fFar;
 
   // Projection matrix : A° Field of View, B:C ratio, display range : D unit <-> E units
-  m_m44Projection = drimi::Perspective (m_fFovy, static_cast<GLfloat> (m_iViewportWidth)/static_cast<GLfloat> (m_iViewportHeight), m_fNear, m_fFar);
+  m_m44Projection = glm::perspective (m_fFovy, static_cast<GLfloat> (m_iViewportWidth)/static_cast<GLfloat> (m_iViewportHeight), m_fNear, m_fFar);
   // Model matrix : an identity matrix (model will be at the origin)
-  m_m44Model    = drimi::Mat4x4f (1.0f); // Changes for each model !
+  m_m44Model    = glm::mat4 (1.0f); // Changes for each model !
 
   m_fPitch = 0.f;
   m_fYaw = 0.f;
 }
 
 ////////////////////////////////////////////////////////////
-drimi::Vec3f& Camera::GetPosition ( void ) {
+glm::vec3& Camera::GetPosition ( void ) {
   return m_v3fPosition;
 }
 
 ////////////////////////////////////////////////////////////
-drimi::Vec3f& Camera::GetFocalisation ( void ) {
+glm::vec3& Camera::GetGlobalFocalisation ( void ) {
   return m_v3fGlobalFocalisation;
 }
 
 ////////////////////////////////////////////////////////////
-drimi::Vec3f& Camera::GetOrientation ( void ) {
+glm::vec3& Camera::GetLocalFocalisation ( void ) {
+  return m_v3fLocalFocalisation;
+}
+
+////////////////////////////////////////////////////////////
+glm::vec3& Camera::GetOrientation ( void ) {
   return m_v3fOrientation;
 }
 
@@ -301,9 +310,16 @@ std::string Camera::ToStringPosition ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-std::string Camera::ToStringFocalisation ( void ) {
+std::string Camera::ToStringGlobalFocalisation ( void ) {
   std::ostringstream oss;
   oss << m_v3fGlobalFocalisation.x << ", " << m_v3fGlobalFocalisation.y << ", " << m_v3fGlobalFocalisation.z;
+  return oss.str ();
+}
+
+////////////////////////////////////////////////////////////
+std::string Camera::ToStringLocalFocalisation ( void ) {
+  std::ostringstream oss;
+  oss << m_v3fLocalFocalisation.x << ", " << m_v3fLocalFocalisation.y << ", " << m_v3fLocalFocalisation.z;
   return oss.str ();
 }
 
@@ -315,16 +331,16 @@ std::string Camera::ToStringOrientation ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-drimi::Vec3f& Camera::GetMoveVector ( void ) {
+glm::vec3& Camera::GetMoveVector ( void ) {
   return m_v3fMoveVector;
 }
 
 ////////////////////////////////////////////////////////////
-drimi::Mat4x4f& Camera::GetGlobalMVP ( void ) {
+glm::mat4& Camera::GetGlobalMVP ( void ) {
   return m_m44GlobalMvp;
 }
 
 ////////////////////////////////////////////////////////////
-drimi::Mat4x4f& Camera::GetLocalMVP ( void ) {
+glm::mat4& Camera::GetLocalMVP ( void ) {
   return m_m44LocalMvp;
 }

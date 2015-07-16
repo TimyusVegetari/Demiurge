@@ -35,7 +35,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 # User's settings - General C++ Flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -pedantic -Wconversion -Wsign-conversion -fexceptions")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -pedantic -Wconversion -Wsign-conversion -fexceptions -Wno-comment")
+### "-Wno-comment" is temporary to by-pass a bug in glm as long as we use a version previous to 0.9.7.0
 
 # Release / Debug flags
 #set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
@@ -50,13 +51,12 @@ add_definitions(-DGLEW_STATIC -DSFML_STATIC)
 include_directories(
         ${sfml_include_dir}
 				${glew_include_dir}
-				${tinyxml2_include_dir}
 				${freeimage_include_dir}
+				${glm_include_dir}
 )
 link_directories(
         ${sfml_lib_dir}
 				${glew_lib_dir}
-				${tinyxml2_lib_dir}
 				${freeimage_lib_dir}
 )
 
@@ -152,7 +152,6 @@ target_link_libraries(
 				${freetype_lib_name}
 				${jpeg_lib_name}
 				${m_lib_name}
-				${tinyxml2_lib_name}
 				${freeimage_lib_name}
 )
 

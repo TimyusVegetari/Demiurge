@@ -33,6 +33,6 @@
 // Include DRIMI
 #include <DRIMI/BitmapFont/BmpFont.hpp>
 #include <DRIMI/BitmapFont/BmpText.hpp>
-#include <DRIMI/Mathematics/Config.hpp>
+//#include <DRIMI/Mathematics/Config.hpp>
 
 #endif // GAME_INCLUDES_HPP_

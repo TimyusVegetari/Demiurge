@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/States/GameStates/WorldState.hpp>
 #include <Game/gamedev_info.hpp>
+#include <glm/trigonometric.hpp> // glm::atan
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
@@ -127,7 +128,7 @@ void WorldState::Draw ( void ) {
 	// Skybox test
 	glPushMatrix ();
   glLoadIdentity ();
-	m_oSkybox.UpdateMVP (oCamera.GetPosition (), oCamera.GetFocalisation (), oCamera.GetOrientation ());
+	m_oSkybox.UpdateMVP (oCamera.GetLocalFocalisation (), oCamera.GetOrientation ());
   glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors at the place of SFML.
   glDepthMask (GL_FALSE);   ///< Disable drawing in the depth buffer
   glEnable (GL_TEXTURE_CUBE_MAP);
@@ -137,7 +138,7 @@ void WorldState::Draw ( void ) {
 	glPopMatrix ();
 
   gluLookAt (oCamera.GetPosition ().x, oCamera.GetPosition ().y, oCamera.GetPosition ().z,
-             oCamera.GetFocalisation ().x, oCamera.GetFocalisation ().y, oCamera.GetFocalisation ().z,
+             oCamera.GetGlobalFocalisation ().x, oCamera.GetGlobalFocalisation ().y, oCamera.GetGlobalFocalisation ().z,
              oCamera.GetOrientation ().x, oCamera.GetOrientation ().y, oCamera.GetOrientation ().z);
   glEnable (GL_DEPTH_TEST);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -174,7 +175,8 @@ GLboolean WorldState::Update ( void ) {
   oSimpleInformations.SetString       (std::string ("Fps : ")+m_stContext.m_oGraphicsEngine.GetFrameRate ()
                                       +std::string ("\nPlayer position : ")+oCamera.ToStringPosition ()
                                       +std::string ("\n       orientation : ")+oCamera.ToStringOrientation ()
-                                      +std::string ("\n       focalisation : ")+oCamera.ToStringFocalisation ());
+                                      +std::string ("\n       focalisation : ")+oCamera.ToStringGlobalFocalisation ()
+                                      +std::string (" (")+oCamera.ToStringLocalFocalisation ()+std::string (")"));
 
   gmMainWindow.DisableSFML ();
 	return GL_FALSE;
@@ -191,8 +193,8 @@ GLboolean WorldState::HandleEvent ( const Event::Type eEventType, const sf::Keyb
     GLfloat fRelMouseX = static_cast<GLfloat> (sf::Mouse::getPosition (gmMainWindow).x) - gmMainWindow.GetView ().getCenter ().x;
     GLfloat fRelMouseY = static_cast<GLfloat> (sf::Mouse::getPosition (gmMainWindow).y) - gmMainWindow.GetView ().getCenter ().y;
     // Rotate the camera 3D
-    oCamera.RotationZXFirstPerson (-drimi::Atan (fRelMouseY)/18.f);
-    oCamera.RotationYFirstPerson (drimi::Atan (fRelMouseX)/18.f);
+    oCamera.RotationZXFirstPerson (-glm::radians (fRelMouseY*0.25f)); ///< 0.25f is the mouse sensitivity
+    oCamera.RotationYFirstPerson (glm::radians (fRelMouseX*0.25f));
     sf::Mouse::setPosition (sf::Vector2i (static_cast<GLint> (gmMainWindow.GetWidth ()/2), static_cast<GLint> (gmMainWindow.GetHeight ()/2)), gmMainWindow);
   }
 

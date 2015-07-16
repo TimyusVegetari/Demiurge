@@ -84,9 +84,8 @@ GLboolean Skybox::InitializeCubeVBO ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void Skybox::UpdateMVP ( const drimi::Vec3f& v3fCamPosition, const drimi::Vec3f& v3fCamFocalisation, const drimi::Vec3f& v3fCamOrientation ) {
-  drimi::Vec3f v3fCamFocale = v3fCamFocalisation - v3fCamPosition;
-  gluLookAt (0, 0, 0, v3fCamFocale.x, v3fCamFocale.y, v3fCamFocale.z, v3fCamOrientation.x, v3fCamOrientation.y, v3fCamOrientation.z);
+void Skybox::UpdateMVP ( const glm::vec3& v3fCamLocalFocalisation, const glm::vec3& v3fCamOrientation ) {
+  gluLookAt (0, 0, 0, v3fCamLocalFocalisation.x, v3fCamLocalFocalisation.y, v3fCamLocalFocalisation.z, v3fCamOrientation.x, v3fCamOrientation.y, v3fCamOrientation.z);
 }
 
 ////////////////////////////////////////////////////////////

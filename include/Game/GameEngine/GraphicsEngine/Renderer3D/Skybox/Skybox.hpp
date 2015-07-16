@@ -39,6 +39,7 @@
 #include <Game/includes.hpp>
 #include <Game/GameEngine/GraphicsEngine/Textures2D/Textures2DManager.hpp>
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexBufferObject.hpp>
+#include <glm/vec3.hpp> // glm::vec3
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to create a sky around the player.
@@ -105,7 +106,7 @@ class Skybox : private VertexBufferObject {
     /// \param
     ///
     ////////////////////////////////////////////////////////////
-    void UpdateMVP ( const drimi::Vec3f& v3fCamPosition, const drimi::Vec3f& v3fCamFocalisation, const drimi::Vec3f& v3fCamOrientation );
+    void UpdateMVP ( const glm::vec3& v3fCamLocalFocalisation, const glm::vec3& v3fCamOrientation );
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw all the composants of the skybox.

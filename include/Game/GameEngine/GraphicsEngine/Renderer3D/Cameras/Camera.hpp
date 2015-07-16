@@ -42,6 +42,8 @@
 #include <DRIMI/Mathematics/Config.hpp>
 #include <sstream>
 #include <memory>
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/mat4x4.hpp> // glm::mat4
 
 #define DISTMIN 16.f
 #define DISTMAX 32.f
@@ -62,16 +64,16 @@ class Camera {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    drimi::Vec3f    m_v3fPosition;
-    drimi::Vec3f    m_v3fLocalFocalisation;
-    drimi::Vec3f    m_v3fGlobalFocalisation;
-    drimi::Vec3f    m_v3fOrientation;
-    drimi::Vec3f    m_v3fMoveVector;
+    glm::vec3       m_v3fPosition;
+    glm::vec3       m_v3fLocalFocalisation;
+    glm::vec3       m_v3fGlobalFocalisation;
+    glm::vec3       m_v3fOrientation;
+    glm::vec3       m_v3fMoveVector;
     GLint           m_iViewportX, m_iViewportY;
     GLsizei         m_iViewportWidth, m_iViewportHeight;
     GLfloat         m_fFovy, m_fRatio, m_fNear, m_fFar;
     GLfloat         m_fPitch, m_fYaw;
-    drimi::Mat4x4f  m_m44LocalMvp, m_m44GlobalMvp,
+    glm::mat4       m_m44LocalMvp, m_m44GlobalMvp,
                     m_m44Model,
                     m_m44LocalView, m_m44GlobalView,
                     m_m44Projection;
@@ -95,7 +97,7 @@ class Camera {
     /// This constructor defines a camera.
     ///
     ////////////////////////////////////////////////////////////
-    Camera ( drimi::Vec3f v3fCoord );
+    Camera ( glm::vec3 v3fCoord );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -202,7 +204,7 @@ class Camera {
     /// \param v3fCoord   Coordinates position.
     ///
     ////////////////////////////////////////////////////////////
-    void SetPosition ( drimi::Vec3f v3fCoord );
+    void SetPosition ( glm::vec3 v3fCoord );
 
     ////////////////////////////////////////////////////////////
     /// \brief Edit coordinates of the camera focalisation.
@@ -210,7 +212,7 @@ class Camera {
     /// \param v3fCoord   Coordinates focalisation.
     ///
     ////////////////////////////////////////////////////////////
-    void SetFocalisation ( drimi::Vec3f v3fCoord );
+    void SetFocalisation ( glm::vec3 v3fCoord );
 
     ////////////////////////////////////////////////////////////
     /// \brief Edit coordinates of the camera orientation.
@@ -218,7 +220,7 @@ class Camera {
     /// \param v3fCoord   Coordinates orientation.
     ///
     ////////////////////////////////////////////////////////////
-    void SetOrientation ( drimi::Vec3f v3fCoord );
+    void SetOrientation ( glm::vec3 v3fCoord );
 
     ////////////////////////////////////////////////////////////
     /// \brief Edit the viewport of the camera.
@@ -247,15 +249,23 @@ class Camera {
     /// \return Position coordinates.
     ///
     ////////////////////////////////////////////////////////////
-    drimi::Vec3f& GetPosition ( void );
+    glm::vec3& GetPosition ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get coordinates of the camera focalisation.
+    /// \brief Get coordinates of the camera global focalisation.
     ///
-    /// \return Focalisation coordinates.
+    /// \return Global focalisation coordinates.
     ///
     ////////////////////////////////////////////////////////////
-    drimi::Vec3f& GetFocalisation ( void );
+    glm::vec3& GetGlobalFocalisation ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get coordinates of the camera local focalisation.
+    ///
+    /// \return Local focalisation coordinates.
+    ///
+    ////////////////////////////////////////////////////////////
+    glm::vec3& GetLocalFocalisation ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get coordinates of the camera orientation.
@@ -263,7 +273,7 @@ class Camera {
     /// \return Orientation coordinates.
     ///
     ////////////////////////////////////////////////////////////
-    drimi::Vec3f& GetOrientation ( void );
+    glm::vec3& GetOrientation ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get coordinates of the camera position in string.
@@ -274,12 +284,20 @@ class Camera {
     std::string ToStringPosition ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get coordinates of the camera focalisation in string.
+    /// \brief Get coordinates of the camera global focalisation in string.
     ///
-    /// \return String to display focalisation coordinates.
+    /// \return String to display global focalisation coordinates.
     ///
     ////////////////////////////////////////////////////////////
-    std::string ToStringFocalisation ( void );
+    std::string ToStringGlobalFocalisation ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get coordinates of the camera local focalisation in string.
+    ///
+    /// \return String to display local focalisation coordinates.
+    ///
+    ////////////////////////////////////////////////////////////
+    std::string ToStringLocalFocalisation ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get coordinates of the camera orientation in string.
@@ -295,7 +313,7 @@ class Camera {
     /// \return Computed movement vector.
     ///
     ////////////////////////////////////////////////////////////
-    drimi::Vec3f& GetMoveVector ( void );
+    glm::vec3& GetMoveVector ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get global MVP matrix.
@@ -303,7 +321,7 @@ class Camera {
     /// \return Computed global MVP matrix.
     ///
     ////////////////////////////////////////////////////////////
-    drimi::Mat4x4f& GetGlobalMVP ( void );
+    glm::mat4& GetGlobalMVP ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get local MVP matrix.
@@ -311,7 +329,7 @@ class Camera {
     /// \return Computed local MVP matrix.
     ///
     ////////////////////////////////////////////////////////////
-    drimi::Mat4x4f& GetLocalMVP ( void );
+    glm::mat4& GetLocalMVP ( void );
 };
 
 #endif // CAMERA_HPP__

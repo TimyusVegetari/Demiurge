@@ -186,7 +186,7 @@ void TitleState::Draw ( void ) {
 	// Skybox test
 	glPushMatrix ();
   glLoadIdentity ();
-	m_oSkybox.UpdateMVP (oCamera.GetPosition (), oCamera.GetFocalisation (), oCamera.GetOrientation ());
+	m_oSkybox.UpdateMVP (oCamera.GetLocalFocalisation (), oCamera.GetOrientation ());
   glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors at the place of SFML.
   glDepthMask (GL_FALSE);   ///< Disable drawing in the depth buffer
   glEnable (GL_TEXTURE_CUBE_MAP);
