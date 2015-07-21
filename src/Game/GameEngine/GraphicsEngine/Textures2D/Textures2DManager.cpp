@@ -35,8 +35,8 @@ Textures2DManager::Textures2DManager ( void ) :
   Texture2D::Ptr psfTexture (new sf::Texture ());
   psfTexture->create (16, 16);
 
-	m_mTextureMap.insert (std::make_pair (Textures2DManager::TexType::NONE, std::move (psfTexture)));
-	m_mTextureIDMap.insert (std::make_pair (Textures2DManager::TexType::NONE, 0));
+	m_mTextureMap.insert (std::make_pair (NONE_TEXTURE, std::move (psfTexture)));
+	m_mTextureIDMap.insert (std::make_pair (NONE_TEXTURE, NONE_TEXTURE));
 }
 
 ////////////////////////////////////////////////////////////
@@ -60,27 +60,27 @@ GLuint Textures2DManager::LoadTexture ( Textures2DManager::TexType eType, const 
     } else {
       // Message which has to be delivered to the errors manager.
       //...
-      uiTextureID = 0;
+      uiTextureID = NONE_TEXTURE;
     }
   } else if (eType == Textures2DManager::TexType::CUBEMAP_TEXTURE) {
     // List of successive faces to create textures of the cube map
     GLenum eCubeMapTarget[6] = {
-      GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
       GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-      GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
       GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-      GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
-      GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+      GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+      GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
     };
 
     // Load the textures
     sf::Image sfTexture[6];
-    sfTexture[0].loadFromFile (szFileName+"_left."+szFileExt);
-    sfTexture[1].loadFromFile (szFileName+"_right."+szFileExt);
-    sfTexture[2].loadFromFile (szFileName+"_bottom."+szFileExt);
-    sfTexture[3].loadFromFile (szFileName+"_top."+szFileExt);
-    sfTexture[4].loadFromFile (szFileName+"_back."+szFileExt);
-    sfTexture[5].loadFromFile (szFileName+"_front."+szFileExt);
+    sfTexture[0].loadFromFile (szFileName+"_right."+szFileExt);
+    sfTexture[1].loadFromFile (szFileName+"_left."+szFileExt);
+    sfTexture[2].loadFromFile (szFileName+"_top."+szFileExt);
+    sfTexture[3].loadFromFile (szFileName+"_bottom."+szFileExt);
+    sfTexture[4].loadFromFile (szFileName+"_front."+szFileExt);
+    sfTexture[5].loadFromFile (szFileName+"_back."+szFileExt);
 
     // Generate an identifier of the cube map
     GLuint uiOpenGLTexID;
@@ -105,10 +105,11 @@ GLuint Textures2DManager::LoadTexture ( Textures2DManager::TexType eType, const 
 
     glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
   } else
-    uiTextureID = 0;
+    uiTextureID = NONE_TEXTURE;
 
   return uiTextureID;
 }
@@ -117,14 +118,14 @@ GLuint Textures2DManager::LoadTexture ( Textures2DManager::TexType eType, const 
 void Textures2DManager::DeleteTexture ( Textures2DManager::TexType eType, GLuint uiTextureID ) {
   if (eType == Textures2DManager::TexType::SFML_TEXTURE) {
     auto mFound = m_mTextureMap.find (uiTextureID);
-    if (mFound == m_mTextureMap.end () || uiTextureID == 0) {
+    if (mFound == m_mTextureMap.end () || uiTextureID == NONE_TEXTURE) {
       // Message which has to be delivered to the errors manager.
       //...
     } else
       m_mTextureMap.erase (uiTextureID);
   } else if (Textures2DManager::TexType::CUBEMAP_TEXTURE) {
     auto mFound = m_mTextureIDMap.find (uiTextureID);
-    if (mFound == m_mTextureIDMap.end () || uiTextureID == 0) {
+    if (mFound == m_mTextureIDMap.end () || uiTextureID == NONE_TEXTURE) {
       // Message which has to be delivered to the errors manager.
       //...
     } else {
@@ -159,7 +160,7 @@ const sf::Texture& Textures2DManager::GetSFMLTexture ( GLuint uiTextureID ) {
     // Message which has to be delivered to the errors manager.
     //...
 
-    return *m_mTextureMap[0];
+    return *m_mTextureMap[NONE_TEXTURE];
   }
   return *mFound->second;
 }
