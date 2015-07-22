@@ -60,12 +60,12 @@ Camera::Camera ( void ) :
   m_fFar              (0.0),
   m_fPitch            (0.f),
   m_fYaw              (0.f),
-  m_m44LocalMvp       (),
-  m_m44GlobalMvp      (),
-  m_m44Model          (),
-  m_m44LocalView      (),
-  m_m44GlobalView     (),
-  m_m44Projection     ()
+  m_m44LocalMvp       (1.f),
+  m_m44GlobalMvp      (1.f),
+  m_m44Model          (1.f),
+  m_m44LocalView      (1.f),
+  m_m44GlobalView     (1.f),
+  m_m44Projection     (1.f)
 {
 }
 
@@ -86,12 +86,12 @@ Camera::Camera ( glm::vec3 v3fCoord ) :
   m_fFar              (0.0),
   m_fPitch            (0.f),
   m_fYaw              (0.f),
-  m_m44LocalMvp       (),
-  m_m44GlobalMvp      (),
-  m_m44Model          (),
-  m_m44LocalView      (),
-  m_m44GlobalView     (),
-  m_m44Projection     ()
+  m_m44LocalMvp       (1.f),
+  m_m44GlobalMvp      (1.f),
+  m_m44Model          (1.f),
+  m_m44LocalView      (1.f),
+  m_m44GlobalView     (1.f),
+  m_m44Projection     (1.f)
 {
 }
 
@@ -274,7 +274,7 @@ void Camera::SetPerspective ( GLfloat fFovy, GLfloat fNear, GLfloat fFar ) {
     m_fFar = fFar;
 
   // Projection matrix : A° Field of View, B:C ratio, display range : D unit <-> E units
-  m_m44Projection = glm::perspective (m_fFovy, static_cast<GLfloat> (m_iViewportWidth)/static_cast<GLfloat> (m_iViewportHeight), m_fNear, m_fFar);
+  m_m44Projection = glm::perspective (glm::radians(m_fFovy), static_cast<GLfloat> (m_iViewportWidth)/static_cast<GLfloat> (m_iViewportHeight), m_fNear, m_fFar);
   // Model matrix : an identity matrix (model will be at the origin)
   m_m44Model    = glm::mat4 (1.0f); // Changes for each model !
 
@@ -343,4 +343,14 @@ glm::mat4& Camera::GetGlobalMVP ( void ) {
 ////////////////////////////////////////////////////////////
 glm::mat4& Camera::GetLocalMVP ( void ) {
   return m_m44LocalMvp;
+}
+
+////////////////////////////////////////////////////////////
+glm::mat4 Camera::GetProjection ( void ) {
+  return m_m44Projection;
+}
+
+////////////////////////////////////////////////////////////
+glm::mat4 Camera::GetLocalMV ( void ) {
+  return m_m44LocalView * m_m44Model;
 }
