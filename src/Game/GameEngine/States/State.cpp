@@ -85,3 +85,12 @@ void State::RequestStateClear ( void ) {
 State::ST_Context State::GetContext ( void ) const {
 	return m_stContext;
 }
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+OGLManager& State::GetOGLManager ( void ) {
+  return m_stContext.m_oGraphicsEngine.GetOGLManager ();
+}

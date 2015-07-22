@@ -63,6 +63,7 @@ class OGLManager {
     sf::Context*          m_psfContext;
     std::set<std::string> m_szExtensions;
     GLboolean             m_bErrorGLExt;
+    GLuint                m_uiVersion;
 
   public:
     ////////////////////////////////////////////////////////////
@@ -106,10 +107,10 @@ class OGLManager {
     ////////////////////////////////////////////////////////////
     /// \brief Check if OpenGL supports the expected version.
     ///
-    /// \param dVersionLimit  The expected version.
+    /// \return True if checking succeeded.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean CheckGLversion ( const GLdouble dVersionLimit );
+    GLboolean CheckGLversion ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if OpenGL detected an error in a function.
@@ -140,6 +141,10 @@ class OGLManager {
     void CheckExtension ( const std::string& szExtension );
 
     ////////////////////////////////////////////////////////////
+    // Accessor methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return if no support problem of OpenGL extension was find.
     ///
     /// \return True if initializing succeeded, false if it failed.
@@ -154,6 +159,14 @@ class OGLManager {
     ///
     ////////////////////////////////////////////////////////////
     OGLConfig& GetConfig ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the OpenGL version of the computer.
+    ///
+    /// \return OpenGL version of the computer.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLuint GetVersion ( void );
 };
 
 #endif //OGLMANAGER_HPP_

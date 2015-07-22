@@ -181,6 +181,14 @@ class GraphicsEngine {
     GLuint GetElapsedFrames ( void );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the OpenGL manager.
+    ///
+    /// \return Instance of the OpenGL manager.
+    ///
+    ////////////////////////////////////////////////////////////
+    OGLManager& GetOGLManager ( void );
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the textures 2D manager.
     ///
     /// \return Instance of the textures 2D manager.

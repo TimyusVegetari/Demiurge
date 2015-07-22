@@ -32,7 +32,8 @@ OGLManager::OGLManager ( void ) :
   m_stOGLConfig   {0, 0, 0},
   m_psfContext    (NULL),
   m_szExtensions  (),
-  m_bErrorGLExt   (GL_TRUE)
+  m_bErrorGLExt   (GL_TRUE),
+  m_uiVersion     (0)
 {
 }
 
@@ -61,18 +62,19 @@ GLboolean OGLManager::InitializeGlew ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean OGLManager::CheckGLversion ( const GLdouble dVersionLimit ) {
+GLboolean OGLManager::CheckGLversion ( void ) {
   std::cout << "Status: Using GLEW " << glewGetString (GLEW_VERSION) << std::endl;
   std::cout << "Status: Using OpenGL " << glGetString (GL_VERSION) << std::endl;
   std::cout << "Status: Using GLSL " << glGetString (GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
-  if (!atof ((char*)glGetString (GL_VERSION)) >= dVersionLimit) {
-    std::cout << "OGLManager : OpenGL version check failed" << std::endl;
-    std::cout << " > Error: This game works with OpenGL in version " << dVersionLimit << " ou higher." << std::endl <<
-                 "          You must update the driver of your graphic card to continue." << std::endl;
-    return GL_FALSE;
-  } else
-    std::cout << "OGLManager : OpenGL version check succeed" << std::endl;
+  if (atof ((char*)glGetString (GL_VERSION)) < 3.0) {
+    m_uiVersion = 2;
+    std::cout << "Warning : OGLManager has detected your OpenGL version is previous to 3.0 !" << std::endl;
+    std::cout << " > This game can works with your OpenGL version, but no optimal way and can miss some special effects." << std::endl <<
+                 " > If it is possible, update the driver of your graphic card to have a better game experience." << std::endl;
+  } else {
+    m_uiVersion = 3;
+  }
 
   return GL_TRUE;
 }
@@ -152,6 +154,10 @@ void OGLManager::CheckExtension ( const std::string& szExtension ) {
 }
 
 ////////////////////////////////////////////////////////////
+// Accessor methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
 GLboolean OGLManager::GetErrorGLExt ( void ) {
   return m_bErrorGLExt;
 }
@@ -159,4 +165,9 @@ GLboolean OGLManager::GetErrorGLExt ( void ) {
 ////////////////////////////////////////////////////////////
 OGLManager::OGLConfig& OGLManager::GetConfig ( void ) {
   return m_stOGLConfig;
+}
+
+////////////////////////////////////////////////////////////
+GLuint OGLManager::GetVersion ( void ) {
+  return m_uiVersion;
 }

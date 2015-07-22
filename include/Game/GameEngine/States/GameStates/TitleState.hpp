@@ -38,6 +38,7 @@
 ////////////////////////////////////////////////////////////
 #include "../State.hpp"
 #include <Game/includes.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/ShaderProgram.hpp>
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Skybox/Skybox.hpp>
 
 ////////////////////////////////////////////////////////////
@@ -61,6 +62,7 @@ class TitleState : public State {
     GLint             m_iTitleLogoFrameX,
                       m_iTitleLogoFrameY;
     GLuint            m_uiCamera_ID;
+    ShaderProgram     m_oShaderProgramSkybox;
     Skybox            m_oSkybox;
 
   public :

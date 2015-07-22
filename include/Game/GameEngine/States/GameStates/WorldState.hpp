@@ -38,6 +38,7 @@
 ////////////////////////////////////////////////////////////
 #include "../State.hpp"
 #include <Game/includes.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/ShaderProgram.hpp>
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Skybox/Skybox.hpp>
 #include <Game/GameObjects/VertexBufferObjects/Box.hpp>
 
@@ -57,6 +58,8 @@ class WorldState : public State {
     GLuint            m_uiSimpleInformations_ID;
     GLuint            m_uiCamera_ID;
     GLboolean         m_bMoved;
+    ShaderProgram     m_oShaderProgramSkybox,
+                      m_oShaderProgramClassic;
     Skybox            m_oSkybox;
     Box               m_oBox;
 

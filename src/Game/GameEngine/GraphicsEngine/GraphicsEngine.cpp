@@ -68,11 +68,12 @@ GLboolean GraphicsEngine::Initialize ( void ) {
   m_oOGLManager.CreateOpenGLContext ();
 
   // Initialize OpenGL
-  if (m_oOGLManager.InitializeGlew () && m_oOGLManager.CheckGLversion (2.1) && m_oOGLManager.InitializeGLExtensions ()) {
+  if (m_oOGLManager.InitializeGlew () && m_oOGLManager.CheckGLversion () && m_oOGLManager.InitializeGLExtensions ()) {
     m_oOGLManager.CheckExtension ("GL_ARB_instanced_arrays");
     m_oOGLManager.CheckExtension ("GL_ARB_draw_instanced");
     m_oOGLManager.CheckExtension ("GL_EXT_framebuffer_object");
     m_oOGLManager.CheckExtension ("GL_EXT_texture3D");
+    m_oOGLManager.CheckExtension ("GL_ARB_texture_cube_map");
   }
 
   if (m_oOGLManager.GetErrorGLExt ()) {
@@ -141,6 +142,11 @@ GLuint GraphicsEngine::GetFrameTrigger ( void ) {
 ////////////////////////////////////////////////////////////
 GLuint GraphicsEngine::GetElapsedFrames ( void ) {
   return m_uiElapsedFrames;
+}
+
+////////////////////////////////////////////////////////////
+OGLManager& GraphicsEngine::GetOGLManager ( void ) {
+  return m_oOGLManager;
 }
 
 ////////////////////////////////////////////////////////////
