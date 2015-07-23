@@ -25,7 +25,7 @@
  * \file Box.hpp
  * \brief Class to define the VBO of a box.
  * \author Anthony Acroute
- * \version 0.3
+ * \version 0.4
  * \date 2013-2015
  *
  */
@@ -37,12 +37,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexBufferObject.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/NormalBufferObject.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/ColorBufferObject.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to define the VBO of a box.
 ///
 ////////////////////////////////////////////////////////////
-class Box : public VertexBufferObject {
+class Box : public VertexBufferObject, NormalBufferObject, ColorBufferObject {
 
   private :
     ////////////////////////////////////////////////////////////
@@ -81,7 +83,23 @@ class Box : public VertexBufferObject {
     /// \brief Initialize the VBO datas (Vertex, normale, etc...).
     ///
     ////////////////////////////////////////////////////////////
-    virtual void  InitializeDatas ( void );
+    virtual void InitializeDatas ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize the VBO.
+    ///
+    /// \return True if initialization succeeded, false if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean InitializeVBO ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw all the composants of the box.
+    ///
+    /// \param
+    ///
+    ////////////////////////////////////////////////////////////
+    void Draw ( GLenum eMode );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods

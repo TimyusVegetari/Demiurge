@@ -24,16 +24,29 @@
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Skybox/Skybox.hpp>
 
 ////////////////////////////////////////////////////////////
+// Constructor(s)/Destructor
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
 Skybox::Skybox ( void ) :
-  VertexBufferObject  (),
-  m_uiCubeMapID       (0)
+  VertexBufferObject      (),
+  Tex3DCoordsBufferObject (),
+  m_uiCubeMapID           (0)
 {
   m_szTypeName  = "VBO::Skybox";
 }
 
 ////////////////////////////////////////////////////////////
 Skybox::~Skybox ( void ) {
+  DeleteBuffers ();
+  m_oTex3DCoords.DeleteBuffer ();
+  DeleteDatas ();
+  m_oTex3DCoords.DeleteDatas ();
 }
+
+////////////////////////////////////////////////////////////
+// General methods
+////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 void Skybox::SetCubeMapID ( const GLuint uiTextureID ) {
@@ -53,9 +66,9 @@ void Skybox::InitializeDatas ( void ) {
        fWidth, fWidth,-fWidth,
        fWidth,-fWidth, fWidth,
        fWidth, fWidth, fWidth
-    }, 24, 3, GL_ARRAY_BUFFER);    ///< Coordinnates of the vertex
+    }, 24);   ///< Coordinnates of the vertex
 
-  m_oTextures.SetDatas (new GLfloat[24] {
+  m_oTex3DCoords.SetDatas (new GLfloat[24] {
       -fWidth,-fWidth,-fWidth,
       -fWidth, fWidth,-fWidth,
       -fWidth,-fWidth, fWidth,
@@ -64,7 +77,7 @@ void Skybox::InitializeDatas ( void ) {
        fWidth, fWidth,-fWidth,
        fWidth,-fWidth, fWidth,
        fWidth, fWidth, fWidth
-    }, 24, 3, GL_ARRAY_BUFFER);  ///< Coordinnates of the textures
+    }, 24);   ///< Coordinnates of the textures
 
   m_oIndex.SetDatas (
     new GLuint[24] {
@@ -74,13 +87,24 @@ void Skybox::InitializeDatas ( void ) {
       1, 5, 3, 7, // Y Positive
       0, 4, 1, 5, // Z Negative
       2, 3, 6, 7, // Z Positive
-    }, 24, 1, GL_ELEMENT_ARRAY_BUFFER);   ///< Index of the vertex and textures
+    }, 24);   ///< Index of the vertex and textures
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean Skybox::InitializeCubeVBO ( void ) {
+GLboolean Skybox::InitializeVBO ( void ) {
+  GLint iNoError = 1;
+
 	InitializeDatas ();
-	return InitializeBuffers (VBO_TEXTURES);
+  // Generating of the buffers
+  iNoError &= m_oTex3DCoords.GenBufferID ();
+  GenBuffers (iNoError);
+  // Sending of the datas
+  if (iNoError == 1) {
+    iNoError &= m_oTex3DCoords.SendDatas ();
+    SendDatas (iNoError);
+  }
+
+  return static_cast<GLboolean> (iNoError);
 }
 
 ////////////////////////////////////////////////////////////
@@ -92,5 +116,10 @@ void Skybox::UpdateMVP ( const glm::vec3& v3fCamLocalFocalisation, const glm::ve
 void Skybox::Draw ( Textures2DManager& oTextures2DManager ) {
   // Binding of the cube map texture
   oTextures2DManager.BindTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, m_uiCubeMapID);
-  Render (VBO_TEXTURES, GL_TRIANGLE_STRIP);
+  glEnableClientState (GL_TEXTURE_COORD_ARRAY); ///< Activate texture coords array
+  ActiveTex3DCoordsPointer ();
+
+  Render (GL_TRIANGLE_STRIP);
+
+  glDisableClientState (GL_TEXTURE_COORD_ARRAY);  ///< Deactivate texture coords array
 }

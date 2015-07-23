@@ -29,16 +29,24 @@
 
 ////////////////////////////////////////////////////////////
 Box::Box ( void ) :
-  VertexBufferObject  (),
-  m_fWidth            (0),
-  m_fHeight           (0),
-  m_fDepth            (0)
+  VertexBufferObject      (),
+  NormalBufferObject      (),
+  ColorBufferObject       (),
+  m_fWidth                (0),
+  m_fHeight               (0),
+  m_fDepth                (0)
 {
   m_szTypeName  = "VBO::Box";
 }
 
 ////////////////////////////////////////////////////////////
 Box::~Box ( void ) {
+  DeleteBuffers ();
+  m_oNormales.DeleteBuffer ();
+  m_oColors.DeleteBuffer ();
+  DeleteDatas ();
+  m_oNormales.DeleteDatas ();
+  m_oColors.DeleteDatas ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -83,7 +91,7 @@ void Box::InitializeDatas ( void ) {
        fMidWidth,  fMidHeight, -fMidDepth,
       -fMidWidth,  fMidHeight, -fMidDepth,
       -fMidWidth,  fMidHeight,  fMidDepth
-    }, 72, 3, GL_ARRAY_BUFFER);
+    }, 72);
 
   m_oNormales.SetDatas (
     new GLfloat[72] {
@@ -117,7 +125,7 @@ void Box::InitializeDatas ( void ) {
        0.f,  1.f,  0.f,
        0.f,  1.f,  0.f,
        0.f,  1.f,  0.f
-    }, 72, 3, GL_ARRAY_BUFFER);
+    }, 72);
 
   m_oColors.SetDatas (
     new GLfloat[72] {
@@ -151,41 +159,7 @@ void Box::InitializeDatas ( void ) {
       1.f, 1.f, 1.f,
       1.f, 1.f, 1.f,
       1.f, 1.f, 1.f
-    }, 72, 3, GL_ARRAY_BUFFER);
-
-  m_oTextures.SetDatas (
-    new GLfloat[48] {
-      // Face 0 : Bottom face
-      1.f, 1.f,
-      1.f, 0.f,
-      0.f, 0.f,
-      0.f, 1.f,
-      // Face 1 : Back face
-      1.f, 1.f,
-      1.f, 0.f,
-      0.f, 0.f,
-      0.f, 1.f,
-      // Face 2 : Right face
-      1.f, 1.f,
-      1.f, 0.f,
-      0.f, 0.f,
-      0.f, 1.f,
-      // Face 3 : Front face
-      1.f, 1.f,
-      1.f, 0.f,
-      0.f, 0.f,
-      0.f, 1.f,
-      // Face 4 : Left face
-      1.f, 1.f,
-      1.f, 0.f,
-      0.f, 0.f,
-      0.f, 1.f,
-      // Face 5 : Top face
-      1.f, 1.f,
-      1.f, 0.f,
-      0.f, 0.f,
-      0.f, 1.f
-    }, 48, 2, GL_ARRAY_BUFFER);
+    }, 72);
 
   m_oIndex.SetDatas (
     new GLuint[24] {
@@ -195,8 +169,45 @@ void Box::InitializeDatas ( void ) {
       12,13,14,15,
       16,17,18,19,
       20,21,22,23
-    }, 24, 1, GL_ELEMENT_ARRAY_BUFFER);
+    }, 24);
 }
+
+////////////////////////////////////////////////////////////
+GLboolean Box::InitializeVBO ( void ) {
+  GLint iNoError = 1;
+
+	InitializeDatas ();
+  // Generating of the buffers
+  iNoError &= m_oNormales.GenBufferID ();
+  iNoError &= m_oColors.GenBufferID ();
+  GenBuffers (iNoError);
+  // Sending of the datas
+  if (iNoError == 1) {
+    iNoError &= m_oNormales.SendDatas ();
+    iNoError &= m_oColors.SendDatas ();
+    SendDatas (iNoError);
+  }
+
+  return static_cast<GLboolean> (iNoError);
+}
+
+////////////////////////////////////////////////////////////
+void Box::Draw ( GLenum eMode ) {
+  // Binding of the cube map texture
+  glEnableClientState (GL_NORMAL_ARRAY);  ///< Activate normal coords array
+  ActiveNormalesPointer ();
+  glEnableClientState (GL_COLOR_ARRAY);   ///< Activate color coords array
+  ActiveColorsPointer ();
+
+  Render (eMode);
+
+  glDisableClientState (GL_COLOR_ARRAY);  ///< Deactivate color coords array
+  glDisableClientState (GL_NORMAL_ARRAY); ///< Deactivate normal coords array
+}
+
+////////////////////////////////////////////////////////////
+// Accessor methods
+////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 void Box::SetDimensions ( GLfloat fWidth, GLfloat fHeight, GLfloat fDepth ) {

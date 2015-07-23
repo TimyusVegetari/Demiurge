@@ -25,7 +25,7 @@
  * \file VertexBufferObject.hpp
  * \brief Class to define a VBO.
  * \author Anthony Acroute
- * \version 0.3
+ * \version 0.4
  * \date 2013-2015
  *
  */
@@ -37,14 +37,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/includes.hpp>
-#include "CGDatas.hpp"
-
-////////////////////////////////////////////////////////////
-// Precompilator data
-////////////////////////////////////////////////////////////
-#define VBO_NORMALES  0x1
-#define VBO_COLORS    0x2
-#define VBO_TEXTURES  0x4
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexArray.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/IndexArray.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to define the base of the VBOs.
@@ -58,11 +52,8 @@ class VertexBufferObject {
     ////////////////////////////////////////////////////////////
     std::string       m_szTypeName;   ///< A name to display the type of VBO
                                       ///  if is necessary (ex. Cube, Sphere, etc...).
-    CGDatas<GLfloat>  m_oVertex,
-                      m_oNormales,
-                      m_oColors,
-                      m_oTextures;
-    CGDatas<GLuint>   m_oIndex;
+    VertexArray       m_oVertex;
+    IndexArray        m_oIndex;
 
   public:
     ////////////////////////////////////////////////////////////
@@ -96,27 +87,28 @@ class VertexBufferObject {
     virtual void InitializeDatas ( void ) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize the OpenGL buffers.
-    ///
-    /// \param uiMask   Bits mask to active one or many type of datas
-    ///                 used in the VBO to render.
+    /// \brief Initialize the VBO.
     ///
     /// \return True if initialization succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean InitializeBuffers ( GLuint uiMask );
+    virtual GLboolean InitializeVBO ( void ) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Render the VBO.
+    /// \brief Generate the OpenGL buffers.
     ///
-    /// \param uiMask   Bits mask to active one or many type of datas
-    ///                 used in the VBO to render.
-    ///        eMode    Specifies what kind of primitives to render.
-    ///                 Symbolic constants : GL_POINTS, GL_LINE_STRIP,
-    ///                 GL_TRIANGLE_STRIP, GL_QUADS, etc...
+    /// \param iNoError   Variable to check if no error is detected.
     ///
     ////////////////////////////////////////////////////////////
-    void Render ( GLuint uiMask, GLenum eMode );
+    void GenBuffers ( GLint &iNoError );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Send the VBO datas to the graphic card.
+    ///
+    /// \param iNoError   Variable to check if no error is detected.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SendDatas ( GLint &iNoError );
 
     ////////////////////////////////////////////////////////////
     /// \brief Delete the OpenGL buffers.
@@ -131,46 +123,6 @@ class VertexBufferObject {
     void DeleteDatas ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Active the vertex pointer of OpenGL.
-    ///
-    /// \return True if activation succeeded, false if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean ActiveVertexPointer ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Active the normale pointer of OpenGL.
-    ///
-    /// \return True if activation succeeded, false if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean ActiveNormalesPointer ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Active the colors pointer of OpenGL.
-    ///
-    /// \return True if activation succeeded, false if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean ActiveColorsPointer ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Active the textures pointer of OpenGL.
-    ///
-    /// \return True if activation succeeded, false if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean ActiveTexturesPointer ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Bind the index of the VBO.
-    ///
-    /// \return The index datas size if binding succeeded, 0 if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLsizei BindIndex ( void );
-
-    ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
@@ -181,6 +133,36 @@ class VertexBufferObject {
     ///
     ////////////////////////////////////////////////////////////
     std::string GetTypeName ( void );
+
+    ////////////////////////////////////////////////////////////
+    // Internal methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Active the vertex pointer of OpenGL.
+    ///
+    /// \return True if activation succeeded, false if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean ActiveVertexPointer ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Bind the index of the VBO.
+    ///
+    /// \return The index datas size if binding succeeded, 0 if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLsizei BindIndex ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Render the VBO (vertex and index).
+    ///
+    /// \param eMode    Specifies what kind of primitives to render.
+    ///                 Symbolic constants : GL_POINTS, GL_LINE_STRIP,
+    ///                 GL_TRIANGLE_STRIP, GL_QUADS, etc...
+    ///
+    ////////////////////////////////////////////////////////////
+    void Render ( GLenum eMode );
 };
 
 #endif // VERTEXBUFFEROBJECT_HPP__

@@ -72,13 +72,12 @@ WorldState::WorldState ( StateStack& oStack, ST_Context stContext ) :
   Textures2DManager& oTextures2DManager = stContext.m_oGraphicsEngine.GetTextures2DManager ();
 	m_oSkybox.SetCubeMapID (oTextures2DManager.LoadTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, "./datas/skybox/skybox", "png"));
   glDisable (GL_TEXTURE_CUBE_MAP);
-	if (!m_oSkybox.InitializeCubeVBO ()) {
+	if (!m_oSkybox.InitializeVBO ()) {
     // Debug : It will be necessary to process the errors, in the future.
   }
 
 	m_oBox.SetDimensions (1.f, 1.f, 1.f);
-	m_oBox.InitializeDatas ();
-	m_oBox.InitializeBuffers (VBO_NORMALES | VBO_COLORS);
+	m_oBox.InitializeVBO ();
 
   gmMainWindow.EnableSFML ();
 
@@ -114,9 +113,6 @@ WorldState::~WorldState ( void ) {
   // Delete the render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Erase (m_uiRenderList2D_ID);
-
-  m_oBox.DeleteBuffers ();
-  m_oBox.DeleteDatas ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -195,7 +191,7 @@ void WorldState::Draw ( void ) {
 
   glEnable (GL_DEPTH_TEST);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  m_oBox.Render (VBO_NORMALES | VBO_COLORS, GL_QUADS);
+  m_oBox.Draw (GL_QUADS);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glDisable (GL_DEPTH_TEST);
 
@@ -297,6 +293,7 @@ GLboolean WorldState::HandleInput ( void ) {
     oCamera.MoveUpAndDown (0.1f);
     m_bMoved = GL_TRUE;
   } else if (sf::Keyboard::isKeyPressed (sf::Keyboard::Key::Numpad3)) {
+    std::cout << "sf::Keyboard::Key::Numpad3" << std::endl;
     oCamera.MoveUpAndDown (-0.1f);
     m_bMoved = GL_TRUE;
   }

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,40 +22,36 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file Skybox.hpp
- * \brief Class to define a skybox.
+ * \file NormalBufferObject.hpp
+ * \brief Class to define a VBO.
  * \author Anthony Acroute
- * \version 0.3
- * \date 2012-2015
+ * \version 0.4
+ * \date 2013-2015
  *
  */
 
-#ifndef SKYBOX_HPP__
-#define SKYBOX_HPP__
+#ifndef NORMALBUFFEROBJECT_HPP__
+#define NORMALBUFFEROBJECT_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/includes.hpp>
-#include <Game/GameEngine/GraphicsEngine/Textures2D/Textures2DManager.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexBufferObject.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/Tex3DCoordsBufferObject.hpp>
-#include <glm/vec3.hpp> // glm::vec3
-#include <glm/mat4x4.hpp> // glm::mat4
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/NormalArray.hpp>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create a sky around the player.
+/// \brief Class to define the normal of the VBOs.
 ///
 ////////////////////////////////////////////////////////////
-class Skybox : private VertexBufferObject, Tex3DCoordsBufferObject {
+class NormalBufferObject {
 
-  public :
+  protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint    m_uiCubeMapID;
+    NormalArray         m_oNormales;
 
-  public :
+  public:
     ////////////////////////////////////////////////////////////
     // Constructor(s)/Destructor
     ////////////////////////////////////////////////////////////
@@ -63,60 +59,30 @@ class Skybox : private VertexBufferObject, Tex3DCoordsBufferObject {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a skybox.
+    /// This constructor defines a VBO.
     ///
     ////////////////////////////////////////////////////////////
-    Skybox ( void );
+    NormalBufferObject          ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the skybox.
+    /// Cleans up all the internal resources used by the VBO.
     ///
     ////////////////////////////////////////////////////////////
-    ~Skybox ( void );
+    virtual ~NormalBufferObject ( void );
 
     ////////////////////////////////////////////////////////////
-    // General methods
+    // Internal methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the identifier of the cube map texture.
+    /// \brief Active the normal pointer of OpenGL.
     ///
-    /// \param uiTextureID  Identifier of the texture.
-    ///
-    ////////////////////////////////////////////////////////////
-    void SetCubeMapID ( const GLuint uiTextureID );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Initialize the VBO datas (Vertex and textures coordinates).
+    /// \return True if activation succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void InitializeDatas ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Initialize the VBO.
-    ///
-    /// \return True if initialization succeeded, false if it failed.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean InitializeVBO ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the mvp matrix.
-    ///
-    /// \param
-    ///
-    ////////////////////////////////////////////////////////////
-    void UpdateMVP ( const glm::vec3& v3fCamLocalFocalisation, const glm::vec3& v3fCamOrientation );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the skybox.
-    ///
-    /// \param
-    ///
-    ////////////////////////////////////////////////////////////
-    void Draw ( Textures2DManager& oTextures2DManager );
+    GLboolean ActiveNormalesPointer ( void );
 };
 
-#endif // SKYBOX_HPP__
+#endif // NORMALBUFFEROBJECT_HPP__

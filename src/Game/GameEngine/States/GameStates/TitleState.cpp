@@ -70,7 +70,7 @@ TitleState::TitleState ( StateStack& oStack, ST_Context stContext ) :
   glEnable (GL_TEXTURE_CUBE_MAP);
 	m_oSkybox.SetCubeMapID (oTextures2DManager.LoadTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, "./datas/skybox/skybox", "png"));
   glDisable (GL_TEXTURE_CUBE_MAP);
-	if (!m_oSkybox.InitializeCubeVBO ()) {
+	if (!m_oSkybox.InitializeVBO ()) {
     // Debug : It will be necessary to process the errors, in the future.
   }
 
