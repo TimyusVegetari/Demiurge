@@ -22,63 +22,38 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file GameObject.hpp
- * \brief Class for the game objects.
+ * \file GOTitle.hpp
+ * \brief Class for the title of the game.
  * \author Anthony Acroute
- * \version 0.2
+ * \version 0.1
  * \date 2015
  *
  */
 
-#ifndef GAMEOBJECT_HPP__
-#define GAMEOBJECT_HPP__
+#ifndef GOTITLE_HPP__
+#define GOTITLE_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/includes.hpp>
-#include <Game/GameEngine/RenderTargets/RenderTargetsManager.hpp>
-#include <Game/GameEngine/GraphicsEngine/GraphicsEngine.hpp>
-#include <Game/EventTypes.hpp>
-#include "GameObjectIdentifiers.hpp"
-
-class GameObjectsManager;
+#include <Game/GameEngine/GameObjects/GameObject.hpp>
+#include <Game/GameEngine/GameObjects/GameObject2D.hpp>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create game objects like as players,
-/// creatures, equipments, vehicules, etc...
+/// \brief Class to create the title for the title of the game.
 ///
 ////////////////////////////////////////////////////////////
-class GameObject {
+class GOTitle : public GameObject, public GameObject2D {
 
-  public :
-    ////////////////////////////////////////////////////////////
-    // Types
-    ////////////////////////////////////////////////////////////
-    typedef std::unique_ptr<GameObject> Ptr; ///< Unique pointer of game object.
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Structure defining a unique ressources context.
-    ///
-    ////////////////////////////////////////////////////////////
-    struct ST_Context {
-			RenderTargetsManager&	m_oRenderTargetsManager;  ///< Reference of the render targets manager of the game.
-			drimi::BmpFont&       m_oBmpFont;               ///< Reference of the bitmap font of the game.
-      GraphicsEngine&       m_oGraphicsEngine;        ///< Reference of the graphics engine of the game.
-			GameObjectsManager&   m_oGameObjectsManager;    ///< Reference of the game objects manager.
-
-			ST_Context  ( RenderTargetsManager&	oRenderTargetsManager,
-                    drimi::BmpFont& oBmpFont,
-                    GraphicsEngine& oGraphicsEngine,
-                    GameObjectsManager& oGameObjectsManager );
-      RenderList2D& GetRenderList2D ( GLuint uiRenderList2D_ID );
-    };
-
-  protected :
+  private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ST_Context&       m_stContext;
+    sf::Vector2f  m_sfPosition;
+    GLuint        m_uiTitle_ID,
+                  m_uiTitleLogo_ID;
+    GLint         m_iTitleLogoFrameX,
+                  m_iTitleLogoFrameY;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -88,10 +63,10 @@ class GameObject {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a game object.
+    /// This constructor defines the game object.
     ///
     ////////////////////////////////////////////////////////////
-    GameObject ( ST_Context& stContext );
+    GOTitle ( ST_Context& stContext );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -99,11 +74,32 @@ class GameObject {
     /// Cleans up all the internal resources used by the game object.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~GameObject ( void );
+    virtual ~GOTitle ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize all the composants of the game object.
+    ///
+    /// \return True if the initialization is not finish, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean Initialize ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Upgrade all the composants of the game object when
+    /// the render target view is resized.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ResizeView ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Update the frames of the animated logo.
+    ///
+    ////////////////////////////////////////////////////////////
+    void UpdateAnimation ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the events for all the components of the state.
@@ -114,39 +110,44 @@ class GameObject {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) = 0;
+    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_FALSE; }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the inputs for all the components of the state.
+    /// \brief Check the inputs for all the components of the game object.
     ///
-    /// \return True to permit the inputs of the other states to be checked, false else.
+    /// \return True to permit the inputs of the other game objects to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleInput ( void ) = 0;
+    virtual GLboolean HandleInput ( void ) { return GL_FALSE; }
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the unique ressources context of the game
+    /// \brief Set the position of the main menu.
     ///
-    /// \return The unique ressources context
+    /// \param fX   X value of the position of the main menu.
+    ///        fY   Y value of the position of the main menu.
     ///
     ////////////////////////////////////////////////////////////
-    ST_Context& GetContext ( void ) const;
+    void SetPosition ( GLfloat fX, GLfloat fY );
 
     ////////////////////////////////////////////////////////////
-    // Internal methods
+    /// \brief Get the position of the title.
+    ///
+    /// \return Position of the title.
+    ///
     ////////////////////////////////////////////////////////////
+    const sf::Vector2f& GetPosition ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenGL manager.
+    /// \brief Get the height of the title.
     ///
-    /// \return The OpenGL manager.
+    /// \return Height of the title.
     ///
     ////////////////////////////////////////////////////////////
-    OGLManager& GetOGLManager ( void );
+    GLfloat GetHeight ( void );
 };
 
-#endif // GAMEOBJECT_HPP__
+#endif // GOTITLE_HPP__

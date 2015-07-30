@@ -76,14 +76,12 @@ GLboolean Game::GameInit ( void ) {
 
   // Render targets registration in the list
   RegisterRenderTargets ();
-
+  // Game objects registration
+  RegisterGameObjects ();
   // States registration in the stack
   RegisterStates ();
   // Prepare the first state of the game
-  m_oStateStack.PushState (States::ID::InDevInfo);
-
-  // Game objects registration
-  RegisterGameObjects ();
+  m_oStateStack.Initialize (States::ID::InDevInfo);
 
   // Set the tick rate of the game mecanic
   SetTickRate (20);

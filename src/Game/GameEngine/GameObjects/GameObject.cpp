@@ -25,15 +25,54 @@
 #include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
 
 ////////////////////////////////////////////////////////////
+// Structures
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+GameObject::ST_Context::ST_Context ( RenderTargetsManager&	oRenderTargetsManager,
+                                drimi::BmpFont& oBmpFont,
+                                GraphicsEngine& oGraphicsEngine,
+                                GameObjectsManager& oGameObjectsManager ) :
+  m_oRenderTargetsManager   (oRenderTargetsManager),
+  m_oBmpFont                (oBmpFont),
+  m_oGraphicsEngine         (oGraphicsEngine),
+  m_oGameObjectsManager     (oGameObjectsManager)
+{
+}
+
+////////////////////////////////////////////////////////////
+RenderList2D& GameObject::ST_Context::GetRenderList2D ( GLuint uiRenderList2D_ID ) {
+  return m_oGraphicsEngine.GetRenderer2D ().GetRenderList (uiRenderList2D_ID);
+}
+
+////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GameObject::GameObject ( GameObjectsManager& oGameObjectsManager ) :
-  m_oGameObjectsManager (oGameObjectsManager)
+GameObject::GameObject ( ST_Context& stContext ) :
+  m_stContext       (stContext)
 {
 }
 
 ////////////////////////////////////////////////////////////
 GameObject::~GameObject ( void ) {
+}
+
+////////////////////////////////////////////////////////////
+// Accessor methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+GameObject::ST_Context& GameObject::GetContext ( void ) const {
+	return m_stContext;
+}
+
+////////////////////////////////////////////////////////////
+// Internal methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+OGLManager& GameObject::GetOGLManager ( void ) {
+  return m_stContext.m_oGraphicsEngine.GetOGLManager ();
 }

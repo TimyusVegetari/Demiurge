@@ -27,7 +27,7 @@
  * \file StateStack.hpp
  * \brief Class for the stack of the states.
  * \author Anthony Acroute
- * \version 0.1
+ * \version 0.3
  * \date 2014-2015
  *
  */
@@ -55,6 +55,7 @@ class StateStack : private sf::NonCopyable {
     enum Action {
       Push,
       Pop,
+      Replace,
       Clear
     }; ///< List of possible actions in the stack.
 
@@ -75,9 +76,11 @@ class StateStack : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
     std::vector<State::Ptr>           m_vStack;       ///< Stack of states.
     std::vector<ST_PendingChange>     m_vPendingList; ///< List of changes ready to be executed for the stack.
-    State::ST_Context                 m_stContext;    ///< Unique ressources context for the game.
+    GameObject::ST_Context            m_stContext;    ///< Unique ressources context for the game.
     std::map<States::ID,
         std::function<State::Ptr ()>> m_mFactories;   ///< List of functions to call constructor of the specific states.
+    State::Ptr                        m_pInitializer; ///< Unique pointer of State to Initialize before execution.
+    GLboolean                         m_bReplacement; ///< Variable to know if the new state will replace the last in the stack.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -92,7 +95,7 @@ class StateStack : private sf::NonCopyable {
     /// \param stContext  Unique ressources context.
     ///
     ////////////////////////////////////////////////////////////
-    explicit StateStack ( State::ST_Context stContext );
+    explicit StateStack ( GameObject::ST_Context stContext );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -116,6 +119,14 @@ class StateStack : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
     template <typename T>
     void RegisterState ( States::ID eStateID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Call the first state.
+    ///
+    /// \param eStateID   ID of the state to launch.
+    ///
+    ////////////////////////////////////////////////////////////
+    void Initialize ( States::ID eStateID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Call all the update of the states in the stack.
@@ -160,6 +171,14 @@ class StateStack : private sf::NonCopyable {
     void PopState ( void );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Remove a state and add another state on the top of the stack.
+    ///
+    /// \param eStateID   ID of the registered state which be added.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ReplaceState ( States::ID eStateID );
+
+    ////////////////////////////////////////////////////////////
     /// \brief Clear the totality of the stack.
     ///
     ////////////////////////////////////////////////////////////
@@ -197,6 +216,12 @@ class StateStack : private sf::NonCopyable {
     ///
     ////////////////////////////////////////////////////////////
     void  ApplyPendingChanges ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Call the initialize of the states in the initializer.
+    ///
+    ////////////////////////////////////////////////////////////
+    void InitializeState ( void );
 };
 
 ////////////////////////////////////////////////////////////

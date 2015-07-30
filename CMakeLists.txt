@@ -35,8 +35,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 # User's settings - General C++ Flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -pedantic -Wconversion -Wsign-conversion -fexceptions -Wno-comment")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wconversion -Wsign-conversion -fexceptions -Wno-comment")
 ### "-Wno-comment" is temporary to by-pass a bug in glm as long as we use a version previous to 0.9.7.0
+### "-Werror" is temporary deleted to by-pass a part of the code which will upgraded later
 
 # Release / Debug flags
 #set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")

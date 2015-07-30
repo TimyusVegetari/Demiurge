@@ -39,8 +39,14 @@ StateStack::ST_PendingChange::ST_PendingChange (StateStack::Action eAction, Stat
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-StateStack::StateStack ( State::ST_Context stContext ) :
-  m_vStack (), m_vPendingList (), m_stContext (stContext), m_mFactories () {
+StateStack::StateStack ( GameObject::ST_Context stContext ) :
+  m_vStack        (),
+  m_vPendingList  (),
+  m_stContext     (stContext),
+  m_mFactories    (),
+  m_pInitializer  (nullptr),
+  m_bReplacement  (GL_FALSE)
+{
 }
 
 ////////////////////////////////////////////////////////////
@@ -52,7 +58,16 @@ StateStack::~StateStack ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
+void StateStack::Initialize ( States::ID eStateID ) {
+  PushState ( eStateID );
+	ApplyPendingChanges ();
+}
+
+////////////////////////////////////////////////////////////
 void StateStack::Update ( void ) {
+  // Initialize the new states when it's necessary.
+  InitializeState ();
+
 	// Iterate from top to bottom, stop as soon as Update () returns false
 	for (auto rit = m_vStack.rbegin () ; rit != m_vStack.rend () ; ++rit) {
 		if (!(*rit)->Update ())
@@ -101,6 +116,11 @@ void StateStack::PopState ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+void StateStack::ReplaceState ( States::ID eStateID ) {
+	m_vPendingList.push_back (ST_PendingChange (Replace, eStateID));
+}
+
+////////////////////////////////////////////////////////////
 void StateStack::ClearStates ( void ) {
 	m_vPendingList.push_back (ST_PendingChange (Clear));
 }
@@ -136,10 +156,16 @@ void StateStack::ApplyPendingChanges ( void ) {
   for (auto it = m_vPendingList.begin () ; it != m_vPendingList.end () ; ++it) {
 		switch ((*it).m_eAction) {
 			case Push:
-				m_vStack.push_back (CreateState ((*it).m_eStateID));
+				m_pInitializer = CreateState ((*it).m_eStateID);
+				//m_vStack.push_back (CreateState ((*it).m_eStateID));
+				//m_vStack[m_vStack.size ()-1]->m_sfThread.launch ();
 				break;
 			case Pop:
 				m_vStack.pop_back ();
+				break;
+			case Replace:
+			  m_bReplacement = GL_TRUE;
+				m_pInitializer = CreateState ((*it).m_eStateID);
 				break;
 			case Clear:
 				m_vStack.clear ();
@@ -148,4 +174,17 @@ void StateStack::ApplyPendingChanges ( void ) {
 	}
 
 	m_vPendingList.clear ();
+}
+
+////////////////////////////////////////////////////////////
+void StateStack::InitializeState ( void ) {
+	if (m_pInitializer != nullptr) {
+    if (!m_pInitializer->Initialize ()) {
+      if (m_bReplacement) {
+				m_vStack.pop_back ();
+        m_bReplacement = GL_FALSE;
+      }
+      m_vStack.push_back (std::move(m_pInitializer));
+    }
+	}
 }

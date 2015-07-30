@@ -22,46 +22,35 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file TitleState.hpp
- * \brief Class to define the title state of the game.
+ * \file GOLicense.hpp
+ * \brief Class for the title of the game.
  * \author Anthony Acroute
- * \version 0.2
+ * \version 0.1
  * \date 2015
  *
  */
 
-#ifndef TITLESTATE_HPP__
-#define TITLESTATE_HPP__
+#ifndef GOLICENSE_HPP__
+#define GOLICENSE_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../State.hpp"
-#include <Game/includes.hpp>
-#include <Game/GameObjects/TitleState/GOTitleBackground.hpp>
-#include <Game/GameObjects/TitleState/GOTitle.hpp>
-#include <Game/GameObjects/TitleState/GOMainMenu.hpp>
-#include <Game/GameObjects/TitleState/GOLicense.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/ShaderProgram.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/Skybox/Skybox.hpp>
+#include <Game/GameEngine/GameObjects/GameObject.hpp>
+#include <Game/GameEngine/GameObjects/GameObject2D.hpp>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create the title state of the game.
-/// This state contain the title of the game and the menu to play, or
-/// for the options, etc...
+/// \brief Class to create the license informations for the title of the game.
 ///
 ////////////////////////////////////////////////////////////
-class TitleState : public State {
+class GOLicense : public GameObject, public GameObject2D {
 
-  public :
+  private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint            m_uiRenderList2D_ID;
-    GOTitleBackground m_oGOTitleBackground;
-    GOTitle           m_oGOTitle;
-    GOMainMenu        m_oGOMainMenu;
-    GOLicense         m_oGOLicense;
+    GLuint    m_uiVersion_ID,
+              m_uiLicense_ID;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -71,51 +60,37 @@ class TitleState : public State {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a title state.
+    /// This constructor defines the game object.
     ///
     ////////////////////////////////////////////////////////////
-    TitleState ( StateStack& oStack, ST_Context& stContext );
+    GOLicense ( ST_Context& stContext );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the state.
+    /// Cleans up all the internal resources used by the game object.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~TitleState ( void );
+    virtual ~GOLicense ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize all the composants of the state.
+    /// \brief Initialize all the composants of the game object.
     ///
     /// \return True if the initialization is not finish, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean Initialize ( void );
+    GLboolean Initialize ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Upgrade all the composants of the state when
+    /// \brief Upgrade all the composants of the game object when
     /// the render target view is resized.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ResizeView ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the state.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void Draw ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Call all the update of the components of the state.
-    ///
-    /// \return True to permit the other states to be updated, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean Update ( void );
+    void ResizeView ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the events for all the components of the state.
@@ -126,27 +101,15 @@ class TitleState : public State {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_FALSE; }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the inputs for all the components of the state.
+    /// \brief Check the inputs for all the components of the game object.
     ///
-    /// \return True to permit the inputs of the other states to be checked, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleInput ( void );
-
-    ////////////////////////////////////////////////////////////
-    // Internal methods
-    ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the main render window of the game.
-    ///
-    /// \return The main render window of the game
+    /// \return True to permit the inputs of the other game objects to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    gm::RenderWindow& GetMainWindow ( void );
+    virtual GLboolean HandleInput ( void ) { return GL_FALSE; }
 };
 
-#endif // TITLESTATE_HPP__
+#endif // GOLICENSE_HPP__
