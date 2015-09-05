@@ -38,12 +38,6 @@
 ////////////////////////////////////////////////////////////
 #include "../State.hpp"
 #include <Game/includes.hpp>
-#include <Game/GameObjects/TitleState/GOTitleBackground.hpp>
-#include <Game/GameObjects/TitleState/GOTitle.hpp>
-#include <Game/GameObjects/TitleState/GOMainMenu.hpp>
-#include <Game/GameObjects/TitleState/GOLicense.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/ShaderProgram.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/Skybox/Skybox.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to create the title state of the game.
@@ -57,11 +51,11 @@ class TitleState : public State {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint            m_uiRenderList2D_ID;
-    GOTitleBackground m_oGOTitleBackground;
-    GOTitle           m_oGOTitle;
-    GOMainMenu        m_oGOMainMenu;
-    GOLicense         m_oGOLicense;
+    GLuint                    m_uiRenderList2D_ID;
+    GameObjects::ID           m_uiTitleBackground,
+                              m_uiTitle,
+                              m_uiMainMenu,
+                              m_uiLicense;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -91,7 +85,7 @@ class TitleState : public State {
     ////////////////////////////////////////////////////////////
     /// \brief Initialize all the composants of the state.
     ///
-    /// \return True if the initialization is not finish, false else.
+    /// \return True if the initialization is succeed, false else.
     ///
     ////////////////////////////////////////////////////////////
     virtual GLboolean Initialize ( void );

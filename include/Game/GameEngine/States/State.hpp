@@ -43,6 +43,9 @@
 #include "GameStates/StateIdentifiers.hpp"
 
 class StateStack;
+namespace States {
+  class Factories;
+}
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to create states of the game like as the menu,
@@ -50,7 +53,7 @@ class StateStack;
 ///
 ////////////////////////////////////////////////////////////
 class State : public GameObject {
-  friend class StateStack;
+  friend class States::Factories;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -62,7 +65,8 @@ class State : public GameObject {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    StateStack&       m_oStack;
+    StateStack&               m_oStack;
+    GameObjects::Initializer  m_uiInitializer_ID;
     /*sf::Thread        m_sfThread;       ///< Thread to initialize the state.
     GLboolean         m_bIsInitialized; ///< Variable to lock the other functions while the class is not initialized.*/
 
@@ -77,7 +81,7 @@ class State : public GameObject {
     /// This constructor defines a state.
     ///
     ////////////////////////////////////////////////////////////
-    State ( StateStack& oStack, ST_Context& stContext );
+    State ( StateStack& oStack, GameObject::ST_Context& stContext );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -90,14 +94,6 @@ class State : public GameObject {
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Initialize all the composants of the state.
-    ///
-    /// \return True if the initialization is not finish, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean Initialize ( void ) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Upgrade all the composants of the state when
@@ -148,6 +144,18 @@ class State : public GameObject {
     ///
     ////////////////////////////////////////////////////////////
     void RequestStateClear ( void );
+
+    ////////////////////////////////////////////////////////////
+    // Accessor methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the identifier of the game object initializer of the state.
+    ///
+    /// \return Identifier of the game object initializer.
+    ///
+    ////////////////////////////////////////////////////////////
+    GameObjects::Initializer GetInitializerID ( void );
 };
 
 #endif // STATE_HPP__

@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/GameObjects/TitleState/GOTitleBackground.hpp>
+#include <Game/GameObjects/WorldState/GOSkybox.hpp>
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 ////////////////////////////////////////////////////////////
@@ -29,25 +29,21 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GOTitleBackground::GOTitleBackground ( ST_Context& stContext ) :
+GOSkybox::GOSkybox ( ST_Context& stContext ) :
   GameObject              (stContext),
   GameObject3D            (),
-  m_uiCamera_ID           (0),
   m_oShaderProgramSkybox  (),
   m_oSkybox               ()
 {
 }
 
 ////////////////////////////////////////////////////////////
-GOTitleBackground::~GOTitleBackground ( void ) {
+GOSkybox::~GOSkybox ( void ) {
   OGLManager& oOGLManager = GetOGLManager ();
   if (oOGLManager.GetVersion () == 3) {         ///< OpenGL 3
     // Delete the shaders
     m_oShaderProgramSkybox.Delete ();
   }
-  // Delete the camera 3D
-  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
-  oCameraManager.Erase (m_uiCamera_ID);
 }
 
 ////////////////////////////////////////////////////////////
@@ -55,10 +51,9 @@ GOTitleBackground::~GOTitleBackground ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GLboolean GOTitleBackground::Initialize ( void ) {
-  std::cout << " >> GOTitleBackground initializing..." << std::endl;
+GLboolean GOSkybox::Initialize ( void ) {
+  std::cout << " >> GOSkybox initializing..." << std::endl;
   // Getting of the needed systems
-  gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
   Textures2DManager& oTextures2DManager = m_stContext.m_oGraphicsEngine.GetTextures2DManager ();
 
   // Getting of the OGLManager
@@ -70,14 +65,6 @@ GLboolean GOTitleBackground::Initialize ( void ) {
       // Debug : It will be necessary to process the errors, in the future.
     }
   }
-
-  // Create a camera 3D
-  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
-  m_uiCamera_ID = oCameraManager.CreateCamera ();
-  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
-  // Initialize the camera 3D
-  oCamera.SetViewport (0, 0, gmMainWindow.GetWidth (), gmMainWindow.GetHeight ());
-  oCamera.SetPerspective (69.f, 0.1f, 128.f);
 
 	// Skybox test
   glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors activated by SFML.
@@ -92,37 +79,15 @@ GLboolean GOTitleBackground::Initialize ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void GOTitleBackground::ResizeView ( void ) {
-  // Getting of the main window
-  gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
-
-  // Get the camera 3D
-  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
-  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
-  // Initialize the camera 3D
-  oCamera.SetViewport (0, 0, gmMainWindow.GetWidth (), gmMainWindow.GetHeight ());
-  oCamera.SetPerspective (69.f, 0.1f, 128.f);
-}
-
-////////////////////////////////////////////////////////////
-void GOTitleBackground::Draw ( void ) {
+void GOSkybox::Draw ( const GLuint uiCameraID ) {
   // Getting of the needed systems
-  gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
   OGLManager& oOGLManager = GetOGLManager ();
 
-  if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
-    glMatrixMode (GL_PROJECTION);
-    glLoadIdentity ();
-    gluPerspective (69.0, static_cast<GLdouble> (gmMainWindow.GetWidth ())/static_cast<GLdouble> (gmMainWindow.GetHeight ()), 0.1, 128.0);
-    glMatrixMode (GL_MODELVIEW);
-    glLoadIdentity ();
-  }
-
+  // Camera 3D
   CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
-  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+  Camera& oCamera = oCameraManager.GetCamera (uiCameraID);
 
-  // Skybox test
-	if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
+  if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
     glPushMatrix ();
     glLoadIdentity ();
     m_oSkybox.UpdateMVP (oCamera.GetLocalFocalisation (), oCamera.GetOrientation ());
@@ -147,28 +112,4 @@ void GOTitleBackground::Draw ( void ) {
 
   glDisable (GL_TEXTURE_CUBE_MAP);
   glDepthMask (GL_TRUE);    ///< Enable drawing in the depth buffer
-
-	if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
-    glPopMatrix ();
-  } else if (oOGLManager.GetVersion () == 3) {  ///< OpenGL 3
-    glUseProgram (0);
-  }
-}
-
-////////////////////////////////////////////////////////////
-GLboolean GOTitleBackground::Update ( void ) {
-  // Update the camera 3D
-  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
-  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
-  // Rotate the camera 3D
-  oCamera.RotationYFirstPerson (drimi::Radians (1.f/4.f));
-  oCamera.ApplyMove ();
-
-  OGLManager& oOGLManager = GetOGLManager ();
-  if (oOGLManager.GetVersion () == 3) {         ///< OpenGL 3
-    oCamera.FocaliseFirstPerson ();
-    oCamera.UseMVP ();
-  }
-
-	return GL_FALSE;
 }

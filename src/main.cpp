@@ -32,7 +32,7 @@ int main ( void ) {
   Game oGame;
 
   // Initialisation of the game
-  if (oGame.GameInit () && oGame.InitWinMain ()) {
+  if (oGame.GameInit ()) {
     while (oGame.WindowIsOpen ()) {
       oGame.ElapsedTime ();
 

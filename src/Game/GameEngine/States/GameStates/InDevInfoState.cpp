@@ -28,27 +28,42 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
+InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context& stContext ) :
   State ( oStack, stContext ),
   m_uiRenderList2D_ID (0),
   m_uiTitle_ID        (0),
   m_uiContent_ID      (0),
   m_uiTickTrigger     (500),
-  m_uiElapsedTicks    (0)
+  m_uiElapsedTicks    (0),
+  m_bIsQuiting        (GL_FALSE)
 {
+}
+
+////////////////////////////////////////////////////////////
+InDevInfoState::~InDevInfoState ( void ) {
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  oRenderer2D.Erase (m_uiRenderList2D_ID);
+}
+
+////////////////////////////////////////////////////////////
+// General methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+GLboolean InDevInfoState::Initialize ( void ) {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
   gmMainWindow.EnableSFML ();
 
   // Create a render list 2D
-  Renderer2D& oRenderer2D = stContext.m_oGraphicsEngine.GetRenderer2D ();
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   m_uiRenderList2D_ID = oRenderer2D.CreateRenderList ();
   RenderList2D& oRenderList2D = oRenderer2D.GetRenderList (m_uiRenderList2D_ID);
 
 	// In development information title
   m_uiTitle_ID            = oRenderList2D.PushBack<drimi::BmpText> ();
   drimi::BmpText& oTitle  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiTitle_ID);
-  oTitle.SetFont        (stContext.m_oBmpFont);
+  oTitle.SetFont        (m_stContext.m_oBmpFont);
   oTitle.SetString      ("Please note this is a pre-alpha version of Demiurge.");
   oTitle.SetStyle       (sf::Text::Style::Bold);
   oTitle.SetColor       (sf::Color::Yellow);
@@ -57,7 +72,7 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
 	// In development information contant
   m_uiContent_ID            = oRenderList2D.PushBack<drimi::BmpText> ();
   drimi::BmpText& oContent  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiContent_ID);
-  oContent.SetFont          (stContext.m_oBmpFont);
+  oContent.SetFont          (m_stContext.m_oBmpFont);
   oContent.SetString        (std::string ("It has only a fraction of the planned features\n")
                             +std::string ("and may contain bugs and be missing anims,\n")
                             +std::string ("sounds and other features.\n\n")
@@ -71,17 +86,9 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context stContext ) :
 	oContent.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
 
   gmMainWindow.DisableSFML ();
-}
 
-////////////////////////////////////////////////////////////
-InDevInfoState::~InDevInfoState ( void ) {
-  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
-  oRenderer2D.Erase (m_uiRenderList2D_ID);
+  return GL_TRUE;
 }
-
-////////////////////////////////////////////////////////////
-// General methods
-////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
 void InDevInfoState::ResizeView ( void ) {
@@ -117,14 +124,16 @@ void InDevInfoState::Draw ( void ) {
 
 ////////////////////////////////////////////////////////////
 GLboolean InDevInfoState::Update ( void ) {
-  // After a laps of time the game go to the title state
-  if (m_uiElapsedTicks >= m_uiTickTrigger) {
-    RequestStackPop ();
-    RequestStackPush (States::ID::Title);
+  if (!m_bIsQuiting) {    ///< While the state is not quiting.
+    // After a laps of time the game go to the title state
+    if (m_uiElapsedTicks >= m_uiTickTrigger) {
+      RequestStackReplace (States::ID::Title);
+      m_bIsQuiting = GL_TRUE;
 
-    return GL_TRUE;
-  } else
-    m_uiElapsedTicks++; // Else, time goes by
+      return GL_TRUE;
+    } else
+      m_uiElapsedTicks++; // Else, time goes by
+  }
 
 	return GL_FALSE;
 }
@@ -134,9 +143,11 @@ GLboolean InDevInfoState::HandleEvent ( const Event::Type eEventType, const sf::
 	if (eEventType == Event::Type::Resized) {
     ResizeView ();
 	} else if (eEventType == Event::Type::KeyPressed) {
-    if (sfKeyCode == sf::Keyboard::Key::Return) {
-      RequestStackPop ();
-      RequestStackPush (States::ID::Title);
+    if (!m_bIsQuiting) {  ///< While the state is not quiting.
+      if (sfKeyCode == sf::Keyboard::Key::Return) {
+        RequestStackReplace (States::ID::Title);
+        m_bIsQuiting = GL_TRUE;
+      }
     }
 	}
 	return GL_TRUE;

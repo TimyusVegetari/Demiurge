@@ -42,8 +42,8 @@ GameEngine::GameEngine ( void ) :
   m_uiElapsedTime         (0),
   m_oBmpFont              (),
   m_oGraphicsEngine       (),
-  m_oGameObjectsManager   (),
-  m_oStateStack           (State::ST_Context (m_oRenderTargetsManager, m_oBmpFont, m_oGraphicsEngine, m_oGameObjectsManager)),
+  m_oGameObjectsManager   (GameObject::ST_Context (m_uiElapsedTime, m_oRenderTargetsManager, m_oBmpFont, m_oGraphicsEngine, m_oGameObjectsManager)),
+  m_oStateStack           (m_oGameObjectsManager.GetContext ()),
   m_bSleep                (GL_FALSE)
 {
 }
@@ -178,5 +178,6 @@ void GameEngine::SetSleep ( GLboolean bSleep ) {
 
 ////////////////////////////////////////////////////////////
 void GameEngine::RegisterRenderTargets ( void ) {
+  std::cout << "RenderTargets registering..." << std::endl;
   m_oRenderTargetsManager.RegisterRenderTarget<gm::RenderWindow> (RenderTargets::ID::MainWindow);
 }

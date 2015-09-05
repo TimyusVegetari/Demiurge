@@ -32,9 +32,10 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-State::State ( StateStack& oStack, ST_Context& stContext ) :
-  GameObject        (stContext),
-  m_oStack          (oStack)
+State::State ( StateStack& oStack, GameObject::ST_Context& stContext ) :
+  GameObject          (stContext),
+  m_oStack            (oStack),
+  m_uiInitializer_ID  (0)
   /*m_sfThread        (&State::Initialize, this),
   m_bIsInitialized  (GL_FALSE)*/
 {
@@ -67,4 +68,13 @@ void State::RequestStackReplace ( States::ID eStateID ) {
 ////////////////////////////////////////////////////////////
 void State::RequestStateClear ( void ) {
 	m_oStack.ClearStates ();
+}
+
+////////////////////////////////////////////////////////////
+// Accessor methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+GameObjects::Initializer State::GetInitializerID ( void ) {
+  return m_uiInitializer_ID;
 }

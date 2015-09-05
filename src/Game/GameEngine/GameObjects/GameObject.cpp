@@ -29,10 +29,12 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GameObject::ST_Context::ST_Context ( RenderTargetsManager&	oRenderTargetsManager,
-                                drimi::BmpFont& oBmpFont,
-                                GraphicsEngine& oGraphicsEngine,
-                                GameObjectsManager& oGameObjectsManager ) :
+GameObject::ST_Context::ST_Context ( const GLuint& uiElapsedTime,
+                                     RenderTargetsManager& oRenderTargetsManager,
+                                     drimi::BmpFont& oBmpFont,
+                                     GraphicsEngine& oGraphicsEngine,
+                                     GameObjectsManager& oGameObjectsManager ) :
+  m_uiElapsedTime           (uiElapsedTime),
   m_oRenderTargetsManager   (oRenderTargetsManager),
   m_oBmpFont                (oBmpFont),
   m_oGraphicsEngine         (oGraphicsEngine),
@@ -41,8 +43,18 @@ GameObject::ST_Context::ST_Context ( RenderTargetsManager&	oRenderTargetsManager
 }
 
 ////////////////////////////////////////////////////////////
+const GLuint& GameObject::ST_Context::GetElapsedTime ( void ) {
+  return m_uiElapsedTime;
+}
+
+////////////////////////////////////////////////////////////
 RenderList2D& GameObject::ST_Context::GetRenderList2D ( GLuint uiRenderList2D_ID ) {
   return m_oGraphicsEngine.GetRenderer2D ().GetRenderList (uiRenderList2D_ID);
+}
+
+////////////////////////////////////////////////////////////
+GameObjectsManager& GameObject::ST_Context::GetGameObjectsManager ( void ) {
+  return m_oGameObjectsManager;
 }
 
 ////////////////////////////////////////////////////////////

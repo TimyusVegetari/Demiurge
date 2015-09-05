@@ -44,7 +44,12 @@ GOTitle::~GOTitle ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+// General methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
 GLboolean GOTitle::Initialize ( void ) {
+  std::cout << " >> GOTitle initializing..." << std::endl;
   // Getting of the needed systems
   gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
   Textures2DManager& oTextures2DManager = m_stContext.m_oGraphicsEngine.GetTextures2DManager ();
@@ -72,7 +77,7 @@ GLboolean GOTitle::Initialize ( void ) {
 
   gmMainWindow.DisableSFML ();
 
-  return GL_FALSE;
+  return GL_TRUE;
 }
 
 ////////////////////////////////////////////////////////////
@@ -117,9 +122,4 @@ void GOTitle::SetPosition ( GLfloat fX, GLfloat fY ) {
 ////////////////////////////////////////////////////////////
 const sf::Vector2f& GOTitle::GetPosition ( void ) {
   return m_sfPosition;
-}
-
-////////////////////////////////////////////////////////////
-GLfloat GOTitle::GetHeight ( void ) {
-  return m_stContext.GetRenderList2D (m_uiRenderList2D_ID).GetDrawable<sf::Sprite> (m_uiTitle_ID).getLocalBounds ().height;
 }

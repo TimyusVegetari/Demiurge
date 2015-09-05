@@ -38,8 +38,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "State.hpp"
-#include "GameStates/StateDefinitions.hpp"
+#include "Factories.hpp"
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to store and manage the states of the game
@@ -74,13 +73,10 @@ class StateStack : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<State::Ptr>           m_vStack;       ///< Stack of states.
-    std::vector<ST_PendingChange>     m_vPendingList; ///< List of changes ready to be executed for the stack.
-    GameObject::ST_Context            m_stContext;    ///< Unique ressources context for the game.
-    std::map<States::ID,
-        std::function<State::Ptr ()>> m_mFactories;   ///< List of functions to call constructor of the specific states.
-    State::Ptr                        m_pInitializer; ///< Unique pointer of State to Initialize before execution.
-    GLboolean                         m_bReplacement; ///< Variable to know if the new state will replace the last in the stack.
+    std::vector<State::Ptr>           m_vStack;         ///< Stack of states.
+    std::vector<ST_PendingChange>     m_vPendingList;   ///< List of changes ready to be executed for the stack.
+    GameObject::ST_Context&           m_stContext;      ///< Unique ressources context for the game.
+    States::Factories                 m_oFactories;     ///< List of factories to construct and initialize the specific states.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -95,7 +91,7 @@ class StateStack : private sf::NonCopyable {
     /// \param stContext  Unique ressources context.
     ///
     ////////////////////////////////////////////////////////////
-    explicit StateStack ( GameObject::ST_Context stContext );
+    explicit StateStack ( GameObject::ST_Context& stContext );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -110,15 +106,10 @@ class StateStack : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Register a state in the stack.
-    ///
-    /// \tparam T   Type of the specific state.
-    ///
-    /// \param eStateID   ID of the state to register.
+    /// \brief Contains the registration of the states of the game.
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
-    void RegisterState ( States::ID eStateID );
+    void RegisterStates ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Call the first state.
@@ -185,6 +176,12 @@ class StateStack : private sf::NonCopyable {
     void ClearStates ( void );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Call the crash state.
+    ///
+    ////////////////////////////////////////////////////////////
+    void Crash ( void );
+
+    ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
@@ -202,38 +199,10 @@ class StateStack : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a type of specific state.
-    ///
-    /// \param eStateID   ID of the registered state.
-    ///
-    /// \return Pointer of constructed state.
-    ///
-    ////////////////////////////////////////////////////////////
-    State::Ptr CreateState ( States::ID eStateID );
-
-    ////////////////////////////////////////////////////////////
     /// \brief Apply changes in the stack.
     ///
     ////////////////////////////////////////////////////////////
     void  ApplyPendingChanges ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Call the initialize of the states in the initializer.
-    ///
-    ////////////////////////////////////////////////////////////
-    void InitializeState ( void );
 };
-
-////////////////////////////////////////////////////////////
-// General methods
-////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-template <typename T>
-void StateStack::RegisterState ( States::ID eStateID ) {
-	m_mFactories[eStateID] = [this] () {
-		return State::Ptr (new T (*this, m_stContext));
-	};
-}
 
 #endif // STATESTACK_HPP__

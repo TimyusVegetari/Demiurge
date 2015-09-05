@@ -83,10 +83,10 @@ class GOTitle : public GameObject, public GameObject2D {
     ////////////////////////////////////////////////////////////
     /// \brief Initialize all the composants of the game object.
     ///
-    /// \return True if the initialization is not finish, false else.
+    /// \return True if the initialization is succeed, false else.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean Initialize ( void );
+    virtual GLboolean Initialize ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Upgrade all the composants of the game object when
@@ -140,14 +140,6 @@ class GOTitle : public GameObject, public GameObject2D {
     ///
     ////////////////////////////////////////////////////////////
     const sf::Vector2f& GetPosition ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the height of the title.
-    ///
-    /// \return Height of the title.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLfloat GetHeight ( void );
 };
 
 #endif // GOTITLE_HPP__

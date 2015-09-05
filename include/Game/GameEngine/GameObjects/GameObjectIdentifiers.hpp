@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////
 /**
  * \file GameObjectIdentifiers.hpp
- * \brief Enumeration of IDs for the game objects.
+ * \brief Enumeration of types of game objects.
  * \author Anthony Acroute
  * \version 0.1
  * \date 2015
@@ -39,9 +39,22 @@
 ////////////////////////////////////////////////////////////
 namespace GameObjects {
 
-enum ID {
-  None
-  //...
+typedef GLuint  Initializer;  ///< Identifier of the initializer.
+typedef GLuint  ID;           ///< Identifier of game object.
+
+enum Type {
+  None,
+  // Game objects of the title state
+  TitleBackground,
+  Title,
+  MainMenu,
+  License,
+  // Game objects of the world state
+  Camera,
+  SimpleInformations,
+  Skybox,
+  Box
+
 };
 
 }

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,15 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef GAME_INCLUDES_HPP_
-#define GAME_INCLUDES_HPP_
+#ifndef GAME_MANAGERSIGNALS_HPP_
+#define GAME_MANAGERSIGNALS_HPP_
 
-// Include SFML
-#include <GL/glew.h>
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
+// Managers out signals
+enum OutSignal {
+  Element_Failed,
+  Element_Succeed,
+  List_Failed,
+  List_End
+};
 
-// Include STD
-#include <iostream>
-#include <memory>
-
-// Include DRIMI
-#include <DRIMI/BitmapFont/BmpFont.hpp>
-#include <DRIMI/BitmapFont/BmpText.hpp>
-
-#endif // GAME_INCLUDES_HPP_
+#endif // GAME_MANAGERSIGNALS_HPP_

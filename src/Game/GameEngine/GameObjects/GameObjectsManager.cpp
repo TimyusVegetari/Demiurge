@@ -28,16 +28,20 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GameObjectsManager::GameObjectsManager ( void ) :
-  m_mList       (),
-  m_mFactories  (),
-  m_uiError     (Error::NONE)
+GameObjectsManager::GameObjectsManager ( GameObject::ST_Context stContext ) :
+  m_mList         (),
+  m_mInitializer  (),
+  m_stContext     (stContext),
+  m_uiError       (Error::NONE)
 {
 }
 
 ////////////////////////////////////////////////////////////
 GameObjectsManager::~GameObjectsManager ( void ) {
+  for (std::map<GameObjects::Type, GOInstances*>::iterator it = m_mList.begin (); it != m_mList.end (); ++it)
+    delete it->second;
 	m_mList.clear ();
+	m_mInitializer.clear ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -45,13 +49,43 @@ GameObjectsManager::~GameObjectsManager ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-void GameObjectsManager::AddGameObject ( GameObjects::ID eGameObjectID ) {
-	m_mList.insert (CreateGameObject (eGameObjectID));
+GameObjectsManager::GOInstances_SizeType GameObjectsManager::DeleteGameObject ( GameObjects::Type eGameObjectType, GameObjects::ID uiGameObjectID ) {
+	if (m_mList[eGameObjectType]->erase (uiGameObjectID)) {
+    if (m_mList[eGameObjectType]->empty ())
+      m_mList.erase (eGameObjectType);
+    return GL_TRUE;
+	}
+	return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////
-GameObjectsManager::Size_type GameObjectsManager::DeleteGameObject ( GameObjects::ID eGameObjectID ) {
-	return m_mList.erase (eGameObjectID);
+OutSignal GameObjectsManager::Initializer ( GameObjects::Initializer uiInitializer ) {
+  if (!m_mInitializer[uiInitializer].empty ()) {
+    auto lBegin = m_mInitializer[uiInitializer].begin ();
+    if ((*m_mList[lBegin->m_uiType])[lBegin->m_uiID]->Initialize ()) {
+      // If initialisation succeed
+      m_mInitializer[uiInitializer].pop_front ();
+      return OutSignal::Element_Succeed;
+    } else {
+      // If initialisation failed
+      m_mInitializer.erase (uiInitializer);
+      return OutSignal::Element_Failed;
+    }
+  }
+  // If initialisation finished
+  m_mInitializer.erase (uiInitializer);
+  return OutSignal::List_End;
+}
+
+////////////////////////////////////////////////////////////
+GameObjects::Initializer GameObjectsManager::CreateInitializer ( void ) {
+  GLuint uiInitializerID;
+  if (m_mInitializer.empty ()) uiInitializerID = 1;
+  else uiInitializerID = m_mInitializer.rend ()->first + 1;
+	m_mInitializer.insert (std::pair<GameObjects::Initializer, std::list<ST_InitContainer>> (uiInitializerID, std::list<ST_InitContainer> ()));
+
+	return uiInitializerID;
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -59,8 +93,12 @@ GameObjectsManager::Size_type GameObjectsManager::DeleteGameObject ( GameObjects
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GLboolean GameObjectsManager::IsEmpty ( void ) {
-	return m_mList.empty ();
+GLboolean GameObjectsManager::IsExist ( GameObjects::Type eGameObjectType ) {
+  auto mFound = m_mList.find (eGameObjectType);
+  if (mFound == m_mList.end ()) {
+    return GL_FALSE;
+  }
+	return GL_TRUE;
 }
 
 ////////////////////////////////////////////////////////////
@@ -69,17 +107,6 @@ GLuint GameObjectsManager::CheckError ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-// Internal methods
-////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-GameObjectsManager::Pair GameObjectsManager::CreateGameObject ( GameObjects::ID eGameObjectID ) {
-  auto mFound = m_mFactories.find (eGameObjectID);
-  if (mFound == m_mFactories.end ()) {
-    m_uiError = Error::UNREGISTERED_OBJECT;
-
-    return GameObjectsManager::Pair (GameObjects::ID::None, nullptr);
-  }
-
-  return GameObjectsManager::Pair (eGameObjectID, mFound->second ());
+GameObject::ST_Context& GameObjectsManager::GetContext ( void ) {
+  return m_stContext;
 }

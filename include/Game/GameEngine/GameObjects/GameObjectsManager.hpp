@@ -38,6 +38,7 @@
 ////////////////////////////////////////////////////////////
 #include "GameObject.hpp"
 #include "GameObjectDefinitions.hpp"
+#include <Game/GameEngine/ManagerSignals.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to store and manage the game objects.
@@ -51,25 +52,41 @@ class GameObjectsManager : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
     enum Error {
       NONE,
-      UNREGISTERED_OBJECT,
-      UNCONSTRUCTED_OBJECT
+      UNCONSTRUCTED_OBJECT,
+      UNCREATED_INITIALIZER
     };
 
   private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<GameObjects::ID, GameObject::Ptr>::size_type Size_type;  ///< std::map::size_type of created game object list.
-    typedef std::pair<GameObjects::ID, GameObject::Ptr>           Pair;       ///< std::pair of created game object.
+    typedef std::map<GameObjects::ID, GameObject::Ptr>  GOInstances;          ///< std::map of created instances of game objects.
+    typedef GOInstances::size_type                      GOInstances_SizeType; ///< std::map::size_type of created game object list.
+    typedef std::pair<GameObjects::ID, GameObject::Ptr> GOInstances_Pair;     ///< std::pair of created game object.
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Structure defining a initializer container.
+    ///
+    ////////////////////////////////////////////////////////////
+    struct ST_InitContainer {
+			GameObjects::Type   m_uiType;   ///< Type of the game object to initialize.
+			GameObjects::ID     m_uiID;     ///< Identifier of the game object to initialize.
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    typedef std::map<GameObjects::Initializer,
+                std::list<ST_InitContainer>>            GOInitializers;       ///< std::map of game object initializer.
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::map<GLuint, GameObject::Ptr>       m_mList;      ///< List of created game object.
-    std::map<GameObjects::ID,
-        std::function<GameObject::Ptr ()>>  m_mFactories; ///< List of functions to call constructor
-                                                          ///  of the specific game objects.
-    GLuint                                  m_uiError;    ///< Error value if an error arose.
+    std::map<GameObjects::Type, GOInstances*> m_mList;        ///< List of created game object.
+                                                              ///  of the specific game objects.
+    GOInitializers                            m_mInitializer; ///< Initializer of game objects.
+    GameObject::ST_Context                    m_stContext;    ///< Unique ressources context for the game.
+    GLuint                                    m_uiError;      ///< Error value if an error arose.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -81,8 +98,10 @@ class GameObjectsManager : private sf::NonCopyable {
     ///
     /// This constructor defines a stack of game objects.
     ///
+    /// \param stContext  Unique ressources context.
+    ///
     ////////////////////////////////////////////////////////////
-    explicit GameObjectsManager ( void );
+    explicit GameObjectsManager ( GameObject::ST_Context stContext );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -97,56 +116,87 @@ class GameObjectsManager : private sf::NonCopyable {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Register a game object in the stack.
+    /// \brief Add a game object in the list.
     ///
     /// \tparam T   Type of the specific game object.
     ///
-    /// \param eGameObjectID  ID of the game object to register.
+    /// \param eGameObjectType  Registered game object identifier.
+    ///        uiGameObjectID   Constructed game object identifier.
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    void RegisterGameObject ( GameObjects::ID eGameObjectID );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Add a game object in the list.
-    ///
-    /// \param eGameObjectID  ID of the registered game object.
-    ///
-    ////////////////////////////////////////////////////////////
-    void AddGameObject ( GameObjects::ID eGameObjectID );
+    void AddGameObject ( GameObjects::Type eGameObjectType, GameObjects::ID& eGameObjectID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove a game object in the list.
     ///
-    /// \param eGameObjectID  ID of the registered game object.
+    /// \param eGameObjectType  Registered game object identifier.
+    ///        uiGameObjectID   Constructed game object identifier.
     ///
     ////////////////////////////////////////////////////////////
-    Size_type DeleteGameObject ( GameObjects::ID eGameObjectID );
+    GOInstances_SizeType DeleteGameObject ( GameObjects::Type eGameObjectType, GameObjects::ID uiGameObjectID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize the game objects in the initializers.
+    ///
+    /// \param uiInitializer  Identifier of the game object initializer.
+    ///
+    /// \return A signal to know if the initialization list is empty,
+    ///         if there is an error, or a success of an element.
+    ///
+    ////////////////////////////////////////////////////////////
+    OutSignal Initializer ( GameObjects::Initializer uiInitializer );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create an initializer.
+    ///
+    /// \return Identifier of the game object initializer.
+    ///
+    ////////////////////////////////////////////////////////////
+    GameObjects::Initializer CreateInitializer ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize a game object.
+    ///
+    /// \tparam T   Type of the specific game object.
+    ///
+    /// \param uiInitializer    Identifier of the game object initializer.
+    ///        eGameObjectType  Registered game object identifier.
+    ///        uiGameObjectID   Constructed game object identifier.
+    ///
+    /// \return True if the pre-initialization succeed, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    GLboolean AddToInitializer ( GameObjects::Initializer uiInitializer, GameObjects::Type eGameObjectType, GameObjects::ID& uiGameObjectID );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get if the list is empty.
+    /// \brief Get if the list is exist.
     ///
-    /// \return True if the list is empty, false else.
+    /// \param eGameObjectType  Registered game object identifier.
+    ///
+    /// \return True if the list is exist, false else.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean IsEmpty ( void );
+    GLboolean IsExist ( GameObjects::Type eGameObjectType );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the identified game object.
     ///
     /// \tparam T   Type of the specific game object.
     ///
-    /// \param eGameObjectID  ID of the registered game object.
+    /// \param eGameObjectType  Registered game object identifier.
+    ///        uiGameObjectID   Constructed game object identifier.
     ///
     /// \return Game object or error.
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    T& GetGameObject ( GameObjects::ID eGameObjectID );
+    T& GetGameObject ( GameObjects::Type eGameObjectType, GameObjects::ID uiGameObjectID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the value of an error.
@@ -157,18 +207,12 @@ class GameObjectsManager : private sf::NonCopyable {
     GLuint CheckError ( void );
 
     ////////////////////////////////////////////////////////////
-    // Accessor methods
-    ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create a type of specific game object.
+    /// \brief Get the ressources context.
     ///
-    /// \param eGameObjectID   ID of the registered game object.
-    ///
-    /// \return Pointer of constructed game object.
+    /// \return Instance of the ressources context.
     ///
     ////////////////////////////////////////////////////////////
-    Pair CreateGameObject ( GameObjects::ID eGameObjectID );
+    GameObject::ST_Context& GetContext ( void );
 };
 
 ////////////////////////////////////////////////////////////
@@ -177,10 +221,14 @@ class GameObjectsManager : private sf::NonCopyable {
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-void GameObjectsManager::RegisterGameObject ( GameObjects::ID eGameObjectID ) {
-	m_mFactories[eGameObjectID] = [this] () {
-		return GameObject::Ptr (new T (*this));
-	};
+void GameObjectsManager::AddGameObject ( GameObjects::Type eGameObjectType, GameObjects::ID& uiGameObjectID ) {
+  if (!IsExist (eGameObjectType)) {
+    m_mList.insert (std::pair<GameObjects::Type, GameObjectsManager::GOInstances*> (eGameObjectType, new GameObjectsManager::GOInstances ()));
+    uiGameObjectID = 1;
+  } else {
+    uiGameObjectID = m_mList[eGameObjectType]->rend ()->first + 1;
+  }
+	m_mList[eGameObjectType]->insert (GameObjectsManager::GOInstances_Pair (uiGameObjectID, GameObject::Ptr (new T (m_stContext))));
 }
 
 ////////////////////////////////////////////////////////////
@@ -189,15 +237,28 @@ void GameObjectsManager::RegisterGameObject ( GameObjects::ID eGameObjectID ) {
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-T& GameObjectsManager::GetGameObject ( GameObjects::ID eGameObjectID ) {
-  auto mFound = m_mList.find (eGameObjectID);
-  if (mFound == m_mList.end ()) {
+T& GameObjectsManager::GetGameObject ( GameObjects::Type eGameObjectType, GameObjects::ID uiGameObjectID ) {
+  auto mFound = m_mList[eGameObjectType]->find (uiGameObjectID);
+  if (mFound == m_mList[eGameObjectType]->end ()) {
     m_uiError = Error::UNCONSTRUCTED_OBJECT;
 
-    AddGameObject ( eGameObjectID );
-    return static_cast<T&>(*m_mList[eGameObjectID]);
+    AddGameObject<T> ( eGameObjectType, uiGameObjectID );
+    return static_cast<T&> (*(*m_mList[eGameObjectType])[uiGameObjectID]);
   }
-  return static_cast<T&>(*mFound->second);
+  return static_cast<T&> (*mFound->second);
+}
+
+////////////////////////////////////////////////////////////
+template <typename T>
+GLboolean GameObjectsManager::AddToInitializer ( GameObjects::Initializer uiInitializer, GameObjects::Type eGameObjectType, GameObjects::ID& uiGameObjectID ) {
+  auto mFound = m_mInitializer.find (uiInitializer);
+  if (mFound == m_mInitializer.end ()) {
+    m_uiError = Error::UNCREATED_INITIALIZER;
+    return GL_FALSE;
+  }
+  AddGameObject<T> (eGameObjectType, uiGameObjectID);
+  m_mInitializer[uiInitializer].push_back ({eGameObjectType, uiGameObjectID});
+  return GL_TRUE;
 }
 
 #endif // GAMEOBJECTSMANAGER_HPP__

@@ -22,40 +22,34 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file WorldState.hpp
- * \brief Class to define the world state of the game.
+ * \file GOSimpleInformations.hpp
+ * \brief Class for the simple informations about player position, focalisation, etc...
  * \author Anthony Acroute
  * \version 0.1
  * \date 2015
  *
  */
 
-#ifndef WORLDSTATE_HPP__
-#define WORLDSTATE_HPP__
+#ifndef GOSIMPLEINFORMATIONS_HPP__
+#define GOSIMPLEINFORMATIONS_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../State.hpp"
-#include <Game/includes.hpp>
+#include <Game/GameEngine/GameObjects/GameObject.hpp>
+#include <Game/GameEngine/GameObjects/GameObject2D.hpp>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create the world state of the game.
-/// This state contain the world, objets, creatures, etc...
-/// It's here that the player plays in the 3D world.
+/// \brief Class to create the simple informations for the world state.
 ///
 ////////////////////////////////////////////////////////////
-class WorldState : public State {
+class GOSimpleInformations : public GameObject, public GameObject2D {
 
-  public :
+  private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint            m_uiRenderList2D_ID;
-    GameObjects::ID   m_uiCamera,
-                      m_uiSimpleInformations,
-                      m_uiSkybox,
-                      m_uiBox;
+    GLuint    m_uiSimpleInformations_ID;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -65,25 +59,25 @@ class WorldState : public State {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a world state.
+    /// This constructor defines the game object.
     ///
     ////////////////////////////////////////////////////////////
-    WorldState ( StateStack& oStack, ST_Context& stContext );
+    GOSimpleInformations ( ST_Context& stContext );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the state.
+    /// Cleans up all the internal resources used by the game object.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~WorldState ( void );
+    virtual ~GOSimpleInformations ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize all the composants of the state.
+    /// \brief Initialize all the composants of the game object.
     ///
     /// \return True if the initialization is succeed, false else.
     ///
@@ -91,25 +85,21 @@ class WorldState : public State {
     virtual GLboolean Initialize ( void );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Upgrade all the composants of the state when
+    /// \brief Upgrade all the composants of the game object when
     /// the render target view is resized.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void ResizeView ( void );
+    void ResizeView ( void ) {};
 
     ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the state.
+    /// \brief Call the update of the components of the game object.
+    ///
+    /// \param uiCameraID   The 3D Camera identifier to get informations to display.
+    ///
+    /// \return True to permit the other game objects to be updated, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void Draw ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Call all the update of the components of the state.
-    ///
-    /// \return True to permit the other states to be updated, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean Update ( void );
+    GLboolean Update ( GLuint uiCameraID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the events for all the components of the state.
@@ -120,27 +110,15 @@ class WorldState : public State {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_TRUE; }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the inputs for all the components of the state.
+    /// \brief Check the inputs for all the components of the game object.
     ///
-    /// \return True to permit the inputs of the other states to be checked, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleInput ( void );
-
-    ////////////////////////////////////////////////////////////
-    // Internal methods
-    ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the main render window of the game.
-    ///
-    /// \return The main render window of the game
+    /// \return True to permit the inputs of the other game objects to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    gm::RenderWindow& GetMainWindow ( void );
+    virtual GLboolean HandleInput ( void ) { return GL_TRUE; }
 };
 
-#endif // WORLDSTATE_HPP__
+#endif // GOSIMPLEINFORMATIONS_HPP__

@@ -33,6 +33,16 @@
 #ifndef GAMEOBJECTDEFINITIONS_HPP__
 #define GAMEOBJECTDEFINITIONS_HPP__
 
-//#include <Game/GameObjects/... .hpp>
+// Game objects of the title state
+#include <Game/GameObjects/TitleState/GOTitleBackground.hpp>
+#include <Game/GameObjects/TitleState/GOTitle.hpp>
+#include <Game/GameObjects/TitleState/GOMainMenu.hpp>
+#include <Game/GameObjects/TitleState/GOLicense.hpp>
+
+// Game objects of the world state
+#include <Game/GameObjects/WorldState/GOCamera.hpp>
+#include <Game/GameObjects/WorldState/GOSimpleInformations.hpp>
+#include <Game/GameObjects/WorldState/GOSkybox.hpp>
+#include <Game/GameObjects/WorldState/GOBox.hpp>
 
 #endif // GAMEOBJECTDEFINITIONS_HPP__

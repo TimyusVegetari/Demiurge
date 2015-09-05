@@ -40,7 +40,12 @@ GOMainMenu::~GOMainMenu ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+// General methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
 GLboolean GOMainMenu::Initialize ( void ) {
+  std::cout << " >> GOMainMenu initializing..." << std::endl;
   // Getting of the needed systems
   gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
   RenderList2D& oRenderList2D = m_stContext.GetRenderList2D (m_uiRenderList2D_ID);
@@ -58,7 +63,7 @@ GLboolean GOMainMenu::Initialize ( void ) {
 
   gmMainWindow.DisableSFML ();
 
-  return GL_FALSE;
+  return GL_TRUE;
 }
 
 ////////////////////////////////////////////////////////////

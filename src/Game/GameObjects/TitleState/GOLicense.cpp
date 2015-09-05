@@ -42,12 +42,20 @@ GOLicense::~GOLicense ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+// General methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
 GLboolean GOLicense::Initialize ( void ) {
+  std::cout << " >> GOLicense initializing..." << std::endl;
   // Getting of the needed systems
   gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
   RenderList2D& oRenderList2D = m_stContext.GetRenderList2D (m_uiRenderList2D_ID);
 
   gmMainWindow.EnableSFML ();
+
+  GLuint uiElapsedSecond = 0;
+  GLuint uiElapsedTime = m_stContext.GetElapsedTime ();
 
 	// Game version
   m_uiVersion_ID = oRenderList2D.PushBack<drimi::BmpText> ();
@@ -60,6 +68,14 @@ GLboolean GOLicense::Initialize ( void ) {
   oVersion.SetColor     (sf::Color::Yellow);
 	oVersion.SetOrigin    (0.f, oVersion.GetLocalBounds ().height);
 	oVersion.setPosition  (5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
+
+  uiElapsedTime = m_stContext.GetElapsedTime () - uiElapsedTime;
+  if (uiElapsedTime >= 1000) {
+    uiElapsedSecond = static_cast<GLuint> (uiElapsedTime / 1000.f);
+    uiElapsedTime -= uiElapsedSecond * 1000;
+  }
+  std::cout << uiElapsedSecond << " s " << uiElapsedTime << " ms" << std::endl;
+
 	// Game licence
   m_uiLicense_ID = oRenderList2D.PushBack<drimi::BmpText> ();
   drimi::BmpText& oLicense = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiLicense_ID);
@@ -69,9 +85,16 @@ GLboolean GOLicense::Initialize ( void ) {
 	oLicense.SetOrigin    (oLicense.GetLocalBounds ().width, oLicense.GetLocalBounds ().height);
 	oLicense.setPosition  (static_cast<GLfloat> (gmMainWindow.GetWidth ()) - 5.f, static_cast<GLfloat> (gmMainWindow.GetHeight ()) - 5.f);
 
+  uiElapsedTime = m_stContext.GetElapsedTime () - uiElapsedTime;
+  if (uiElapsedTime >= 1000) {
+    uiElapsedSecond = static_cast<GLuint> (uiElapsedTime / 1000.f);
+    uiElapsedTime -= uiElapsedSecond * 1000;
+  }
+  std::cout << uiElapsedSecond << " s " << uiElapsedTime << " ms" << std::endl;
+
   gmMainWindow.DisableSFML ();
 
-  return GL_FALSE;
+  return GL_TRUE;
 }
 
 ////////////////////////////////////////////////////////////

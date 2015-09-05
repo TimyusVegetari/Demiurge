@@ -55,23 +55,27 @@ class GameObject {
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::unique_ptr<GameObject> Ptr; ///< Unique pointer of game object.
+    typedef std::unique_ptr<GameObject> Ptr;  ///< Unique pointer of game object.
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a unique ressources context.
     ///
     ////////////////////////////////////////////////////////////
     struct ST_Context {
+      const GLuint&         m_uiElapsedTime;          ///< Reference of the absolute elapsed time of the game.
 			RenderTargetsManager&	m_oRenderTargetsManager;  ///< Reference of the render targets manager of the game.
 			drimi::BmpFont&       m_oBmpFont;               ///< Reference of the bitmap font of the game.
       GraphicsEngine&       m_oGraphicsEngine;        ///< Reference of the graphics engine of the game.
 			GameObjectsManager&   m_oGameObjectsManager;    ///< Reference of the game objects manager.
 
-			ST_Context  ( RenderTargetsManager&	oRenderTargetsManager,
+			ST_Context  ( const GLuint& uiElapsedTime,
+                    RenderTargetsManager&	oRenderTargetsManager,
                     drimi::BmpFont& oBmpFont,
                     GraphicsEngine& oGraphicsEngine,
                     GameObjectsManager& oGameObjectsManager );
+      const GLuint& GetElapsedTime ( void );
       RenderList2D& GetRenderList2D ( GLuint uiRenderList2D_ID );
+      GameObjectsManager& GetGameObjectsManager ( void );
     };
 
   protected :
@@ -106,7 +110,15 @@ class GameObject {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the events for all the components of the state.
+    /// \brief Initialize all the composants of the game object.
+    ///
+    /// \return True if the initialization is not finish, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual GLboolean Initialize ( void ) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check the events for all the components of the game object.
     ///
     /// \param eEventType   The current event type.
     ///        sfKeyCode    The current keyboard key code.
@@ -117,7 +129,7 @@ class GameObject {
     virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the inputs for all the components of the state.
+    /// \brief Check the inputs for all the components of the game object.
     ///
     /// \return True to permit the inputs of the other states to be checked, false else.
     ///
