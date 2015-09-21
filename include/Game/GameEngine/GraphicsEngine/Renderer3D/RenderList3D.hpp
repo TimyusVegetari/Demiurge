@@ -114,67 +114,67 @@ class RenderList3D {
     ////////////////////////////////////////////////////////////
     /// \brief Add a 3d object at the end of the list.
     ///
-    /// \param uiTypeID   Identifier of the type of the 3d object.
+    /// \param eTypeID    Identifier of the type of the 3d object.
     ///
     /// \return Identifier of the 3d object.
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    GLuint PushBack ( GameObjects3D::Type uiTypeID );
+    GLuint PushBack ( GameObjects3D::Type eTypeID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a 3d object at the begin of the list.
     ///
-    /// \param uiTypeID   Identifier of the type of the 3d object.
+    /// \param eTypeID    Identifier of the type of the 3d object.
     ///
     /// \return Identifier of the 3d object.
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    GLuint PushFront ( GameObjects3D::Type uiTypeID );
+    GLuint PushFront ( GameObjects3D::Type eTypeID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a 3d object after another 3d object in the list.
     ///
-    /// \param uiTypeID     Identifier of the type of the 3d object.
+    /// \param eTypeID      Identifier of the type of the 3d object.
     ///        uiObjectID   Identifier of the preview 3d object.
     ///
     /// \return Identifier of the 3d object.
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    GLuint Insert ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID );
+    GLuint Insert ( GameObjects3D::Type eTypeID, const GLuint uiObjectID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Erase a 3d object in the list.
     ///
-    /// \param uiTypeID     Identifier of the type of the 3d object.
+    /// \param eTypeID      Identifier of the type of the 3d object.
     ///        uiObjectID   Identifier of the 3d object to erase.
     ///
     /// \return New size of the list.
     ///
     ////////////////////////////////////////////////////////////
-    Size_type Erase ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID );
+    Size_type Erase ( GameObjects3D::Type eTypeID, const GLuint uiObjectID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Reset the internal iterator.
     ///
-    /// \param uiTypeID   Identifier of the type of the 3d object.
+    /// \param eTypeID    Identifier of the type of the 3d object.
     ///
     /// \return True if the internal iterator isn't at the end of the list, false else.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean Reset ( GameObjects3D::Type uiTypeID );
+    GLboolean Reset ( GameObjects3D::Type eTypeID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Increment the internal iterator.
     ///
-    /// \param uiTypeID   Identifier of the type of the 3d object.
+    /// \param eTypeID    Identifier of the type of the 3d object.
     ///
     /// \return True if the internal iterator isn't at the end of the list, false else.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean Advance ( GameObjects3D::Type uiTypeID );
+    GLboolean Advance ( GameObjects3D::Type eTypeID );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods
@@ -183,44 +183,44 @@ class RenderList3D {
     ////////////////////////////////////////////////////////////
     /// \brief Get if the list is empty.
     ///
-    /// \param uiTypeID   Identifier of the type of the 3d object.
+    /// \param eTypeID    Identifier of the type of the 3d object.
     ///
     /// \return True if the list is empty, false else.
     ///
     ////////////////////////////////////////////////////////////
-    GLboolean IsEmpty ( GameObjects3D::Type uiTypeID );
+    GLboolean IsEmpty ( GameObjects3D::Type eTypeID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the identified 3d object.
     ///
-    /// \param uiTypeID     Identifier of the type of the 3d object.
+    /// \param eTypeID      Identifier of the type of the 3d object.
     ///        uiObjectID   Identifier of the listed 3d object.
     ///
     /// \return The 3d object found or a created 3d object and an internal error state.
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    T& GetObject ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID );
+    T& GetObject ( GameObjects3D::Type eTypeID, const GLuint uiObjectID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current 3d object in the internal iterator.
     ///
-    /// \param uiTypeID   Identifier of the type of the 3d object.
+    /// \param eTypeID    Identifier of the type of the 3d object.
     ///
     /// \return The 3d object in the internal iterator.
     ///
     ////////////////////////////////////////////////////////////
-    GameObject3D& GetObject ( GameObjects3D::Type uiTypeID );
+    GameObject3D& GetObject ( GameObjects3D::Type eTypeID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the value of an error.
     ///
-    /// \param uiTypeID   Identifier of the type of the 3d object.
+    /// \param eTypeID    Identifier of the type of the 3d object.
     ///
     /// \return Value of an error.
     ///
     ////////////////////////////////////////////////////////////
-    GLuint CheckError ( GameObjects3D::Type uiTypeID );
+    GLuint CheckError ( GameObjects3D::Type eTypeID );
 
   private :
     ////////////////////////////////////////////////////////////
@@ -230,11 +230,11 @@ class RenderList3D {
     ////////////////////////////////////////////////////////////
     /// \brief Check what type of error arose.
     ///
-    /// \param uiTypeID     Identifier of the type of the 3d object.
+    /// \param eTypeID      Identifier of the type of the 3d object.
     ///        uiObjectID   Identifier which make an error.
     ///
     ////////////////////////////////////////////////////////////
-    void CheckIDError ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID );
+    void CheckIDError ( GameObjects3D::Type eTypeID, const GLuint uiObjectID );
 };
 
 ////////////////////////////////////////////////////////////
@@ -243,38 +243,38 @@ class RenderList3D {
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-GLuint RenderList3D::PushBack ( GameObjects3D::Type uiTypeID ) {
-  m_stDatas[uiTypeID].m_lList.push_back (GameObject3D::Ptr (new T ()));
-  m_stDatas[uiTypeID].m_uiIdAccumulator++;
-  std::list<GameObject3D::Ptr>::iterator lListLast = --m_stDatas[uiTypeID].m_lList.end ();
-  m_stDatas[uiTypeID].m_mIndex.insert (RenderList3D::Pair (m_stDatas[uiTypeID].m_uiIdAccumulator, lListLast));
+GLuint RenderList3D::PushBack ( GameObjects3D::Type eTypeID ) {
+  m_stDatas[eTypeID].m_lList.push_back (GameObject3D::Ptr (new T ()));
+  m_stDatas[eTypeID].m_uiIdAccumulator++;
+  std::list<GameObject3D::Ptr>::iterator lListLast = --m_stDatas[eTypeID].m_lList.end ();
+  m_stDatas[eTypeID].m_mIndex.insert (RenderList3D::Pair (m_stDatas[eTypeID].m_uiIdAccumulator, lListLast));
 
-  return m_stDatas[uiTypeID].m_uiIdAccumulator;
+  return m_stDatas[eTypeID].m_uiIdAccumulator;
 }
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-GLuint RenderList3D::PushFront ( GameObjects3D::Type uiTypeID ) {
-  m_stDatas[uiTypeID].m_lList.push_front (GameObject3D::Ptr (new T ()));
-  m_stDatas[uiTypeID].m_uiIdAccumulator++;
-  m_stDatas[uiTypeID].m_mIndex.insert (RenderList3D::Pair (m_stDatas[uiTypeID].m_uiIdAccumulator, m_stDatas[uiTypeID].m_lList.begin ()));
+GLuint RenderList3D::PushFront ( GameObjects3D::Type eTypeID ) {
+  m_stDatas[eTypeID].m_lList.push_front (GameObject3D::Ptr (new T ()));
+  m_stDatas[eTypeID].m_uiIdAccumulator++;
+  m_stDatas[eTypeID].m_mIndex.insert (RenderList3D::Pair (m_stDatas[eTypeID].m_uiIdAccumulator, m_stDatas[eTypeID].m_lList.begin ()));
 
-  return m_stDatas[uiTypeID].m_uiIdAccumulator;
+  return m_stDatas[eTypeID].m_uiIdAccumulator;
 }
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-GLuint RenderList3D::Insert ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID ) {
-  auto mFound = m_stDatas[uiTypeID].m_mIndex.find (uiObjectID);
-  if (mFound == m_stDatas[uiTypeID].m_mIndex.end ()) {
-    CheckIDError (uiTypeID, uiObjectID);
+GLuint RenderList3D::Insert ( GameObjects3D::Type eTypeID, const GLuint uiObjectID ) {
+  auto mFound = m_stDatas[eTypeID].m_mIndex.find (uiObjectID);
+  if (mFound == m_stDatas[eTypeID].m_mIndex.end ()) {
+    CheckIDError (eTypeID, uiObjectID);
 
     return 0;
   }
-  m_stDatas[uiTypeID].m_uiIdAccumulator++;
-  m_stDatas[uiTypeID].m_mIndex.insert (RenderList3D::Pair (m_stDatas[uiTypeID].m_uiIdAccumulator, m_stDatas[uiTypeID].m_lList.insert (m_stDatas[uiTypeID].m_mIndex[uiObjectID], GameObject3D::Ptr (new T ()))));
+  m_stDatas[eTypeID].m_uiIdAccumulator++;
+  m_stDatas[eTypeID].m_mIndex.insert (RenderList3D::Pair (m_stDatas[eTypeID].m_uiIdAccumulator, m_stDatas[eTypeID].m_lList.insert (m_stDatas[eTypeID].m_mIndex[uiObjectID], GameObject3D::Ptr (new T ()))));
 
-  return m_stDatas[uiTypeID].m_uiIdAccumulator;
+  return m_stDatas[eTypeID].m_uiIdAccumulator;
 }
 
 ////////////////////////////////////////////////////////////
@@ -283,15 +283,15 @@ GLuint RenderList3D::Insert ( GameObjects3D::Type uiTypeID, const GLuint uiObjec
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-T& RenderList3D::GetObject ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID ) {
-  auto mFound = m_stDatas[uiTypeID].m_mIndex.find (uiObjectID);
-  if (mFound == m_stDatas[uiTypeID].m_mIndex.end ()) {
-    CheckIDError (uiTypeID, uiObjectID);
+T& RenderList3D::GetObject ( GameObjects3D::Type eTypeID, const GLuint uiObjectID ) {
+  auto mFound = m_stDatas[eTypeID].m_mIndex.find (uiObjectID);
+  if (mFound == m_stDatas[eTypeID].m_mIndex.end ()) {
+    CheckIDError (eTypeID, uiObjectID);
 
-    m_stDatas[uiTypeID].m_lList.push_back (GameObject3D::Ptr (new T ()));
-    std::list<GameObject3D::Ptr>::iterator lListLast = --m_stDatas[uiTypeID].m_lList.end ();
-    m_stDatas[uiTypeID].m_mIndex.insert (RenderList3D::Pair (uiObjectID, lListLast));
-    return static_cast<T&> (**m_stDatas[uiTypeID].m_mIndex[uiObjectID]);
+    m_stDatas[eTypeID].m_lList.push_back (GameObject3D::Ptr (new T ()));
+    std::list<GameObject3D::Ptr>::iterator lListLast = --m_stDatas[eTypeID].m_lList.end ();
+    m_stDatas[eTypeID].m_mIndex.insert (RenderList3D::Pair (uiObjectID, lListLast));
+    return static_cast<T&> (**m_stDatas[eTypeID].m_mIndex[uiObjectID]);
   }
   return static_cast<T&> (**mFound->second);
 }

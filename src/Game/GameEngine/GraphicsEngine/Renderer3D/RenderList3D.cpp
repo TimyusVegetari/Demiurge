@@ -55,25 +55,25 @@ RenderList3D::~RenderList3D ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-RenderList3D::Size_type RenderList3D::Erase ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID ) {
-  m_stDatas[uiTypeID].m_lList.erase (m_stDatas[uiTypeID].m_mIndex[uiObjectID]);
-  m_stDatas[uiTypeID].m_mIndex.erase (uiObjectID);
+RenderList3D::Size_type RenderList3D::Erase ( GameObjects3D::Type eTypeID, const GLuint uiObjectID ) {
+  m_stDatas[eTypeID].m_lList.erase (m_stDatas[eTypeID].m_mIndex[uiObjectID]);
+  m_stDatas[eTypeID].m_mIndex.erase (uiObjectID);
 
-  return m_stDatas[uiTypeID].m_lList.size ();
+  return m_stDatas[eTypeID].m_lList.size ();
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean RenderList3D::Reset ( GameObjects3D::Type uiTypeID ) {
-  m_stDatas[uiTypeID].m_lListIter = m_stDatas[uiTypeID].m_lList.begin ();
-  if (m_stDatas[uiTypeID].m_lListIter != m_stDatas[uiTypeID].m_lList.end ())
+GLboolean RenderList3D::Reset ( GameObjects3D::Type eTypeID ) {
+  m_stDatas[eTypeID].m_lListIter = m_stDatas[eTypeID].m_lList.begin ();
+  if (m_stDatas[eTypeID].m_lListIter != m_stDatas[eTypeID].m_lList.end ())
     return GL_TRUE;
   return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean RenderList3D::Advance ( GameObjects3D::Type uiTypeID ) {
-  m_stDatas[uiTypeID].m_lListIter++;
-  if (m_stDatas[uiTypeID].m_lListIter != m_stDatas[uiTypeID].m_lList.end ())
+GLboolean RenderList3D::Advance ( GameObjects3D::Type eTypeID ) {
+  m_stDatas[eTypeID].m_lListIter++;
+  if (m_stDatas[eTypeID].m_lListIter != m_stDatas[eTypeID].m_lList.end ())
     return GL_TRUE;
   return GL_FALSE;
 }
@@ -83,18 +83,18 @@ GLboolean RenderList3D::Advance ( GameObjects3D::Type uiTypeID ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GLboolean RenderList3D::IsEmpty ( GameObjects3D::Type uiTypeID ) {
-	return m_stDatas[uiTypeID].m_lList.empty ();
+GLboolean RenderList3D::IsEmpty ( GameObjects3D::Type eTypeID ) {
+	return m_stDatas[eTypeID].m_lList.empty ();
 }
 
 ////////////////////////////////////////////////////////////
-GameObject3D& RenderList3D::GetObject ( GameObjects3D::Type uiTypeID ) {
-  return (**m_stDatas[uiTypeID].m_lListIter);
+GameObject3D& RenderList3D::GetObject ( GameObjects3D::Type eTypeID ) {
+  return (**m_stDatas[eTypeID].m_lListIter);
 }
 
 ////////////////////////////////////////////////////////////
-GLuint RenderList3D::CheckError ( GameObjects3D::Type uiTypeID ) {
-	return m_stDatas[uiTypeID].m_uiError;
+GLuint RenderList3D::CheckError ( GameObjects3D::Type eTypeID ) {
+	return m_stDatas[eTypeID].m_uiError;
 }
 
 ////////////////////////////////////////////////////////////
@@ -102,10 +102,10 @@ GLuint RenderList3D::CheckError ( GameObjects3D::Type uiTypeID ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-void RenderList3D::CheckIDError ( GameObjects3D::Type uiTypeID, const GLuint uiObjectID ) {
-  if (uiObjectID > m_stDatas[uiTypeID].m_uiIdAccumulator) {
-    m_stDatas[uiTypeID].m_uiIdAccumulator = uiObjectID;
-    m_stDatas[uiTypeID].m_uiError = Error::OVERFLOWED_OBJECT;
+void RenderList3D::CheckIDError ( GameObjects3D::Type eTypeID, const GLuint uiObjectID ) {
+  if (uiObjectID > m_stDatas[eTypeID].m_uiIdAccumulator) {
+    m_stDatas[eTypeID].m_uiIdAccumulator = uiObjectID;
+    m_stDatas[eTypeID].m_uiError = Error::OVERFLOWED_OBJECT;
   } else
-    m_stDatas[uiTypeID].m_uiError = Error::UNCONSTRUCTED_OBJECT;
+    m_stDatas[eTypeID].m_uiError = Error::UNCONSTRUCTED_OBJECT;
 }

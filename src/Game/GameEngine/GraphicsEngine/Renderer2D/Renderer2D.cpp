@@ -27,7 +27,8 @@
 ////////////////////////////////////////////////////////////
 Renderer2D::Renderer2D ( void ) :
   m_mRenderLists    (),
-  m_uiIdAccumulator (0)
+  m_uiIdAccumulator (0),
+  m_uiError         (NONE)
 {
 }
 
@@ -114,9 +115,9 @@ RenderList2D& Renderer2D::GetRenderList ( GLuint uiRenderListID ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-void Renderer2D::CheckIDError ( GLuint uiDrawableID ) {
-  if (uiDrawableID > m_uiIdAccumulator) {
-    m_uiIdAccumulator = uiDrawableID;
+void Renderer2D::CheckIDError ( GLuint uiRenderListID ) {
+  if (uiRenderListID > m_uiIdAccumulator) {
+    m_uiIdAccumulator = uiRenderListID;
     m_uiError = Error::OVERFLOWED_OBJECT;
   } else
     m_uiError = Error::UNCONSTRUCTED_OBJECT;

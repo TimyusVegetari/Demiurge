@@ -121,10 +121,7 @@ class Renderer2D {
     void Erase ( GLuint uiRenderListID );
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a render list and return its identifier.
-    ///
-    /// \param uiRenderListID   Identifier of the render list.
-    ///        gmRenderWindow   Render Window to render.
+    /// \brief Render the content of the list.
     ///
     ////////////////////////////////////////////////////////////
     void Render ( GLuint uiRenderListID, gm::RenderWindow& gmRenderWindow );
@@ -167,10 +164,10 @@ class Renderer2D {
     ////////////////////////////////////////////////////////////
     /// \brief Check what type of error arose.
     ///
-    /// \param uiDrawableID   Identifier which make an error.
+    /// \param uiRenderListID   Identifier which make an error.
     ///
     ////////////////////////////////////////////////////////////
-    void CheckIDError ( GLuint uiDrawableID );
+    void CheckIDError ( GLuint uiRenderListID );
 
 };
 
