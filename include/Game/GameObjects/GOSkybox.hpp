@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * \file GOSkybox.hpp
  * \brief Class for the skybox of the world state.
  * \author Anthony Acroute
- * \version 0.1
+ * \version 0.2
  * \date 2015
  *
  */
@@ -38,21 +38,21 @@
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GameObjects/GameObject.hpp>
 #include <Game/GameEngine/GameObjects/GameObject3D.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/ShaderProgram.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/Skybox/Skybox.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexBufferObject.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/Tex3DCoordsBufferObject.hpp>
+#include <glm/vec3.hpp> // glm::vec3
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to create the skybox for the world.
 ///
 ////////////////////////////////////////////////////////////
-class GOSkybox : public GameObject, public GameObject3D {
+class GOSkybox : public GameObject, public GameObject3D, private VertexBufferObject, private Tex3DCoordsBufferObject {
 
   private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ShaderProgram   m_oShaderProgramSkybox;
-    Skybox          m_oSkybox;
+    GLuint          m_uiCubeMapID;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -95,12 +95,19 @@ class GOSkybox : public GameObject, public GameObject3D {
     void ResizeView ( void ) {};
 
     ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the game object.
+    /// \brief Update the mvp matrix.
     ///
-    /// \param uiCameraID   Identifier of the 3D camera.
+    /// \param v3fCamLocalFocalisation  Focalisation of the camera.
+    ///        v3fCamOrientation        Orientation of the camera.
     ///
     ////////////////////////////////////////////////////////////
-    void Draw ( const GLuint uiCameraID );
+    void UpdateMVP ( const glm::vec3& v3fCamLocalFocalisation, const glm::vec3& v3fCamOrientation );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw all the composants of the skybox.
+    ///
+    ////////////////////////////////////////////////////////////
+    void Draw ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Call all the update of the components of the game object.
@@ -128,6 +135,25 @@ class GOSkybox : public GameObject, public GameObject3D {
     ///
     ////////////////////////////////////////////////////////////
     virtual GLboolean HandleInput ( void ) { return GL_TRUE; }
+
+  private :
+    ////////////////////////////////////////////////////////////
+    // Internal methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize the VBO datas (Vertex and textures coordinates).
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void InitializeDatas ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize the VBO.
+    ///
+    /// \return True if initialization succeeded, false if it failed.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean InitializeVBO ( void );
 };
 
 #endif // GOSKYBOX_HPP__
