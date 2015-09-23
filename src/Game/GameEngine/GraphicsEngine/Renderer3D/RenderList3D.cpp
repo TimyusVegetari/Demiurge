@@ -88,11 +88,6 @@ GLboolean RenderList3D::IsEmpty ( GameObjects3D::Type eTypeID ) {
 }
 
 ////////////////////////////////////////////////////////////
-GameObject3D& RenderList3D::GetObject ( GameObjects3D::Type eTypeID ) {
-  return (**m_stDatas[eTypeID].m_lListIter);
-}
-
-////////////////////////////////////////////////////////////
 GLuint RenderList3D::CheckError ( GameObjects3D::Type eTypeID ) {
 	return m_stDatas[eTypeID].m_uiError;
 }

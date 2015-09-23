@@ -210,7 +210,8 @@ class RenderList3D {
     /// \return The 3d object in the internal iterator.
     ///
     ////////////////////////////////////////////////////////////
-    GameObject3D& GetObject ( GameObjects3D::Type eTypeID );
+    template <typename T>
+    T& GetObject ( GameObjects3D::Type eTypeID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the value of an error.
@@ -280,6 +281,12 @@ GLuint RenderList3D::Insert ( GameObjects3D::Type eTypeID, const GLuint uiObject
 ////////////////////////////////////////////////////////////
 // Accessor methods
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+template <typename T>
+T& RenderList3D::GetObject ( GameObjects3D::Type eTypeID ) {
+  return static_cast<T&> (**m_stDatas[eTypeID].m_lListIter);
+}
 
 ////////////////////////////////////////////////////////////
 template <typename T>
