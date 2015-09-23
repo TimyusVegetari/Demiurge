@@ -62,6 +62,32 @@ GLboolean ShaderProgram::Load ( const std::string szVertexName, const std::strin
 }
 
 ////////////////////////////////////////////////////////////
+void ShaderProgram::EnableShaderProgram ( void ) {
+  glUseProgram (m_uiID);
+}
+
+////////////////////////////////////////////////////////////
+void ShaderProgram::DisableShaderProgram ( void ) {
+  glUseProgram (0);
+}
+
+////////////////////////////////////////////////////////////
+void ShaderProgram::SendUnitTexture ( const GLchar* szName, GLint iV0 ) {
+  GLint iUnitTextureLoc = glGetUniformLocation (m_uiID, szName);
+  if (iUnitTextureLoc == -1)
+    std::cout << "Error while getting the uniform '" << szName << "'" << std::endl;
+  glUniform1i (iUnitTextureLoc, iV0);
+}
+
+////////////////////////////////////////////////////////////
+void ShaderProgram::SendCurrentMatrix ( const GLchar* szName, glm::mat4& m4fMVP ) {
+  GLint iMatrixLoc = glGetUniformLocation (m_uiID, szName);
+  if (iMatrixLoc == -1)
+    std::cout << "Error while getting the uniform '" << szName << "'" << std::endl;
+  glUniformMatrix4fv (iMatrixLoc, 1, GL_FALSE, glm::value_ptr (m4fMVP));
+}
+
+////////////////////////////////////////////////////////////
 void ShaderProgram::Delete ( void ) {
   if (m_uiID != 0) {
     glDetachShader (m_uiID, m_gFragmentShader.GetID ());

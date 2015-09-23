@@ -38,6 +38,8 @@
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/Shader.hpp>
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/ShaderIdentifiers.hpp>
+#include <glm/mat4x4.hpp>       // glm::mat4
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to create a shader program.
@@ -88,6 +90,36 @@ class ShaderProgram {
     ///
     ////////////////////////////////////////////////////////////
     GLboolean Load ( const std::string szVertexName, const std::string szFragmentName );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Use the shader program.
+    ///
+    ////////////////////////////////////////////////////////////
+    void EnableShaderProgram ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Unuse the shader program.
+    ///
+    ////////////////////////////////////////////////////////////
+    void DisableShaderProgram ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Send a texture.
+    ///
+    /// \param szName   Name of the variable in the shader.
+    ///        iV0      Value of TEXTUREx in OpenGL (TEXTURE0 => 0).
+    ///
+    ////////////////////////////////////////////////////////////
+    void SendUnitTexture ( const GLchar* szName, GLint iV0 );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Send a matrix.
+    ///
+    /// \param szName   Name of the variable in the shader.
+    ///        m4fMVP   Matrix for the rendering.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SendCurrentMatrix ( const GLchar* szName, glm::mat4& m4fMVP );
 
     ////////////////////////////////////////////////////////////
     /// \brief Delete the shader program.
