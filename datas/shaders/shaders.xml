@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<lstShaders>
+	<shaders type="skybox"		vertex="datas/shaders/vertex_skybox.glsl"		fragment="datas/shaders/fragment_skybox.glsl" />
+	<shaders type="wired"			vertex="datas/shaders/vertex_wired.glsl"			fragment="datas/shaders/fragment_wired.glsl" />
+</lstShaders>

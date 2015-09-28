@@ -54,11 +54,13 @@ include_directories(
 				${glew_include_dir}
 				${freeimage_include_dir}
 				${glm_include_dir}
+				${tinyxml2_include_dir}
 )
 link_directories(
         ${sfml_lib_dir}
 				${glew_lib_dir}
 				${freeimage_lib_dir}
+				${tinyxml2_lib_dir}
 )
 
 # Inclusion of the headers
@@ -70,10 +72,10 @@ file(
 				source_files
 				src/*
 )
-# Generation of the header files list
+# Generation of the include files list
 file(
         GLOB_RECURSE
-				header_files
+				include_files
 				include/*
 )
 
@@ -87,7 +89,7 @@ endif()
 add_executable(
         Debug
         ${source_files}
-        ${header_files}
+        ${include_files}
 )
 
 # Configuration of the links edition
@@ -107,6 +109,7 @@ if(WIN32)
 				${jpeg_lib_name}
 				${m_lib_name}
 				${freeimage_lib_name}d
+				${tinyxml2_lib_name}
 )
 else()
 	target_link_libraries(
@@ -123,6 +126,7 @@ else()
 				${jpeg_lib_name}
 				${m_lib_name}
 				${freeimage_lib_name}d
+				${tinyxml2_lib_name}
 )
 endif()
 
@@ -154,6 +158,7 @@ target_link_libraries(
 				${jpeg_lib_name}
 				${m_lib_name}
 				${freeimage_lib_name}
+				${tinyxml2_lib_name}
 )
 
 # Configuration of the path of the program
