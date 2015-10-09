@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,56 +22,59 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file GameObject3D.hpp
- * \brief Class for the 3D game objects.
+ * \file Object3D.hpp
+ * \brief Class for the 3D objects.
  * \author Anthony Acroute
- * \version 0.2
+ * \version 0.3
  * \date 2015
  *
  */
 
-#ifndef GAMEOBJECT3D_HPP__
-#define GAMEOBJECT3D_HPP__
+#ifndef OBJECT3D_HPP__
+#define OBJECT3D_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/includes.hpp>
+#include <list>
 
 ////////////////////////////////////////////////////////////
-/// \brief Enumeration of types for the game objects 3D.
+/// \brief Enumeration of types for the 3D objects.
 ///
 ////////////////////////////////////////////////////////////
-namespace GameObjects3D {
+namespace Objects3D {
 
 enum Type {
   None,
   Skybox,
-  WiredObject,
-  TexturedObject,
+  Box,
   Count
 };
 
 }
 
+class RenderList3D;
+
 ////////////////////////////////////////////////////////////
-/// \brief Class to create game objects like as players,
-/// creatures, equipments, vehicules, etc...
+/// \brief Class to create 3D objects like as skybox, box,
+/// sphere, block, etc...
 ///
 ////////////////////////////////////////////////////////////
-class GameObject3D {
+class Object3D {
+  friend Renderer3D;
 
   public :
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::unique_ptr<GameObject3D> Ptr;  ///< Unique pointer of 3D game object.
+    typedef std::unique_ptr<Object3D> Ptr;  ///< Unique pointer of 3D object.
 
-  private :
+  protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint    m_uiRenderList3D_ID;
+    std::list<GLuint>::iterator m_lRenderListIter;  ///< Iterator to the identifier in the render list.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -81,30 +84,18 @@ class GameObject3D {
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines a game object.
+    /// This constructor defines a 3D object.
     ///
     ////////////////////////////////////////////////////////////
-    GameObject3D ( void );
+    Object3D ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the game object.
+    /// Cleans up all the internal resources used by the 3D object.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~GameObject3D ( void );
-
-    ////////////////////////////////////////////////////////////
-    // Accessor methods
-    ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the 3D render list identifier to insert the 3D game object.
-    ///
-    /// \param uiRenderList3D_ID  Identifier of the render list.
-    ///
-    ////////////////////////////////////////////////////////////
-    void SetRenderList3D_ID ( GLuint uiRenderList3D_ID );
+    virtual ~Object3D ( void );
 };
 
-#endif // GAMEOBJECT_HPP__
+#endif // OBJECT3D_HPP__
