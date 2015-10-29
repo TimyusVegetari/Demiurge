@@ -22,39 +22,40 @@
 // Description for Doxygen
 ////////////////////////////////////////////////////////////
 /**
- * \file GOSkybox.hpp
- * \brief Class for the skybox of the world state.
+ * \file Box.hpp
+ * \brief Class to define the VBO of a box.
  * \author Anthony Acroute
- * \version 0.2
- * \date 2015
+ * \version 0.4
+ * \date 2013-2015
  *
  */
 
-#ifndef GOSKYBOX_HPP__
-#define GOSKYBOX_HPP__
+#ifndef VBO_BOX_HPP__
+#define VBO_BOX_HPP__
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/GameEngine/GameObjects/GameObject.hpp>
-#include <Game/GameEngine/GameObjects/GameObject3D.hpp>
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/VertexBufferObject.hpp>
-#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/Tex3DCoordsBufferObject.hpp>
-#include <glm/vec3.hpp> // glm::vec3
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/NormalBufferObject.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/BufferObjects/ColorBufferObject.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/Object3D.hpp>
 
 ////////////////////////////////////////////////////////////
-/// \brief Class to create the skybox for the world.
+/// \brief Class to define the VBO of a box.
 ///
 ////////////////////////////////////////////////////////////
-class GOSkybox : public GameObject, public GameObject3D, private VertexBufferObject, private Tex3DCoordsBufferObject {
+class Box : public Object3D, VertexBufferObject, NormalBufferObject, ColorBufferObject {
 
   private :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLuint          m_uiCubeMapID;
+    GLfloat m_fWidth,
+            m_fHeight,
+            m_fDepth;
 
-  public :
+  public:
     ////////////////////////////////////////////////////////////
     // Constructor(s)/Destructor
     ////////////////////////////////////////////////////////////
@@ -62,87 +63,25 @@ class GOSkybox : public GameObject, public GameObject3D, private VertexBufferObj
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor.
     ///
-    /// This constructor defines the game object.
+    /// This constructor defines a box.
     ///
     ////////////////////////////////////////////////////////////
-    GOSkybox ( ST_Context& stContext );
+    Box ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
     ///
-    /// Cleans up all the internal resources used by the game object.
+    /// Cleans up all the internal resources used by the box.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~GOSkybox ( void );
+    virtual ~Box ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize all the composants of the game object.
-    ///
-    /// \return True if the initialization is succeed, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean Initialize ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Upgrade all the composants of the game object when
-    /// the render target view is resized.
-    ///
-    ////////////////////////////////////////////////////////////
-    void ResizeView ( void ) {};
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the mvp matrix.
-    ///
-    /// \param v3fCamLocalFocalisation  Focalisation of the camera.
-    ///        v3fCamOrientation        Orientation of the camera.
-    ///
-    ////////////////////////////////////////////////////////////
-    void UpdateMVP ( const glm::vec3& v3fCamLocalFocalisation, const glm::vec3& v3fCamOrientation );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Draw all the composants of the skybox.
-    ///
-    ////////////////////////////////////////////////////////////
-    void Draw ( void );
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Call all the update of the components of the game object.
-    ///
-    /// \return True to permit the other game objects to be updated, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    GLboolean Update ( void ) { return GL_TRUE; }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check the events for all the components of the state.
-    ///
-    /// \param eEventType   The current event type.
-    ///        sfKeyCode    The current keyboard key code.
-    ///
-    /// \return True to permit the events of the other states to be checked, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_TRUE; }
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check the inputs for all the components of the game object.
-    ///
-    /// \return True to permit the inputs of the other game objects to be checked, false else.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleInput ( void ) { return GL_TRUE; }
-
-  private :
-    ////////////////////////////////////////////////////////////
-    // Internal methods
-    ////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Initialize the VBO datas (Vertex and textures coordinates).
+    /// \brief Initialize the VBO datas (Vertex, normale, etc...).
     ///
     ////////////////////////////////////////////////////////////
     virtual void InitializeDatas ( void );
@@ -154,6 +93,66 @@ class GOSkybox : public GameObject, public GameObject3D, private VertexBufferObj
     ///
     ////////////////////////////////////////////////////////////
     GLboolean InitializeVBO ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw all the composants of the box.
+    ///
+    /// \param
+    ///
+    ////////////////////////////////////////////////////////////
+    void Draw ( GLenum eMode );
+
+    ////////////////////////////////////////////////////////////
+    // Accessor methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the dimensions of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetDimensions ( GLfloat fWidth, GLfloat fHeight, GLfloat fDepth );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the width of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetWidth ( GLfloat fWidth );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the height of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetHeight ( GLfloat fHeight );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the depth of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetDepth ( GLfloat fDepth );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the width of the box.
+    ///
+    /// \return Width of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLfloat GetWidth ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the height of the box.
+    ///
+    /// \return Height of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLfloat GetHeight ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the depth of the box.
+    ///
+    /// \return Depth of the box.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLfloat GetDepth ( void );
 };
 
-#endif // GOSKYBOX_HPP__
+#endif // VBO_BOX_HPP__

@@ -68,7 +68,7 @@ RenderList3D::Iter RenderList3D::PushFront ( Objects3D::Type eTypeID, GLuint uiO
 }
 
 ////////////////////////////////////////////////////////////
-RenderList3D::Iter RenderList3D::Insert ( Objects3D::Type eTypeID, const GLuint uiListedObjectID, GLuint uiObjectID ) {
+RenderList3D::Iter RenderList3D::Insert ( Objects3D::Type eTypeID, GLuint uiObjectID, const GLuint uiListedObjectID ) {
   for (RenderList3D::Iter lIter = m_stIdentifiers[eTypeID].m_lList.begin () ; lIter != m_stIdentifiers[eTypeID].m_lList.end () ; lIter++)
     if ((*lIter) == uiListedObjectID)
       return m_stIdentifiers[eTypeID].m_lList.insert (lIter, uiObjectID);

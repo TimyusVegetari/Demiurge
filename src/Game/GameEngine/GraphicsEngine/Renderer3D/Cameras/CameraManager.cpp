@@ -26,9 +26,10 @@
 
 ////////////////////////////////////////////////////////////
 CameraManager::CameraManager ( void ) :
-  m_mIndex          (),
-  m_uiIdAccumulator (0),
-  m_uiError         (Error::NONE)
+  m_mIndex              (),
+  m_uiIdAccumulator     (0),
+  m_uiError             (Error::NONE),
+  m_uiActivatedCameraID (0)
 {
 }
 
@@ -59,6 +60,16 @@ void CameraManager::Erase ( GLuint uiCameraID ) {
 }
 
 ////////////////////////////////////////////////////////////
+void CameraManager::EnableCamera ( GLuint uiCameraID ) {
+  m_uiActivatedCameraID = uiCameraID;
+}
+
+////////////////////////////////////////////////////////////
+void CameraManager::DisableCamera ( void ) {
+  m_uiActivatedCameraID = 0;
+}
+
+////////////////////////////////////////////////////////////
 // Accessor methods
 ////////////////////////////////////////////////////////////
 
@@ -80,6 +91,18 @@ Camera& CameraManager::GetCamera ( GLuint uiCameraID ) {
 
     m_mIndex.insert (CameraManager::Pair (uiCameraID, Camera::Ptr (new Camera ())));
     return (*m_mIndex[uiCameraID]);
+  }
+  return (*mFound->second);
+}
+
+////////////////////////////////////////////////////////////
+Camera& CameraManager::GetCamera ( void ) {
+  auto mFound = m_mIndex.find (m_uiActivatedCameraID);
+  if (mFound == m_mIndex.end ()) {
+    CheckIDError (m_uiActivatedCameraID);
+
+    m_mIndex.insert (CameraManager::Pair (m_uiActivatedCameraID, Camera::Ptr (new Camera ())));
+    return (*m_mIndex[m_uiActivatedCameraID]);
   }
   return (*mFound->second);
 }

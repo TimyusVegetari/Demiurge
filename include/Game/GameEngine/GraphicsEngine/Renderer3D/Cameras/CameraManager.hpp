@@ -65,9 +65,10 @@ class CameraManager {
     // Member data
     ////////////////////////////////////////////////////////////
     std::map<GLuint,
-        Camera::Ptr>  m_mIndex; ///< Index of cameras pointers.
-    GLuint m_uiIdAccumulator;   ///< Greater identifier generated since the begin
-    GLuint m_uiError;           ///< Error value if an error arose.
+        Camera::Ptr>  m_mIndex;   ///< Index of cameras pointers.
+    GLuint m_uiIdAccumulator;     ///< Greater identifier generated since the begin
+    GLuint m_uiError;             ///< Error value if an error arose.
+    GLuint m_uiActivatedCameraID; ///< Identifier of the activated camera.
 
   public :
     ////////////////////////////////////////////////////////////
@@ -111,6 +112,20 @@ class CameraManager {
     void Erase ( GLuint uiCameraID );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Activate the identified camera to render.
+    ///
+    /// \param uiCameraID   Identifier of the camera.
+    ///
+    ////////////////////////////////////////////////////////////
+    void EnableCamera ( GLuint uiCameraID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deactivate the identified camera after rendering.
+    ///
+    ////////////////////////////////////////////////////////////
+    void DisableCamera ( void );
+
+    ////////////////////////////////////////////////////////////
     // Accessor methods
     ////////////////////////////////////////////////////////////
 
@@ -127,10 +142,18 @@ class CameraManager {
     ///
     /// \param uiCameraID   Identifier of the camera.
     ///
-    /// \return Instance of the indentified camera.
+    /// \return Instance of the identified camera.
     ///
     ////////////////////////////////////////////////////////////
     Camera& GetCamera ( GLuint uiCameraID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the activated camera.
+    ///
+    /// \return Instance of the activated camera.
+    ///
+    ////////////////////////////////////////////////////////////
+    Camera& GetCamera ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the value of an error.

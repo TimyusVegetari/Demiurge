@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,25 +21,23 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/GameObjects/GOSkybox.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/Objects3D/Skybox.hpp>
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GOSkybox::GOSkybox ( ST_Context& stContext ) :
-  GameObject              (stContext),
-  GameObject3D            (),
+Skybox::Skybox ( void ) :
+  Object3D                (),
   VertexBufferObject      (),
   Tex3DCoordsBufferObject (),
   m_uiCubeMapID           (0)
 {
-  m_szTypeName  = "GOSkybox";
 }
 
 ////////////////////////////////////////////////////////////
-GOSkybox::~GOSkybox ( void ) {
+Skybox::~Skybox ( void ) {
   DeleteBuffers ();
   m_oTex3DCoords.DeleteBuffer ();
   DeleteDatas ();
@@ -51,50 +49,12 @@ GOSkybox::~GOSkybox ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-GLboolean GOSkybox::Initialize ( void ) {
-  std::cout << " >> GOSkybox initializing..." << std::endl;
-  // Getting of the needed systems
-  Textures2DManager& oTextures2DManager = m_stContext.m_oGraphicsEngine.GetTextures2DManager ();
-
-	// Skybox test
-  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors activated by SFML.
-  glEnable (GL_TEXTURE_CUBE_MAP);
-	m_uiCubeMapID = oTextures2DManager.LoadTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, "./datas/skybox/skybox", "png");
-  glDisable (GL_TEXTURE_CUBE_MAP);
-	if (!InitializeVBO ()) {
-    // Debug : It will be necessary to process the errors, in the future.
-    return GL_FALSE;
-  }
-
-  return GL_TRUE;
+void Skybox::SetCubeMapID ( const GLuint uiTextureID ) {
+  m_uiCubeMapID = uiTextureID;
 }
 
 ////////////////////////////////////////////////////////////
-void GOSkybox::UpdateMVP ( const glm::vec3& v3fCamLocalFocalisation, const glm::vec3& v3fCamOrientation ) {
-  gluLookAt (0, 0, 0, v3fCamLocalFocalisation.x, v3fCamLocalFocalisation.y, v3fCamLocalFocalisation.z, v3fCamOrientation.x, v3fCamOrientation.y, v3fCamOrientation.z);
-}
-
-////////////////////////////////////////////////////////////
-void GOSkybox::Draw ( void ) {
-  // Getting of the needed systems
-  Textures2DManager& oTextures2DManager = m_stContext.m_oGraphicsEngine.GetTextures2DManager ();
-
-  // Binding of the cube map texture
-  oTextures2DManager.BindTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, m_uiCubeMapID);
-  glEnableClientState (GL_TEXTURE_COORD_ARRAY); ///< Activate texture coords array
-  ActiveTex3DCoordsPointer ();
-
-  Render (GL_TRIANGLE_STRIP);
-
-  glDisableClientState (GL_TEXTURE_COORD_ARRAY);  ///< Deactivate texture coords array
-}
-
-////////////////////////////////////////////////////////////
-// Internal methods
-////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-void GOSkybox::InitializeDatas ( void ) {
+void Skybox::InitializeDatas ( void ) {
   GLfloat fWidth = 1.0f;          ///< Width of the cube
 
   m_oVertex.SetDatas (new GLfloat[24] {
@@ -131,7 +91,7 @@ void GOSkybox::InitializeDatas ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean GOSkybox::InitializeVBO ( void ) {
+GLboolean Skybox::InitializeVBO ( void ) {
   GLint iNoError = 1;
 
 	InitializeDatas ();
@@ -145,4 +105,21 @@ GLboolean GOSkybox::InitializeVBO ( void ) {
   }
 
   return static_cast<GLboolean> (iNoError);
+}
+
+////////////////////////////////////////////////////////////
+void Skybox::Draw ( Textures2DManager& oTextures2DManager ) {
+  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors at the place of SFML.
+  glDepthMask (GL_FALSE);                 ///< Disable drawing in the depth buffer
+  // Binding of the cube map texture
+  glEnable (GL_TEXTURE_CUBE_MAP);
+  oTextures2DManager.BindTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, m_uiCubeMapID);
+  glEnableClientState (GL_TEXTURE_COORD_ARRAY); ///< Activate texture coords array
+  ActiveTex3DCoordsPointer ();
+
+  Render (GL_TRIANGLE_STRIP);
+
+  glDisableClientState (GL_TEXTURE_COORD_ARRAY);  ///< Deactivate texture coords array
+  glDisable (GL_TEXTURE_CUBE_MAP);
+  glDepthMask (GL_TRUE);    ///< Enable drawing in the depth buffer
 }

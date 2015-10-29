@@ -123,13 +123,13 @@ class RenderList3D {
     /// \brief Add a 3d object after another 3d object in the list.
     ///
     /// \param eTypeID            Identifier of the type of the 3d object.
-    ///        uiListedObjectID   Identifier of the preview 3d object.
-    ///        uiObjectID         Identifier of the game object to insert.
+    ///        uiObjectID         Identifier of the 3d object to insert before the next.
+    ///        uiListedObjectID   Identifier of the next 3d object already listed.
     ///
     /// \return An iterator to the 3D object.
     ///
     ////////////////////////////////////////////////////////////
-    Iter Insert ( Objects3D::Type eTypeID, const GLuint uiListedObjectID, GLuint uiObjectID );
+    Iter Insert ( Objects3D::Type eTypeID, GLuint uiObjectID, const GLuint uiListedObjectID );
 
     ////////////////////////////////////////////////////////////
     /// \brief Erase a 3d object in the list.
