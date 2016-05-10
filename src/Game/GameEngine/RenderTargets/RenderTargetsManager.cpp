@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 RenderTargetsManager::RenderTargetsManager ( void ) :
   m_mList       (),
   m_mFactories  (),
+  m_bFullScreen (GL_FALSE),
   m_uiError     (Error::NONE)
 {
 }
@@ -61,6 +62,16 @@ RenderTargetsManager::Size_type RenderTargetsManager::DeleteRenderTarget ( Rende
 ////////////////////////////////////////////////////////////
 GLboolean RenderTargetsManager::IsEmpty ( void ) {
 	return m_mList.empty ();
+}
+
+////////////////////////////////////////////////////////////
+void RenderTargetsManager::SetFullScreen ( GLboolean bFullScreen ) {
+	m_bFullScreen = bFullScreen;
+}
+
+////////////////////////////////////////////////////////////
+GLboolean RenderTargetsManager::IsFullScreen ( void ) {
+	return m_bFullScreen;
 }
 
 ////////////////////////////////////////////////////////////

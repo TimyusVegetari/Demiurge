@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file RenderTargetsManager.hpp
  * \brief Class to manage the render targets.
  * \author Anthony Acroute
- * \version 0.1
- * \date 2015
+ * \version 0.2
+ * \date 2015-2016
  *
  */
 
@@ -77,6 +77,7 @@ class RenderTargetsManager : sf::NonCopyable {
     std::map<GLuint, RenderTarget::Ptr>       m_mList;        ///< List of created render target.
     std::map<RenderTargets::ID,
         std::function<RenderTarget::Ptr ()>>  m_mFactories;   ///< List of functions to call constructor of the specific render targets.
+    GLboolean                                 m_bFullScreen;  ///< Variable to check if fullscreen is activated or not.
     GLuint                                    m_uiError;      ///< Error value if an error arose.
 
   public :
@@ -153,6 +154,22 @@ class RenderTargetsManager : sf::NonCopyable {
     ////////////////////////////////////////////////////////////
     template <typename T>
     T& GetRenderTargetObject ( RenderTargets::ID eRenderTargetID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the activation of the fullscreen.
+    ///
+    /// \param bFullScreen  State of the fullscreen.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SetFullScreen ( GLboolean bFullScreen );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get if the fullscreen is activated or not.
+    ///
+    /// \return True if the fullscreen is activated, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean IsFullScreen ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the value of an error.

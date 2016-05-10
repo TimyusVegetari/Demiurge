@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * \brief Class to upgrade a sf::RenderWindow.
  * \author Anthony Acroute
  * \version 0.2
- * \date 2015
+ * \date 2015-2016
  *
  */
 
@@ -38,6 +38,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include "RenderTarget.hpp"
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to upgrade a sf::RenderWindow.
@@ -45,7 +46,7 @@
 ////////////////////////////////////////////////////////////
 namespace gm {  ///< Corresponds to the word "game".
 
-class RenderWindow : public sf::RenderWindow {
+class RenderWindow : public sf::RenderWindow, public gm::RenderTarget {
 
   private :
     ////////////////////////////////////////////////////////////
@@ -192,7 +193,7 @@ class RenderWindow : public sf::RenderWindow {
     /// \param sfSize   New size, in pixels.
     ///
     ////////////////////////////////////////////////////////////
-    inline void SetSize ( sf::Vector2u sfSize ) { setSize (sfSize); }
+    inline void SetSize ( sf::Vector2u sfSize ) { setSize (GetLegalSize (sfSize.x, sfSize.y)); }
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the width of the rendering region of the window.
@@ -202,7 +203,7 @@ class RenderWindow : public sf::RenderWindow {
     /// \see GetWidth
     ///
     ////////////////////////////////////////////////////////////
-    inline void SetWidth ( GLuint uiWidth ) { setSize (sf::Vector2u (uiWidth, getSize ().y)); }
+    inline void SetWidth ( GLuint uiWidth ) { setSize (GetLegalSize (uiWidth, getSize ().y)); }
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the width of the rendering region of the window.
@@ -225,7 +226,7 @@ class RenderWindow : public sf::RenderWindow {
     /// \see GetHeight
     ///
     ////////////////////////////////////////////////////////////
-    inline void SetHeight ( GLuint uiHeight ) { setSize (sf::Vector2u (getSize ().x, uiHeight)); }
+    inline void SetHeight ( GLuint uiHeight ) { setSize (GetLegalSize (getSize ().x, uiHeight)); }
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the height of the rendering region of the window.
