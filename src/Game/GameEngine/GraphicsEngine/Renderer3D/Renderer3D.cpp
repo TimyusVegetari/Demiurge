@@ -140,13 +140,13 @@ Renderer3D::RL3DSize_type Renderer3D::EraseRenderList ( Shaders::ID eShaderID, G
 }
 
 ////////////////////////////////////////////////////////////
-void Renderer3D::PerspectiveOGL2 ( gm::RenderWindow& gmRenderWindow ) {
-  glMatrixMode (GL_PROJECTION);
-  glLoadIdentity ();
-  gluPerspective (69.0, static_cast<GLdouble> (gmRenderWindow.GetWidth ())/static_cast<GLdouble> (gmRenderWindow.GetHeight ()), 0.1, 128.0);
-  glMatrixMode (GL_MODELVIEW);
-  glLoadIdentity ();
-}
+//void Renderer3D::PerspectiveOGL2 ( gm::RenderWindow& gmRenderWindow ) {
+//  glMatrixMode (GL_PROJECTION);
+//  glLoadIdentity ();
+//  gluPerspective (69.0, static_cast<GLdouble> (gmRenderWindow.GetWidth ())/static_cast<GLdouble> (gmRenderWindow.GetHeight ()), 0.1, 128.0);
+//  glMatrixMode (GL_MODELVIEW);
+//  glLoadIdentity ();
+//}
 
 ////////////////////////////////////////////////////////////
 void Renderer3D::Render_OGL2 ( Shaders::ID eShaderID, GLuint uiRenderListID, Objects3D::Type eObjectType ) {

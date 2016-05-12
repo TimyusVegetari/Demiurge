@@ -31,7 +31,7 @@
 ////////////////////////////////////////////////////////////
 GOCamera::GOCamera ( ST_Context& stContext ) :
   GameObject              (stContext),
-  GameObject3D            (),
+  //GameObject3D            (),
   m_uiCamera_ID           (0),
   m_bMoved                (GL_FALSE)
 {

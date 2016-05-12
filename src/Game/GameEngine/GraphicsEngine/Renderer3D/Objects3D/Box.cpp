@@ -59,6 +59,8 @@ void Box::InitializeDatas ( void ) {
           fMidHeight  = m_fHeight/2.f,
           fMidDepth   = m_fDepth/2.f;
 
+  m_szTypeName  = "VBO::Box";
+
   m_oVertex.SetDatas (
     new GLfloat[72] {
       // Face 0 : Bottom face

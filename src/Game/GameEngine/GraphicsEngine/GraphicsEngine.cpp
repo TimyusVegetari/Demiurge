@@ -32,7 +32,7 @@ GraphicsEngine::GraphicsEngine ( void ) :
   m_oOGLManager           (),
   m_oTextures2DManager    (),
   m_oRenderer2D           (),
-  m_oRenderer3D           (),
+  m_oRenderer3D           (m_oOGLManager, m_oTextures2DManager),
   m_uiPrevElapsedTime     (0),
   m_uiFrameDelay          (0),
   m_fFrameDelayInSeconds  (0.f),

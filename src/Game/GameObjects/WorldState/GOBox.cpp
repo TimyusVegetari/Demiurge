@@ -31,7 +31,7 @@
 ////////////////////////////////////////////////////////////
 GOBox::GOBox ( ST_Context& stContext ) :
   GameObject              (stContext),
-  GameObject3D            (),
+//  GameObject3D            (),
   m_oShaderProgramClassic (),
   m_oBox                  ()
 {
@@ -58,7 +58,7 @@ GLboolean GOBox::Initialize ( void ) {
 
   if (oOGLManager.GetVersion () == 3) {         ///< OpenGL 3
     // Initialize the shaders
-    if (!m_oShaderProgramClassic.Load ("datas/shaders/vertex_classic.glsl", "datas/shaders/fragment_classic.glsl")) {
+    if (!m_oShaderProgramClassic.Load ("datas/shaders/vertex_wired.glsl", "datas/shaders/fragment_wired.glsl")) {
       // Debug : It will be necessary to process the errors, in the future.
     }
   }
