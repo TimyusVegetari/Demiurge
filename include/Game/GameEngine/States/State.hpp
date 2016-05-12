@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
  * \file State.hpp
  * \brief Class for the states of the game.
  * \author Anthony Acroute
- * \version 0.4
- * \date 2014-2015
+ * \version 0.5
+ * \date 2014-2016
  *
  */
 
@@ -40,9 +40,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
-#include "GameStates/StateIdentifiers.hpp"
 
-class StateStack;
 namespace States {
   class Factories;
 }

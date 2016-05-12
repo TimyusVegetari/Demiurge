@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,22 +31,27 @@
 ////////////////////////////////////////////////////////////
 TitleState::TitleState ( StateStack& oStack, ST_Context& stContext ) :
   State ( oStack, stContext ),
+  m_uiRenderList3D_ID   (0),
   m_uiRenderList2D_ID   (0),
-	m_uiTitleBackground   (0),
+	m_uiSkybox            (0),
 	m_uiTitle             (0),
 	m_uiMainMenu          (0),
-  m_uiLicense           (0)
+  m_uiLicense           (0),
+  m_sfMainView          ()
 {
 }
 
 ////////////////////////////////////////////////////////////
 TitleState::~TitleState ( void ) {
+  // Delete the render list 3D
+//  Renderer3D& oRenderer3D = m_stContext.m_oGraphicsEngine.GetRenderer3D ();
+//  oRenderer3D.Erase (m_uiRenderList3D_ID);
   // Delete the render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Erase (m_uiRenderList2D_ID);
 
   // Delete the game objects
-  m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::TitleBackground, m_uiTitleBackground);
+//  m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::Skybox, m_uiSkybox);
   m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::Title, m_uiTitle);
   m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::MainMenu, m_uiMainMenu);
   m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::License, m_uiLicense);
@@ -65,10 +70,14 @@ GLboolean TitleState::Initialize ( void ) {
   // Creation of the initializer for this state.
   m_uiInitializer_ID = oGameObjectsManager.CreateInitializer ();
 
+  // Create a render list 3D
+//  Renderer3D& oRenderer3D = m_stContext.m_oGraphicsEngine.GetRenderer3D ();
+//  m_uiRenderList3D_ID = oRenderer3D.CreateRenderList ();
+
   // Game title background
-  if (!oGameObjectsManager.AddToInitializer<GOTitleBackground> (m_uiInitializer_ID, GameObjects::Type::TitleBackground, m_uiTitleBackground)) {
+//  if (!oGameObjectsManager.AddToInitializer<GO_Skybox> (m_uiInitializer_ID, GameObjects::Type::Skybox, m_uiSkybox)) {
     // Debug : It will be necessary to process the errors, in the future.
-  }
+//  }
 
   // Create a render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
@@ -95,22 +104,9 @@ GLboolean TitleState::Initialize ( void ) {
   GOLicense& oGOLicense = oGameObjectsManager.GetGameObject<GOLicense> (GameObjects::Type::License, m_uiLicense);
   oGOLicense.SetRenderList2D_ID (m_uiRenderList2D_ID);
 
-  /*// Getting of the needed systems
-  GameObjectsManager& oGameObjectsManager = m_stContext.GetGameObjectsManager ();
-  gm::RenderWindow& gmMainWindow = GetMainWindow ();
-
-  // Game title background
-  GOTitleBackground& oGOTitleBackground = oGameObjectsManager.GetGameObject<GOTitleBackground> (GameObjects::Type::TitleBackground, m_uiTitleBackground);
-  oGOTitleBackground.Initialize ();
-  // Game title
-  GOTitle& oGOTitle = oGameObjectsManager.GetGameObject<GOTitle> (GameObjects::Type::Title, m_uiTitle);
-  oGOTitle.Initialize ();
-  // Game main menu
-  GOMainMenu& oGOMainMenu = oGameObjectsManager.GetGameObject<GOMainMenu> (GameObjects::Type::MainMenu, m_uiMainMenu);
-  oGOMainMenu.Initialize ();
-	// Game licence and version
-  GOLicense& oGOLicense = oGameObjectsManager.GetGameObject<GOLicense> (GameObjects::Type::License, m_uiLicense);
-  oGOLicense.Initialize ();*/
+	// Initialize the main view
+	m_sfMainView.reset (sf::FloatRect(0.f, 0.f, gmMainWindow.GetWidth ()*1.f, gmMainWindow.GetHeight ()*1.f));
+	m_sfMainView.setViewport (sf::FloatRect (0.f, 0.f, 1.f, 1.f));
 
   return GL_TRUE;
 }
@@ -119,15 +115,21 @@ GLboolean TitleState::Initialize ( void ) {
 void TitleState::ResizeView ( void ) {
   // Getting of the needed systems
   GameObjectsManager& oGameObjectsManager = m_stContext.GetGameObjectsManager ();
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
+
+  // Update the main view
+	m_sfMainView.reset (sf::FloatRect(0.f, 0.f, gmMainWindow.GetWidth ()*1.f, gmMainWindow.GetHeight ()*1.f));
 
   // Game title background
-  GOTitleBackground& oGOTitleBackground = oGameObjectsManager.GetGameObject<GOTitleBackground> (GameObjects::Type::TitleBackground, m_uiTitleBackground);
-  oGOTitleBackground.ResizeView ();
+//  GO_Skybox& oGOSkybox = oGameObjectsManager.GetGameObject<GO_Skybox> (GameObjects::Type::Skybox, m_uiSkybox);
+//  oGOSkybox.ResizeView ();
   // Game title
   GOTitle& oGOTitle = oGameObjectsManager.GetGameObject<GOTitle> (GameObjects::Type::Title, m_uiTitle);
+  oGOTitle.SetPosition (gmMainWindow.GetView ().getCenter ().x, floorf (static_cast<GLfloat> (gmMainWindow.GetHeight ()) / 3.f));
   oGOTitle.ResizeView ();
   // Game main menu
   GOMainMenu& oGOMainMenu = oGameObjectsManager.GetGameObject<GOMainMenu> (GameObjects::Type::MainMenu, m_uiMainMenu);
+	oGOMainMenu.SetPosition (oGOTitle.GetPosition ().x, oGOTitle.GetPosition ().y+96);
   oGOMainMenu.ResizeView ();
   // Game license and version
   GOLicense& oGOLicense = oGameObjectsManager.GetGameObject<GOLicense> (GameObjects::Type::License, m_uiLicense);
@@ -140,35 +142,42 @@ void TitleState::Draw ( void ) {
   GameObjectsManager& oGameObjectsManager = m_stContext.GetGameObjectsManager ();
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
-  // Draw the background
-  GOTitleBackground& oGOTitleBackground = oGameObjectsManager.GetGameObject<GOTitleBackground> (GameObjects::Type::TitleBackground, m_uiTitleBackground);
-  oGOTitleBackground.Draw ();
+//  Renderer3D& oRenderer3D = m_stContext.m_oGraphicsEngine.GetRenderer3D ();
+  // Draw the skybox
+//  oRenderer3D.Render (m_uiRenderList3D_ID, gmMainWindow);
 
   gmMainWindow.EnableSFML ();
+
+  // Activating of the main view
+  gmMainWindow.setView (m_sfMainView);
+
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   // Animated title logo
   GOTitle& oGOTitle = oGameObjectsManager.GetGameObject<GOTitle> (GameObjects::Type::Title, m_uiTitle);
   oGOTitle.UpdateAnimation ();
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
+
   gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////
 GLboolean TitleState::Update ( void ) {
   // Update the background
-  GOTitleBackground& oGOTitleBackground = m_stContext.m_oGameObjectsManager.GetGameObject<GOTitleBackground> (GameObjects::Type::TitleBackground, m_uiTitleBackground);
-	return oGOTitleBackground.Update ();
+//  GO_Skybox& oGOSkybox = m_stContext.m_oGameObjectsManager.GetGameObject<GOTitleBackground> (GameObjects::Type::Skybox, m_uiSkybox);
+//	return oGOSkybox.Update ();
+  return GL_TRUE;
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean TitleState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+GLboolean TitleState::HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+  // Getting of the needed systems
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
-  if (eEventType == Event::Type::Closed) {
+  if (eEventType == drimi::Event::Type::Closed) {
     gmMainWindow.Close ();
-	} else if (eEventType == Event::Type::Resized) {
+	} else if (eEventType == drimi::Event::Type::Resized) {
     ResizeView ();
-	} else if (eEventType == Event::Type::KeyPressed) {
+	} else if (eEventType == drimi::Event::Type::KeyPressed) {
     switch (sfKeyCode) {
       case sf::Keyboard::Key::Escape :
         gmMainWindow.Close ();
@@ -181,6 +190,11 @@ GLboolean TitleState::HandleEvent ( const Event::Type eEventType, const sf::Keyb
     }
 	}
 	return GL_TRUE;
+}
+
+////////////////////////////////////////////////////////////
+GLboolean TitleState::HandleTextUnicode ( const GLchar cUnicode ) {
+  return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////

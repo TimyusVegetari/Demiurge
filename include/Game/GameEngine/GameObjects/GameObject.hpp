@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file GameObject.hpp
  * \brief Class for the game objects.
  * \author Anthony Acroute
- * \version 0.2
- * \date 2015
+ * \version 0.3
+ * \date 2015-2016
  *
  */
 
@@ -39,9 +39,11 @@
 #include <Game/includes.hpp>
 #include <Game/GameEngine/RenderTargets/RenderTargetsManager.hpp>
 #include <Game/GameEngine/GraphicsEngine/GraphicsEngine.hpp>
-#include <Game/EventTypes.hpp>
+#include <DRIMI/Utils/EventTypes.hpp>
 #include "GameObjectIdentifiers.hpp"
+#include <Game/GameEngine/States/GameStates/StateIdentifiers.hpp>
 
+class StateStack;
 class GameObjectsManager;
 
 ////////////////////////////////////////////////////////////
@@ -66,15 +68,19 @@ class GameObject {
 			RenderTargetsManager&	m_oRenderTargetsManager;  ///< Reference of the render targets manager of the game.
 			drimi::BmpFont&       m_oBmpFont;               ///< Reference of the bitmap font of the game.
       GraphicsEngine&       m_oGraphicsEngine;        ///< Reference of the graphics engine of the game.
+      StateStack&           m_oStateStack;            ///< Reference of the state stack.
 			GameObjectsManager&   m_oGameObjectsManager;    ///< Reference of the game objects manager.
 
 			ST_Context  ( const GLuint& uiElapsedTime,
                     RenderTargetsManager&	oRenderTargetsManager,
                     drimi::BmpFont& oBmpFont,
                     GraphicsEngine& oGraphicsEngine,
+                    StateStack& oStateStack,
                     GameObjectsManager& oGameObjectsManager );
       const GLuint& GetElapsedTime ( void );
       RenderList2D& GetRenderList2D ( GLuint uiRenderList2D_ID );
+      //RenderList3D& GetRenderList3D ( GLuint uiRenderList3D_ID );
+      StateStack& GetStateStack ( void );
       GameObjectsManager& GetGameObjectsManager ( void );
     };
 
@@ -126,7 +132,17 @@ class GameObject {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) = 0;
+    virtual GLboolean HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Transmit a unicode text to the game object.
+    ///
+    /// \param cUnicode   The current text unicode.
+    ///
+    /// \return True to permit the text unicode transmission of the other states to be checked, false else.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual GLboolean HandleTextUnicode ( const char cUnicode ) {return GL_TRUE;};
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the inputs for all the components of the game object.
@@ -135,6 +151,35 @@ class GameObject {
     ///
     ////////////////////////////////////////////////////////////
     virtual GLboolean HandleInput ( void ) = 0;
+
+  protected :
+    ////////////////////////////////////////////////////////////
+    /// \brief Add a state on the top of the state stack.
+    ///
+    /// \param sStateID   Value to identify a specific state.
+    ///
+    ////////////////////////////////////////////////////////////
+    void RequestStackPush ( States::ID eStateID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Remove a state of the state stack.
+    ///
+    ////////////////////////////////////////////////////////////
+    void RequestStackPop ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Replace a state on the top of the state stack by a new state.
+    ///
+    /// \param sStateID   Value to identify the new state.
+    ///
+    ////////////////////////////////////////////////////////////
+    void RequestStackReplace ( States::ID eStateID );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Call the method to clean the state stack.
+    ///
+    ////////////////////////////////////////////////////////////
+    void RequestStateClear ( void );
 
     ////////////////////////////////////////////////////////////
     // Accessor methods

@@ -37,15 +37,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GameObjects/GameObject.hpp>
-#include <Game/GameEngine/GameObjects/GameObject3D.hpp>
+//#include <Game/GameEngine/GameObjects/GameObject3D.hpp>
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Shaders/ShaderProgram.hpp>
-#include <Game/GameObjects/VertexBufferObjects/Box.hpp>
+#include <Game/GameEngine/GraphicsEngine/Renderer3D/Objects3D/Box.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to create the box for the world.
 ///
 ////////////////////////////////////////////////////////////
-class GOBox : public GameObject, public GameObject3D {
+class GOBox : public GameObject {//, public GameObject3D {
 
   private :
     ////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ class GOBox : public GameObject, public GameObject3D {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_TRUE; }
+    virtual GLboolean HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_TRUE; }
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the inputs for all the components of the game object.

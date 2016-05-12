@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,10 +34,12 @@
 WorldState::WorldState ( StateStack& oStack, ST_Context& stContext ) :
   State ( oStack, stContext ),
   m_uiRenderList2D_ID     (0),
+  m_uiRenderList3D_ID     (0),
 	m_uiCamera              (0),
 	m_uiSimpleInformations  (0),
 	m_uiSkybox              (0),
-  m_uiBox                 (0)
+  m_uiBox                 (0),
+  m_sfMainView            ()
 {
 }
 
@@ -46,12 +48,16 @@ WorldState::~WorldState ( void ) {
   // Delete the game objects
   m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::Camera, m_uiCamera);
   m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::SimpleInformations, m_uiSimpleInformations);
-  m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::Skybox, m_uiSkybox);
-  m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::Box, m_uiBox);
+//  m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::Skybox, m_uiSkybox);
+//  m_stContext.m_oGameObjectsManager.DeleteGameObject (GameObjects::Type::Box, m_uiBox);
 
   // Delete the render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Erase (m_uiRenderList2D_ID);
+
+  // Delete the render list 3D
+//  Renderer3D& oRenderer3D = m_stContext.m_oGraphicsEngine.GetRenderer3D ();
+//  oRenderer3D.Erase (m_uiRenderList3D_ID);
 }
 
 ////////////////////////////////////////////////////////////
@@ -66,32 +72,50 @@ GLboolean WorldState::Initialize ( void ) {
 
   // Creation of the initializer for this state.
   m_uiInitializer_ID = oGameObjectsManager.CreateInitializer ();
-
   // Camera 3D
   if (!oGameObjectsManager.AddToInitializer<GOCamera> (m_uiInitializer_ID, GameObjects::Type::Camera, m_uiCamera)) {
     // Debug : It will be necessary to process the errors, in the future.
   }
   // Skybox
-  if (!oGameObjectsManager.AddToInitializer<GOSkybox> (m_uiInitializer_ID, GameObjects::Type::Skybox, m_uiSkybox)) {
+//  if (!oGameObjectsManager.AddToInitializer<GOSkybox> (m_uiInitializer_ID, GameObjects::Type::Skybox, m_uiSkybox)) {
     // Debug : It will be necessary to process the errors, in the future.
-  }
+//  }
   // Box
-  if (!oGameObjectsManager.AddToInitializer<GOBox> (m_uiInitializer_ID, GameObjects::Type::Box, m_uiBox)) {
+//  if (!oGameObjectsManager.AddToInitializer<GOBox> (m_uiInitializer_ID, GameObjects::Type::Box, m_uiBox)) {
     // Debug : It will be necessary to process the errors, in the future.
-  }
-
-  // Create a render list 2D
-  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
-  m_uiRenderList2D_ID = oRenderer2D.CreateRenderList ();
-
+//  }
 	// Simple informations
   if (!oGameObjectsManager.AddToInitializer<GOSimpleInformations> (m_uiInitializer_ID, GameObjects::Type::SimpleInformations, m_uiSimpleInformations)) {
     // Debug : It will be necessary to process the errors, in the future.
   }
+
+  // Create a render list 3D
+//  Renderer3D& oRenderer3D = m_stContext.m_oGraphicsEngine.GetRenderer3D ();
+//  m_uiRenderList3D_ID = oRenderer3D.CreateRenderList (Shaders::ID::Wired);
+//  RenderList3D& oRenderList3D = m_stContext.GetRenderList3D (m_uiRenderList3D_ID);
+  // Camera 3D
+  GOCamera& oGOCamera = oGameObjectsManager.GetGameObject<GOCamera> (GameObjects::Type::Camera, m_uiCamera);
+  // Skybox
+//  GOSkybox& oGOSkybox = oGameObjectsManager.GetGameObject<GOSkybox> (GameObjects::Type::Skybox, m_uiSkybox);
+//  oRenderList3D.PushBack (GameObjects3D::Type::Skybox, m_uiSkybox);
+//  oGOSkybox.SetRenderList3D_ID (m_uiRenderList3D_ID);
+  // Box
+//  GOBox& oGOBox = oGameObjectsManager.GetGameObject<GOBox> (GameObjects::Type::Box, m_uiBox);
+//  oRenderList3D.PushBack (GameObjects3D::Type::WiredObject, m_uiBox);
+//  oGOBox.SetRenderList3D_ID (m_uiRenderList3D_ID);
+
+  // Create a render list 2D
+  Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
+  m_uiRenderList2D_ID = oRenderer2D.CreateRenderList ();
+	// Simple informations
   GOSimpleInformations& oGOSimpleInformations = oGameObjectsManager.GetGameObject<GOSimpleInformations> (GameObjects::Type::SimpleInformations, m_uiSimpleInformations);
   oGOSimpleInformations.SetRenderList2D_ID (m_uiRenderList2D_ID);
 
   gmMainWindow.SetMouseVisibility (GL_FALSE);
+
+	// Initialize the main view
+	m_sfMainView.reset (sf::FloatRect(0.f, 0.f, gmMainWindow.GetWidth ()*1.f, gmMainWindow.GetHeight ()*1.f));
+	m_sfMainView.setViewport (sf::FloatRect (0.f, 0.f, 1.f, 1.f));
 
   return GL_TRUE;
 }
@@ -99,7 +123,11 @@ GLboolean WorldState::Initialize ( void ) {
 ////////////////////////////////////////////////////////////
 void WorldState::ResizeView ( void ) {
   // Getting of the needed systems
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
   GameObjectsManager& oGameObjectsManager = m_stContext.GetGameObjectsManager ();
+
+  // Update the main view
+	m_sfMainView.reset (sf::FloatRect(0.f, 0.f, static_cast<GLfloat>(gmMainWindow.GetWidth ()), static_cast<GLfloat>(gmMainWindow.GetHeight ())));
 
   // Camera 3D
   GOCamera& oGOCamera = oGameObjectsManager.GetGameObject<GOCamera> (GameObjects::Type::Camera, m_uiCamera);
@@ -113,24 +141,24 @@ void WorldState::Draw ( void ) {
   GameObjectsManager& oGameObjectsManager = m_stContext.GetGameObjectsManager ();
   OGLManager& oOGLManager = GetOGLManager ();
 
-  if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
-    glMatrixMode (GL_PROJECTION);
-    glLoadIdentity ();
-    gluPerspective (69.0, static_cast<GLdouble> (gmMainWindow.GetWidth ())/static_cast<GLdouble> (gmMainWindow.GetHeight ()), 0.1, 128.0);
-    glMatrixMode (GL_MODELVIEW);
-    glLoadIdentity ();
-  }
+  // Activating of the main view
+  gmMainWindow.setView (m_sfMainView);
+
+  Renderer3D& oRenderer3D = m_stContext.m_oGraphicsEngine.GetRenderer3D ();
+//  if (oOGLManager.GetVersion () == 2)         ///< OpenGL 2
+//    oRenderer3D.PerspectiveOGL2 (gmMainWindow);
 
   // Camera 3D
   GOCamera& oGOCamera = oGameObjectsManager.GetGameObject<GOCamera> (GameObjects::Type::Camera, m_uiCamera);
 
 	// Skybox test
-  GOSkybox& oGOSkybox = oGameObjectsManager.GetGameObject<GOSkybox> (GameObjects::Type::Skybox, m_uiSkybox);
-	oGOSkybox.Draw (oGOCamera.GetCameraID ());
+//  oRenderer3D.Render (m_uiRenderList3D_ID, GameObjects3D::Type::Skybox, oGOCamera.GetCameraID (), oOGLManager, oGameObjectsManager);
+  /*GOSkybox& oGOSkybox = oGameObjectsManager.GetGameObject<GOSkybox> (GameObjects::Type::Skybox, m_uiSkybox);
+	oGOSkybox.Draw (oGOCamera.GetCameraID ());*/
 
 	// Box test
-  GOBox& oGOBox = oGameObjectsManager.GetGameObject<GOBox> (GameObjects::Type::Box, m_uiBox);
-	oGOBox.Draw (oGOCamera.GetCameraID ());
+//  GOBox& oGOBox = oGameObjectsManager.GetGameObject<GOBox> (GameObjects::Type::Box, m_uiBox);
+//	oGOBox.Draw (oGOCamera.GetCameraID ());
 
   gmMainWindow.EnableSFML ();
 
@@ -143,38 +171,35 @@ void WorldState::Draw ( void ) {
 ////////////////////////////////////////////////////////////
 GLboolean WorldState::Update ( void ) {
   // Getting of the needed systems
+  gm::RenderWindow& gmMainWindow = GetMainWindow ();
   GameObjectsManager& oGameObjectsManager = m_stContext.GetGameObjectsManager ();
 
   // Update the camera 3D
   GOCamera& oGOCamera = oGameObjectsManager.GetGameObject<GOCamera> (GameObjects::Type::Camera, m_uiCamera);
   oGOCamera.Update ();
 
-  gm::RenderWindow& gmMainWindow = GetMainWindow ();
-  gmMainWindow.EnableSFML ();
-
   // Update simple informations for debug
   GOSimpleInformations& oGOSimpleInformations = oGameObjectsManager.GetGameObject<GOSimpleInformations> (GameObjects::Type::SimpleInformations, m_uiSimpleInformations);
   oGOSimpleInformations.Update (oGOCamera.GetCameraID ());
 
-  gmMainWindow.DisableSFML ();
 	return GL_FALSE;
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean WorldState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+GLboolean WorldState::HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
   // Getting of the needed systems
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
   GameObjectsManager& oGameObjectsManager = m_stContext.GetGameObjectsManager ();
 
-  if (eEventType == Event::Type::MouseMoved) {
+  if (eEventType == drimi::Event::Type::MouseMoved) {
     // Rotate the camera 3D
     GOCamera& oGOCamera = oGameObjectsManager.GetGameObject<GOCamera> (GameObjects::Type::Camera, m_uiCamera);
     oGOCamera.Rotate ();
   }
 
-	if (eEventType == Event::Type::Resized) {
+	if (eEventType == drimi::Event::Type::Resized) {
     ResizeView ();
-  } else if (eEventType == Event::Type::KeyPressed) {
+  } else if (eEventType == drimi::Event::Type::KeyPressed) {
     switch (sfKeyCode) {
       case sf::Keyboard::Key::Escape :
         gmMainWindow.Close ();

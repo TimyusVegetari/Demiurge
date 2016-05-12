@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
  * \file StateStack.hpp
  * \brief Class for the stack of the states.
  * \author Anthony Acroute
- * \version 0.3
- * \date 2014-2015
+ * \version 0.4
+ * \date 2014-2016
  *
  */
 
@@ -120,6 +120,12 @@ class StateStack : private sf::NonCopyable {
     void Initialize ( States::ID eStateID );
 
     ////////////////////////////////////////////////////////////
+    /// \brief Call all the resize view of the states in the stack.
+    ///
+    ////////////////////////////////////////////////////////////
+    void ResizeView ( void );
+
+    ////////////////////////////////////////////////////////////
     /// \brief Call all the update of the states in the stack.
     ///
     ////////////////////////////////////////////////////////////
@@ -139,7 +145,15 @@ class StateStack : private sf::NonCopyable {
     ///        sfKeyCode    The current keyboard key code.
     ///
     ////////////////////////////////////////////////////////////
-    void HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+    void HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Transmit a unicode text to the states in the stack.
+    ///
+    /// \param cUnicode   The current text unicode.
+    ///
+    ////////////////////////////////////////////////////////////
+    void HandleTextUnicode ( const char cUnicode );
 
     ////////////////////////////////////////////////////////////
     /// \brief Call all the inputs of the states in the stack.

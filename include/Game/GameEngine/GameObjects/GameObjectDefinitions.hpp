@@ -34,7 +34,7 @@
 #define GAMEOBJECTDEFINITIONS_HPP__
 
 // Game objects
-#include <Game/GameObjects/GOSkybox.hpp>
+//#include <Game/GameObjects/GO_Skybox.hpp>
 
 // Game objects of the title state
 #include <Game/GameObjects/TitleState/GOTitleBackground.hpp>
@@ -45,6 +45,6 @@
 // Game objects of the world state
 #include <Game/GameObjects/WorldState/GOCamera.hpp>
 #include <Game/GameObjects/WorldState/GOSimpleInformations.hpp>
-#include <Game/GameObjects/WorldState/GOBox.hpp>
+//#include <Game/GameObjects/WorldState/GO_Box.hpp>
 
 #endif // GAMEOBJECTDEFINITIONS_HPP__

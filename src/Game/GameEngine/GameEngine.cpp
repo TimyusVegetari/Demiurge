@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ GameEngine::GameEngine ( void ) :
   m_uiElapsedTime         (0),
   m_oBmpFont              (),
   m_oGraphicsEngine       (),
-  m_oGameObjectsManager   (GameObject::ST_Context (m_uiElapsedTime, m_oRenderTargetsManager, m_oBmpFont, m_oGraphicsEngine, m_oGameObjectsManager)),
+  m_oGameObjectsManager   (GameObject::ST_Context (m_uiElapsedTime, m_oRenderTargetsManager, m_oBmpFont, m_oGraphicsEngine, m_oStateStack, m_oGameObjectsManager)),
   m_oStateStack           (m_oGameObjectsManager.GetContext ()),
   m_bSleep                (GL_FALSE)
 {
@@ -65,7 +65,7 @@ GLboolean GameEngine::InitWinMain ( void ) {
   if (m_sfIcon.getSize ().x != 0)
     gmMainWindow.SetIcon (m_sfIcon.getSize ().x, m_sfIcon.getSize ().y, m_sfIcon.getPixelsPtr ());
 
-  std::string szTitle (m_szTitle+" "+m_szVersion);
+  std::string szTitle (m_szTitle+" v"+m_szVersion);
   gmMainWindow.Create (sf::VideoMode (m_v2uSize.x, m_v2uSize.y, 32), szTitle);
 
   // Activate the vertical synchronisation of the screen
@@ -180,4 +180,5 @@ void GameEngine::SetSleep ( GLboolean bSleep ) {
 void GameEngine::RegisterRenderTargets ( void ) {
   std::cout << "RenderTargets registering..." << std::endl;
   m_oRenderTargetsManager.RegisterRenderTarget<gm::RenderWindow> (RenderTargets::ID::MainWindow);
+  m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow).SetMinimalSize (m_v2uSize.x, m_v2uSize.y);
 }

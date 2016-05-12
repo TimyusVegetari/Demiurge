@@ -31,10 +31,10 @@
 ////////////////////////////////////////////////////////////
 GOTitleBackground::GOTitleBackground ( ST_Context& stContext ) :
   GameObject              (stContext),
-  GameObject3D            (),
+  //GameObject3D            (),
   m_uiCamera_ID           (0),
-  m_oShaderProgramSkybox  (),
-  m_oSkybox               ()
+  m_oShaderProgramSkybox  ()//,
+  //m_oSkybox               (stContext)
 {
 }
 
@@ -64,12 +64,12 @@ GLboolean GOTitleBackground::Initialize ( void ) {
   // Getting of the OGLManager
   OGLManager& oOGLManager = GetOGLManager ();
 
-  if (oOGLManager.GetVersion () == 3) {         ///< OpenGL 3
+  /*if (oOGLManager.GetVersion () == 3) {         ///< OpenGL 3
     // Initialize the shaders
     if (!m_oShaderProgramSkybox.Load ("datas/shaders/vertex_skybox.glsl", "datas/shaders/fragment_skybox.glsl")) {
       // Debug : It will be necessary to process the errors, in the future.
     }
-  }
+  }*/
 
   // Create a camera 3D
   CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
@@ -80,13 +80,14 @@ GLboolean GOTitleBackground::Initialize ( void ) {
   oCamera.SetPerspective (69.f, 0.1f, 128.f);
 
 	// Skybox test
-  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors activated by SFML.
+	//m_oSkybox.Initialize ();
+  /*glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors activated by SFML.
   glEnable (GL_TEXTURE_CUBE_MAP);
 	m_oSkybox.SetCubeMapID (oTextures2DManager.LoadTexture (Textures2DManager::TexType::CUBEMAP_TEXTURE, "./datas/skybox/skybox", "png"));
   glDisable (GL_TEXTURE_CUBE_MAP);
 	if (!m_oSkybox.InitializeVBO ()) {
     // Debug : It will be necessary to process the errors, in the future.
-  }
+  }*/
 
   return GL_TRUE;
 }
@@ -107,18 +108,18 @@ void GOTitleBackground::ResizeView ( void ) {
 ////////////////////////////////////////////////////////////
 void GOTitleBackground::Draw ( void ) {
   // Getting of the needed systems
-  gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
-  OGLManager& oOGLManager = GetOGLManager ();
+//  gm::RenderWindow& gmMainWindow = m_stContext.m_oRenderTargetsManager.GetRenderTargetObject<gm::RenderWindow> (RenderTargets::ID::MainWindow);
+//  OGLManager& oOGLManager = GetOGLManager ();
 
-  if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
-    glMatrixMode (GL_PROJECTION);
-    glLoadIdentity ();
-    gluPerspective (69.0, static_cast<GLdouble> (gmMainWindow.GetWidth ())/static_cast<GLdouble> (gmMainWindow.GetHeight ()), 0.1, 128.0);
-    glMatrixMode (GL_MODELVIEW);
-    glLoadIdentity ();
-  }
+//  if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
+//    glMatrixMode (GL_PROJECTION);
+//    glLoadIdentity ();
+//    gluPerspective (69.0, static_cast<GLdouble> (gmMainWindow.GetWidth ())/static_cast<GLdouble> (gmMainWindow.GetHeight ()), 0.1, 128.0);
+//    glMatrixMode (GL_MODELVIEW);
+//    glLoadIdentity ();
+//  }
 
-  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+  /*CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
   Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
 
   // Skybox test
@@ -152,7 +153,39 @@ void GOTitleBackground::Draw ( void ) {
     glPopMatrix ();
   } else if (oOGLManager.GetVersion () == 3) {  ///< OpenGL 3
     glUseProgram (0);
-  }
+  }*/
+
+
+
+  // Getting of the needed systems
+//  CameraManager& oCameraManager = m_stContext.m_oGraphicsEngine.GetRenderer3D ().GetCameraManager ();
+//  Camera& oCamera = oCameraManager.GetCamera (m_uiCamera_ID);
+//  ShaderProgram& oShaderProgram = m_stContext.m_oGraphicsEngine.GetRenderer3D ().m_oShadersManager.GetShaderProgram (Shaders::ID::Skybox);
+
+//  if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
+//    glPushMatrix ();
+//    glLoadIdentity ();
+//    m_oSkybox.UpdateMVP (oCamera.GetLocalFocalisation (), oCamera.GetOrientation ());
+//  } else if (oOGLManager.GetVersion () == 3) {  ///< OpenGL 3
+//    oShaderProgram.EnableShaderProgram ();
+//    oShaderProgram.SendUnitTexture ("cubemap", 0);
+//    oShaderProgram.SendCurrentMatrix ("mvpMatrix", oCamera.GetLocalMVP ());
+//  }
+
+//  glDisableClientState (GL_COLOR_ARRAY);  ///< If colors are not used, we must disable colors at the place of SFML.
+//  glDepthMask (GL_FALSE);   ///< Disable drawing in the depth buffer
+//  glEnable (GL_TEXTURE_CUBE_MAP);
+
+  //m_oSkybox.Draw ();
+
+//  glDisable (GL_TEXTURE_CUBE_MAP);
+//  glDepthMask (GL_TRUE);    ///< Enable drawing in the depth buffer
+
+//  if (oOGLManager.GetVersion () == 2) {         ///< OpenGL 2
+//    glPopMatrix ();
+//  } else if (oOGLManager.GetVersion () == 3) {  ///< OpenGL 3
+//    oShaderProgram.DisableShaderProgram ();
+//  }
 }
 
 ////////////////////////////////////////////////////////////

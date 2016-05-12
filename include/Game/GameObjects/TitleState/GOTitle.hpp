@@ -110,7 +110,7 @@ class GOTitle : public GameObject, public GameObject2D {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_FALSE; }
+    virtual GLboolean HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_FALSE; }
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the inputs for all the components of the game object.

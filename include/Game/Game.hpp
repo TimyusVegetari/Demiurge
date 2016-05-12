@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2013-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
  * \file Game.hpp
  * \brief Class for the game engine of Demiurge.
  * \author Anthony Acroute
- * \version 0.4
- * \date 2013-2015
+ * \version 0.5
+ * \date 2013-2016
  *
  */
 
@@ -39,7 +39,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "GameEngine/GameEngine.hpp"
-#include "EventTypes.hpp"
+#include <DRIMI/Utils/EventTypes.hpp>
 #include "gamedev_info.hpp"
 
 ////////////////////////////////////////////////////////////
@@ -57,6 +57,10 @@ class Game : public GameEngine {
     GLuint            m_uiTickTrigger;
     // Events system of the game
     GLboolean         m_bPassMouseMoved;
+
+    // Temporary game objects identifiers before futures upgrades.
+    GLuint            m_uiGO_Skybox;
+    GLuint            m_uiGO_Box;
 
   public :
     ////////////////////////////////////////////////////////////

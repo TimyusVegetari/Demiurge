@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <Game/GameEngine/GameObjects/GameObject.hpp>
-#include <Game/GameEngine/GameObjects/GameObjectsManager.hpp>
+#include <Game/GameEngine/States/StateStack.hpp>
 
 ////////////////////////////////////////////////////////////
 // Structures
@@ -33,11 +32,13 @@ GameObject::ST_Context::ST_Context ( const GLuint& uiElapsedTime,
                                      RenderTargetsManager& oRenderTargetsManager,
                                      drimi::BmpFont& oBmpFont,
                                      GraphicsEngine& oGraphicsEngine,
+                                     StateStack& oStateStack,
                                      GameObjectsManager& oGameObjectsManager ) :
   m_uiElapsedTime           (uiElapsedTime),
   m_oRenderTargetsManager   (oRenderTargetsManager),
   m_oBmpFont                (oBmpFont),
   m_oGraphicsEngine         (oGraphicsEngine),
+  m_oStateStack             (oStateStack),
   m_oGameObjectsManager     (oGameObjectsManager)
 {
 }
@@ -50,6 +51,16 @@ const GLuint& GameObject::ST_Context::GetElapsedTime ( void ) {
 ////////////////////////////////////////////////////////////
 RenderList2D& GameObject::ST_Context::GetRenderList2D ( GLuint uiRenderList2D_ID ) {
   return m_oGraphicsEngine.GetRenderer2D ().GetRenderList (uiRenderList2D_ID);
+}
+
+////////////////////////////////////////////////////////////
+//RenderList3D& GameObject::ST_Context::GetRenderList3D ( GLuint uiRenderList3D_ID ) {
+//  return m_oGraphicsEngine.GetRenderer3D ().GetRenderList (uiRenderList3D_ID);
+//}
+
+////////////////////////////////////////////////////////////
+StateStack& GameObject::ST_Context::GetStateStack ( void ) {
+  return m_oStateStack;
 }
 
 ////////////////////////////////////////////////////////////
@@ -69,6 +80,30 @@ GameObject::GameObject ( ST_Context& stContext ) :
 
 ////////////////////////////////////////////////////////////
 GameObject::~GameObject ( void ) {
+}
+
+////////////////////////////////////////////////////////////
+// General methods
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+void GameObject::RequestStackPush ( States::ID eStateID ) {
+  m_stContext.GetStateStack ().PushState (eStateID);
+}
+
+////////////////////////////////////////////////////////////
+void GameObject::RequestStackPop ( void ) {
+	m_stContext.GetStateStack ().PopState ();
+}
+
+////////////////////////////////////////////////////////////
+void GameObject::RequestStackReplace ( States::ID eStateID ) {
+  m_stContext.GetStateStack ().ReplaceState (eStateID);
+}
+
+////////////////////////////////////////////////////////////
+void GameObject::RequestStateClear ( void ) {
+	m_stContext.GetStateStack ().ClearStates ();
 }
 
 ////////////////////////////////////////////////////////////

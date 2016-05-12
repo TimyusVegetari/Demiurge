@@ -51,8 +51,8 @@ int main ( void ) {
     FreeImage_DeInitialise ();
   #endif
 
-    std::cout << "Press 'Enter' to quit..." << std::endl;
-    std::cin.get();
+    //std::cout << "Press 'Enter' to quit..." << std::endl;
+    //std::cin.get();
     return EXIT_SUCCESS;
   }
   // DeInitialize FreeImage

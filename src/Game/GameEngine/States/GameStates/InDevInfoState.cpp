@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/States/GameStates/InDevInfoState.hpp>
+#include <Game/gamedev_info.hpp>
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
@@ -35,7 +36,8 @@ InDevInfoState::InDevInfoState ( StateStack& oStack, ST_Context& stContext ) :
   m_uiContent_ID      (0),
   m_uiTickTrigger     (500),
   m_uiElapsedTicks    (0),
-  m_bIsQuiting        (GL_FALSE)
+  m_bIsQuiting        (GL_FALSE),
+  m_sfMainView        ()
 {
 }
 
@@ -53,7 +55,6 @@ InDevInfoState::~InDevInfoState ( void ) {
 GLboolean InDevInfoState::Initialize ( void ) {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
-  gmMainWindow.EnableSFML ();
 
   // Create a render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
@@ -64,7 +65,9 @@ GLboolean InDevInfoState::Initialize ( void ) {
   m_uiTitle_ID            = oRenderList2D.PushBack<drimi::BmpText> ();
   drimi::BmpText& oTitle  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiTitle_ID);
   oTitle.SetFont        (m_stContext.m_oBmpFont);
-  oTitle.SetString      ("Please note this is a pre-alpha version of Demiurge.");
+  oTitle.SetString      (std::string ("Please note this is a pre-alpha version of ")
+                        +std::string (DEMIURGE_NAME)
+                        +std::string ("."));
   oTitle.SetStyle       (sf::Text::Style::Bold);
   oTitle.SetColor       (sf::Color::Yellow);
 	oTitle.SetOrigin      (oTitle.GetLocalBounds ().width / 2.f, 0.f);
@@ -85,7 +88,9 @@ GLboolean InDevInfoState::Initialize ( void ) {
 	oContent.SetOrigin        (oContent.GetLocalBounds ().width / 2.f, 0.f);
 	oContent.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
 
-  gmMainWindow.DisableSFML ();
+	// Initialize the main view
+	m_sfMainView.reset (sf::FloatRect(0.f, 0.f, gmMainWindow.GetWidth ()*1.f, gmMainWindow.GetHeight ()*1.f));
+	m_sfMainView.setViewport (sf::FloatRect (0.f, 0.f, 1.f, 1.f));
 
   return GL_TRUE;
 }
@@ -95,7 +100,8 @@ void InDevInfoState::ResizeView ( void ) {
   // Getting of the main window
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
 
-  gmMainWindow.EnableSFML ();
+  // Update the main view
+	m_sfMainView.reset (sf::FloatRect(0.f, 0.f, gmMainWindow.GetWidth ()*1.f, gmMainWindow.GetHeight ()*1.f));
 
   // Get the render list 2D
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
@@ -107,14 +113,15 @@ void InDevInfoState::ResizeView ( void ) {
 	// In development information contant
   drimi::BmpText& oContent  = oRenderList2D.GetDrawable<drimi::BmpText> (m_uiContent_ID);
 	oContent.setPosition      (gmMainWindow.GetView ().getCenter ().x, 130.f);
-
-  gmMainWindow.DisableSFML ();
 }
 
 ////////////////////////////////////////////////////////////
 void InDevInfoState::Draw ( void ) {
   gm::RenderWindow& gmMainWindow = GetMainWindow ();
   gmMainWindow.EnableSFML ();
+
+  // Activating of the main view
+  gmMainWindow.setView (m_sfMainView);
 
   Renderer2D& oRenderer2D = m_stContext.m_oGraphicsEngine.GetRenderer2D ();
   oRenderer2D.Render (m_uiRenderList2D_ID, gmMainWindow);
@@ -139,10 +146,8 @@ GLboolean InDevInfoState::Update ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-GLboolean InDevInfoState::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
-	if (eEventType == Event::Type::Resized) {
-    ResizeView ();
-	} else if (eEventType == Event::Type::KeyPressed) {
+GLboolean InDevInfoState::HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+	if (eEventType == drimi::Event::Type::KeyPressed) {
     if (!m_bIsQuiting) {  ///< While the state is not quiting.
       if (sfKeyCode == sf::Keyboard::Key::Return) {
         RequestStackReplace (States::ID::Title);

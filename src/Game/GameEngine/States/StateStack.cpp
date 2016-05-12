@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -81,6 +81,14 @@ void StateStack::Initialize ( States::ID eStateID ) {
 }
 
 ////////////////////////////////////////////////////////////
+void StateStack::ResizeView ( void ) {
+	// Resize all active states from bottom to top
+  for (auto it = m_vStack.begin () ; it != m_vStack.end () ; ++it) {
+    (*it)->ResizeView ();
+  }
+}
+
+////////////////////////////////////////////////////////////
 void StateStack::Update ( void ) {
   // Initialize the new states when it's necessary.
   if (m_oFactories.GetInitializingCount () > 0) {
@@ -106,7 +114,7 @@ void StateStack::Draw ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
-void StateStack::HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
+void StateStack::HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) {
 	// Iterate from top to bottom, stop as soon as HandleEvent () returns false
 	for (auto rit = m_vStack.rbegin () ; rit != m_vStack.rend () ; ++rit) {
 		if (!(*rit)->HandleEvent (eEventType, sfKeyCode))
@@ -114,6 +122,15 @@ void StateStack::HandleEvent ( const Event::Type eEventType, const sf::Keyboard:
 	}
 
 	ApplyPendingChanges ();
+}
+
+////////////////////////////////////////////////////////////
+void StateStack::HandleTextUnicode ( const char cUnicode ) {
+	// Iterate from top to bottom, stop as soon as HandleTextUnicode () returns false
+	for (auto rit = m_vStack.rbegin () ; rit != m_vStack.rend () ; ++rit) {
+		if (!(*rit)->HandleTextUnicode (cUnicode))
+			break;
+	}
 }
 
 ////////////////////////////////////////////////////////////
@@ -179,26 +196,26 @@ void StateStack::ApplyPendingChanges ( void ) {
     // Applying of the pending changes.
 		switch ((*it).m_eAction) {
 			case Push:
-			  if (!m_oFactories.IsConstructed ((*it).m_eStateID)) {
+			  //if (!m_oFactories.IsConstructed ((*it).m_eStateID)) {
           m_oFactories.Construct ((*it).m_eStateID);
           //m_vStack.push_back (CreateState ((*it).m_eStateID));
           //m_vStack[m_vStack.size ()-1]->m_sfThread.launch ();
-			  } else {
-          std::cout << "Warning : The state '" << m_oFactories.GetName ((*it).m_eStateID) << "' has been called then it already constructed !" << std::endl;
-          std::cout << "          The command was 'State Push'." << std::endl;
-        }
+			  //} else {
+        //  std::cout << "Warning : The state '" << m_oFactories.GetName ((*it).m_eStateID) << "' has been called then it already constructed !" << std::endl;
+        //  std::cout << "          The command was 'State Push'." << std::endl;
+        //}
 				break;
 			case Pop:
 				m_vStack.pop_back ();
 				break;
 			case Replace:
-			  if (!m_oFactories.IsConstructed ((*it).m_eStateID)) {
+			  //if (!m_oFactories.IsConstructed ((*it).m_eStateID)) {
           m_oFactories.EnableReplacement ();
           m_oFactories.Construct ((*it).m_eStateID);
-			  } else {
-          std::cout << "Warning : The state '" << m_oFactories.GetName ((*it).m_eStateID) << "' has been called then it already constructed !" << std::endl;
-          std::cout << "          The command was 'State Replace'." << std::endl;
-        }
+			  //} else {
+        //  std::cout << "Warning : The state '" << m_oFactories.GetName ((*it).m_eStateID) << "' has been called then it already constructed !" << std::endl;
+        //  std::cout << "          The command was 'State Replace'." << std::endl;
+        //}
 				break;
 			case Clear:
 				m_vStack.clear ();

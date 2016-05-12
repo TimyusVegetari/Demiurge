@@ -37,13 +37,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GameObjects/GameObject.hpp>
-#include <Game/GameEngine/GameObjects/GameObject3D.hpp>
+//#include <Game/GameEngine/GameObjects/GameObject3D.hpp>
 
 ////////////////////////////////////////////////////////////
 /// \brief Class to create the background for the world.
 ///
 ////////////////////////////////////////////////////////////
-class GOCamera : public GameObject, public GameObject3D {
+class GOCamera : public GameObject {//, public GameObject3D {
 
   private :
     ////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ class GOCamera : public GameObject, public GameObject3D {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_TRUE; }
+    virtual GLboolean HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode ) { return GL_TRUE; }
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the inputs for all the components of the game object.

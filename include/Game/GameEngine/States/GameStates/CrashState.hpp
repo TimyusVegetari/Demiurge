@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file CrashState.hpp
  * \brief Class to define the crash state of the game.
  * \author Anthony Acroute
- * \version 0.1
- * \date 2015
+ * \version 0.2
+ * \date 2015-2016
  *
  */
 
@@ -52,8 +52,10 @@ class CrashState : public State {
     // Member data
     ////////////////////////////////////////////////////////////
     GLuint            m_uiRenderList2D_ID;
-    GLuint            m_uiError_ID,
+    GLuint            m_uiBackground_ID,
+                      m_uiError_ID,
                       m_uiDetails_ID;
+    sf::View          m_sfMainView;
 
   public :
     ////////////////////////////////////////////////////////////
@@ -118,7 +120,7 @@ class CrashState : public State {
     /// \return True to permit the events of the other states to be checked, false else.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean HandleEvent ( const Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
+    virtual GLboolean HandleEvent ( const drimi::Event::Type eEventType, const sf::Keyboard::Key sfKeyCode );
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the inputs for all the components of the state.
