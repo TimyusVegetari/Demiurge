@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of DRIMI::Mathematics.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2015-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file ToString.hpp
  * \brief Methods to convert numerics to strings.
  * \author Anthony Acroute
- * \version 0.1
- * \date 2015
+ * \version 0.2
+ * \date 2015-2016
  *
  */
 
@@ -51,6 +51,14 @@ namespace drimi {
   ///
   ////////////////////////////////////////////////////////////
   std::string ToString ( const GLuint& uiValue );
+
+  ////////////////////////////////////////////////////////////
+  /// \brief Converts float to string.
+  ///
+  /// \return String of the numeric value.
+  ///
+  ////////////////////////////////////////////////////////////
+  std::string ToString ( const GLfloat& fValue );
 
 } // namespace drimi
 

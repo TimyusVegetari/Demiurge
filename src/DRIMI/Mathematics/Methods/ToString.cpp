@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of DRIMI::Mathematics.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2015-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 ////////////////////////////////////////////////////////////
 
 #include <DRIMI/Mathematics/Config.hpp>
+#include <iomanip>    // std::setprecision
 
 namespace drimi {
 
@@ -26,6 +27,15 @@ namespace drimi {
   std::string ToString ( const GLuint& uiValue ) {
     std::ostringstream oss;
     oss << uiValue;
+    return oss.str ();
+	}
+
+  ////////////////////////////////////////////////////////////
+  std::string ToString ( const GLfloat& fValue ) {
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision (3) << fValue;
+    if (fValue >= 0.f)
+      return " "+oss.str ();
     return oss.str ();
 	}
 
