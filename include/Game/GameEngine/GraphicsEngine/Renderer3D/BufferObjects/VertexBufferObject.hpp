@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file VertexBufferObject.hpp
  * \brief Class to define a VBO.
  * \author Anthony Acroute
- * \version 0.4
- * \date 2013-2015
+ * \version 0.5
+ * \date 2013-2016
  *
  */
 
@@ -50,8 +50,6 @@ class VertexBufferObject {
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::string       m_szTypeName;   ///< A name to display the type of VBO
-                                      ///  if is necessary (ex. Cube, Sphere, etc...).
     VertexArray       m_oVertex;
     IndexArray        m_oIndex;
 
@@ -65,8 +63,14 @@ class VertexBufferObject {
     ///
     /// This constructor defines a VBO.
     ///
+    /// \param fVertexDatasArray      Vertex datas array.
+    ///        iVertexDatasArraySize  Size of the vertex datas array.
+    ///        uiIndexDatasArray      Index datas array.
+    ///        iIndexDatasArraySize   Size of the index datas array.
+    ///
     ////////////////////////////////////////////////////////////
-    VertexBufferObject          ( void );
+    VertexBufferObject ( GLfloat* fVertexDatasArray, GLsizei iVertexDatasArraySize,
+                         GLuint* uiIndexDatasArray, GLsizei iIndexDatasArraySize );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -84,7 +88,7 @@ class VertexBufferObject {
     /// \brief Initialize the VBO datas (Vertex, normale, etc...).
     ///
     ////////////////////////////////////////////////////////////
-    virtual void InitializeDatas ( void ) = 0;
+    //virtual void InitializeDatas ( void ) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the VBO.
@@ -92,23 +96,27 @@ class VertexBufferObject {
     /// \return True if initialization succeeded, false if it failed.
     ///
     ////////////////////////////////////////////////////////////
-    virtual GLboolean InitializeVBO ( void ) = 0;
+    //virtual GLboolean InitializeVBO ( void ) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Generate the OpenGL buffers.
     ///
-    /// \param iNoError   Variable to check if no error is detected.
+    /// \param bCloseBinding  Automatic close binding, or not.
+    ///
+    /// \return If the function succeed or not.
     ///
     ////////////////////////////////////////////////////////////
-    void GenBuffers ( GLint &iNoError );
+    GLboolean GenBuffers ( GLboolean bCloseBinding = GL_TRUE );
 
     ////////////////////////////////////////////////////////////
     /// \brief Send the VBO datas to the graphic card.
     ///
-    /// \param iNoError   Variable to check if no error is detected.
+    /// \param bCloseBinding  Automatic close binding, or not.
+    ///
+    /// \return If the function succeed or not.
     ///
     ////////////////////////////////////////////////////////////
-    void SendDatas ( GLint &iNoError );
+    GLboolean SendDatas ( GLboolean bCloseBinding = GL_TRUE );
 
     ////////////////////////////////////////////////////////////
     /// \brief Delete the OpenGL buffers.
@@ -127,12 +135,68 @@ class VertexBufferObject {
     ////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the type name of the VBO.
+    /// \brief Get the length of the vertex of the VBO.
     ///
-    /// \return The Type name of the VBO.
+    /// \return The length of the vertex of the VBO.
     ///
     ////////////////////////////////////////////////////////////
-    std::string GetTypeName ( void );
+    GLsizei GetVertexDatasLength ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the vertex datas array size of the VBO.
+    ///
+    /// \return The vertex datas array size of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLsizei GetVertexDatasSize ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the vertex step of the VBO.
+    ///
+    /// \return The vertex step of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLint GetVertexStep ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the vertex datas array of the VBO.
+    ///
+    /// \return The vertex datas array of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    const GLfloat* GetVertexDatas ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the length of the index of the VBO.
+    ///
+    /// \return The length of the index of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLsizei GetIndexDatasLength ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the index datas array size of the VBO.
+    ///
+    /// \return The index datas array size of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLsizei GetIndexDatasSize ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the index step of the VBO.
+    ///
+    /// \return The index step of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLint GetIndexStep ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the index datas array of the VBO.
+    ///
+    /// \return The index datas array of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    const GLuint* GetIndexDatas ( void );
 
     ////////////////////////////////////////////////////////////
     // Internal methods

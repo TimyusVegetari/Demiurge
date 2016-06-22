@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file NormalBufferObject.hpp
  * \brief Class to define a VBO.
  * \author Anthony Acroute
- * \version 0.4
- * \date 2013-2015
+ * \version 0.5
+ * \date 2013-2016
  *
  */
 
@@ -61,8 +61,11 @@ class NormalBufferObject {
     ///
     /// This constructor defines a VBO.
     ///
+    /// \param fNormalDatasArray      Normal datas array.
+    ///        iNormalDatasArraySize  Size of the normal datas array.
+    ///
     ////////////////////////////////////////////////////////////
-    NormalBufferObject          ( void );
+    NormalBufferObject ( GLfloat* fNormalDatasArray, GLsizei iNormalDatasArraySize );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -71,6 +74,78 @@ class NormalBufferObject {
     ///
     ////////////////////////////////////////////////////////////
     virtual ~NormalBufferObject ( void );
+
+    ////////////////////////////////////////////////////////////
+    // General methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Generate the OpenGL buffers.
+    ///
+    /// \param  bCloseBinding  Automatic close binding, or not.
+    ///
+    /// \return If the function succeed or not.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean GenBuffers ( GLboolean bCloseBinding = GL_TRUE );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Send the VBO datas to the graphic card.
+    ///
+    /// \param  bCloseBinding  Automatic close binding, or not.
+    ///
+    /// \return If the function succeed or not.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLboolean SendDatas ( GLboolean bCloseBinding = GL_TRUE );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Delete the OpenGL buffers.
+    ///
+    ////////////////////////////////////////////////////////////
+    void DeleteBuffers ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Delete the VBO datas.
+    ///
+    ////////////////////////////////////////////////////////////
+    void DeleteDatas ( void );
+
+    ////////////////////////////////////////////////////////////
+    // Accessor methods
+    ////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the length of the normal of the VBO.
+    ///
+    /// \return The length of the normal of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLsizei GetNormalDatasLength ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the normal datas array size of the VBO.
+    ///
+    /// \return The normal datas array size of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLsizei GetNormalDatasSize ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the normal step of the VBO.
+    ///
+    /// \return The normal step of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    GLint GetNormalStep ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the normal datas array of the VBO.
+    ///
+    /// \return The normal datas array of the VBO.
+    ///
+    ////////////////////////////////////////////////////////////
+    const GLfloat* GetNormalDatas ( void );
 
     ////////////////////////////////////////////////////////////
     // Internal methods

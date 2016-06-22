@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file NormalArray.hpp
  * \brief Class to define normal array for VBOs.
  * \author Anthony Acroute
- * \version 0.1
- * \date 2015
+ * \version 0.2
+ * \date 2015-2016
  *
  */
 
@@ -55,8 +55,11 @@ class NormalArray : public CGDatas<GLfloat> {
     ///
     /// This constructor defines a normal array.
     ///
+    /// \param fDatasArray      Datas Array.
+    ///        iDatasArraySize  Size of the datas array.
+    ///
     ////////////////////////////////////////////////////////////
-    NormalArray ( void );
+    NormalArray ( GLfloat* fDatasArray, GLsizei iDatasArraySize );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.

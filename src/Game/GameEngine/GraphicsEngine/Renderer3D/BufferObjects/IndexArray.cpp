@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,9 +28,10 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-IndexArray::IndexArray ( void ) :
+IndexArray::IndexArray ( GLuint* uiDatasArray, GLsizei iDatasArraySize ) :
   CGDatas (1, GL_ELEMENT_ARRAY_BUFFER)
 {
+  SetDatas (uiDatasArray, iDatasArraySize);
 }
 
 ////////////////////////////////////////////////////////////

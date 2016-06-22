@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file IndexArray.hpp
  * \brief Class to define index array for VBOs.
  * \author Anthony Acroute
- * \version 0.1
- * \date 2015
+ * \version 0.2
+ * \date 2015-2016
  *
  */
 
@@ -54,8 +54,11 @@ class IndexArray : public CGDatas<GLuint> {
     ///
     /// This constructor defines a index array.
     ///
+    /// \param uiDatasArray     Datas Array.
+    ///        iDatasArraySize  Size of the datas array.
+    ///
     ////////////////////////////////////////////////////////////
-    IndexArray ( void );
+    IndexArray ( GLuint* uiDatasArray, GLsizei iDatasArraySize );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.

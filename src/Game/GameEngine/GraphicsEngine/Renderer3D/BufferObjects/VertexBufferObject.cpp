@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-VertexBufferObject::VertexBufferObject ( void ) :
-  m_szTypeName  (""),
-  m_oVertex     (),
-  m_oIndex      ()
+VertexBufferObject::VertexBufferObject ( GLfloat* fVertexDatasArray, GLsizei iVertexDatasArraySize,
+                                         GLuint* uiIndexDatasArray, GLsizei iIndexDatasArraySize ) :
+  m_oVertex     (fVertexDatasArray, iVertexDatasArraySize),
+  m_oIndex      (uiIndexDatasArray, iIndexDatasArraySize)
 {
 }
 
@@ -44,24 +44,33 @@ VertexBufferObject::~VertexBufferObject ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-void VertexBufferObject::GenBuffers ( GLint &iNoError ) {
-  iNoError &= m_oVertex.GenBufferID ();
-  iNoError &= m_oIndex.GenBufferID ();
+GLboolean VertexBufferObject::GenBuffers ( GLboolean bCloseBinding ) {
+  GLboolean bNoError = GL_TRUE;
 
-  if (iNoError == 0)
-    std::cout << "Error in VBO : Sending of datas for " << m_szTypeName << " to the graphics card impossible !" << std::endl;
+  bNoError &= m_oVertex.GenBufferID ();
+  bNoError &= m_oIndex.GenBufferID ();
+
+  if (bCloseBinding) {
+    glBindBuffer (GL_ARRAY_BUFFER, 0);
+    glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
+  }
+
+  return bNoError;
 }
 
 ////////////////////////////////////////////////////////////
-void VertexBufferObject::SendDatas ( GLint &iNoError ) {
-  iNoError &= m_oVertex.SendDatas ();
-  iNoError &= m_oIndex.SendDatas ();
+GLboolean VertexBufferObject::SendDatas ( GLboolean bCloseBinding ) {
+  GLboolean bNoError = GL_TRUE;
 
-  glBindBuffer (GL_ARRAY_BUFFER, 0);
-  glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
+  bNoError &= m_oVertex.SendDatas ();
+  bNoError &= m_oIndex.SendDatas ();
 
-  if (iNoError == 0)
-    std::cout << "Error in VBO : Sending of datas for " << m_szTypeName << " to the graphics card impossible !" << std::endl;
+  if (bCloseBinding) {
+    glBindBuffer (GL_ARRAY_BUFFER, 0);
+    glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);
+  }
+
+  return bNoError;
 }
 
 ////////////////////////////////////////////////////////////
@@ -81,8 +90,43 @@ void VertexBufferObject::DeleteDatas ( void ) {
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-std::string VertexBufferObject::GetTypeName ( void ) {
-  return m_szTypeName;
+GLsizei VertexBufferObject::GetVertexDatasLength ( void ) {
+  return m_oVertex.GetDatasLength ();
+}
+
+////////////////////////////////////////////////////////////
+GLsizei VertexBufferObject::GetVertexDatasSize ( void ) {
+  return m_oVertex.GetDatasSize ();
+}
+
+////////////////////////////////////////////////////////////
+GLint VertexBufferObject::GetVertexStep ( void ) {
+  return m_oVertex.GetStep ();
+}
+
+////////////////////////////////////////////////////////////
+const GLfloat* VertexBufferObject::GetVertexDatas ( void ) {
+  return m_oVertex.GetDatas ();
+}
+
+////////////////////////////////////////////////////////////
+GLsizei VertexBufferObject::GetIndexDatasLength ( void ) {
+  return m_oIndex.GetDatasLength ();
+}
+
+////////////////////////////////////////////////////////////
+GLsizei VertexBufferObject::GetIndexDatasSize ( void ) {
+  return m_oIndex.GetDatasSize ();
+}
+
+////////////////////////////////////////////////////////////
+GLint VertexBufferObject::GetIndexStep ( void ) {
+  return m_oIndex.GetStep ();
+}
+
+////////////////////////////////////////////////////////////
+const GLuint* VertexBufferObject::GetIndexDatas ( void ) {
+  return m_oIndex.GetDatas ();
 }
 
 ////////////////////////////////////////////////////////////
@@ -98,6 +142,8 @@ GLboolean VertexBufferObject::ActiveVertexPointer ( void ) {
     if (iVertexStep != 0 && iDatasSize != 0) {
       glVertexPointer (iVertexStep, GL_FLOAT, iDatasSize, 0);
       // Debug : It will be necessary to check OpenGL error, in the future.
+      if (glGetError () == GL_INVALID_ENUM)
+        std::cout << "OpenGL Error during the call of the vertex pointer in the graphics card !" << std::endl;
       return GL_TRUE;
     }
   }
@@ -121,8 +167,9 @@ void VertexBufferObject::Render ( GLenum eMode ) {
 
     // Draw with index
     GLsizei iIndexArraySize = BindIndex ();
-    if (iIndexArraySize != 0)
+    if (iIndexArraySize != 0) {
       glDrawElements (eMode, iIndexArraySize, GL_UNSIGNED_INT, 0);
+    }
 
     // Disable buffers
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, 0);

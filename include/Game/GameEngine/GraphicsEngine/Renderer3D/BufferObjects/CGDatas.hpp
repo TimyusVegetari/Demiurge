@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2011-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file CGDatas.hpp
  * \brief Class to define datas for VBOs.
  * \author Anthony Acroute
- * \version 0.2
- * \date 2014-2015
+ * \version 0.3
+ * \date 2014-2016
  *
  */
 
@@ -45,7 +45,7 @@
 template <typename T>
 class CGDatas {
 
-  private :
+  protected :
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -65,8 +65,12 @@ class CGDatas {
     ///
     /// This constructor defines a CGDatas.
     ///
+    /// \param iStep    Number of subdatas by datas
+    ///                 (ex. Vertex (X,Y,Z) : iStep=3 for 3 floats).
+    ///        eTarget  OpenGL buffer target (ex. GL_ARRAY_BUFFER).
+    ///
     ////////////////////////////////////////////////////////////
-    CGDatas ( void );
+    CGDatas ( GLint iStep, GLenum eTarget );
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor.
@@ -74,7 +78,7 @@ class CGDatas {
     /// Cleans up all the internal resources used by the CGDatas.
     ///
     ////////////////////////////////////////////////////////////
-    ~CGDatas ( void );
+    virtual ~CGDatas ( void );
 
     ////////////////////////////////////////////////////////////
     // General methods
@@ -101,12 +105,9 @@ class CGDatas {
     ///
     /// \param tDatasArray      Datas Array.
     ///        iDatasArraySize  Size of the datas array.
-    ///        iStep            Number of subdatas by datas
-    ///                         (ex. Vertex (X,Y,Z) : iStep=3 for 3 floats).
-    ///        eTarget          OpenGL buffer target (ex. GL_ARRAY_BUFFER).
     ///
     ////////////////////////////////////////////////////////////
-    void SetDatas ( T* tDatasArray, GLsizei iDatasArraySize, GLint iStep, GLenum eTarget );
+    void SetDatas ( T* tDatasArray, GLsizei iDatasArraySize );
 
     ////////////////////////////////////////////////////////////
     /// \brief Send the datas to the OpenGL buffer.
@@ -154,7 +155,7 @@ class CGDatas {
     /// \return Datas array.
     ///
     ////////////////////////////////////////////////////////////
-    T* GetDatas ( void );
+    const T* GetDatas ( void );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of datas.
