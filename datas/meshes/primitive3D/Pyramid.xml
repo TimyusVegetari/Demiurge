@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<datas name="Pyramid" vertex="16" normals="16" index="16" />
+<face num="0" />
+<vertex>
+	<coords x="-0.5" y="-0.5" z="0.5" />
+	<coords x="-0.5" y="-0.5" z="-0.5" />
+	<coords x="0.5" y="-0.5" z="-0.5" />
+	<coords x="0.5" y="-0.5" z="0.5" />
+</vertex>
+<normals>
+	<coords x="0.0" y="-1.0" z="0.0" />
+	<coords x="0.0" y="-1.0" z="0.0" />
+	<coords x="0.0" y="-1.0" z="0.0" />
+	<coords x="0.0" y="-1.0" z="0.0" />
+</normals>
+<face num="1" />
+<vertex>
+	<coords x="0.0" y="0.5" z="0.0" />
+	<coords x="0.5" y="-0.5" z="-0.5" />
+	<coords x="-0.5" y="-0.5" z="-0.5" />
+</vertex>
+<normals>
+	<coords x="0.0" y="0.0" z="-1.0" />
+	<coords x="0.0" y="0.0" z="-1.0" />
+	<coords x="0.0" y="0.0" z="-1.0" />
+</normals>
+<face num="2" />
+<vertex>
+	<coords x="0.0" y="0.5" z="0.0" />
+	<coords x="-0.5" y="-0.5" z="-0.5" />
+	<coords x="-0.5" y="-0.5" z="0.5" />
+</vertex>
+<normals>
+	<coords x="-1.0" y="0.0" z="0.0" />
+	<coords x="-1.0" y="0.0" z="0.0" />
+	<coords x="-1.0" y="0.0" z="0.0" />
+</normals>
+<face num="3" />
+<vertex>
+	<coords x="0.0" y="0.5" z="0.0" />
+	<coords x="-0.5" y="-0.5" z="0.5" />
+	<coords x="0.5" y="-0.5" z="0.5" />
+</vertex>
+<normals>
+	<coords x="0.0" y="0.0" z="1.0" />
+	<coords x="0.0" y="0.0" z="1.0" />
+	<coords x="0.0" y="0.0" z="1.0" />
+</normals>
+<face num="4" />
+<vertex>
+	<coords x="0.0" y="0.5" z="0.0" />
+	<coords x="0.5" y="-0.5" z="0.5" />
+	<coords x="0.5" y="-0.5" z="-0.5" />
+</vertex>
+<normals>
+	<coords x="1.0" y="0.0" z="0.0" />
+	<coords x="1.0" y="0.0" z="0.0" />
+	<coords x="1.0" y="0.0" z="0.0" />
+</normals>
+<index>
+	<polygone type="quad" p1="0" p2="1" p3="2" p4="3" />
+	<polygone type="triangle" p1="4" p2="5" p3="6" />
+    <polygone type="triangle" p1="7" p2="8" p3="9" />
+    <polygone type="triangle" p1="10" p2="11" p3="12" />
+    <polygone type="triangle" p1="13" p2="14" p3="15" />
+</index>

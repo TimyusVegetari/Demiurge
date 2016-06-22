@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<datas name="Box" vertex="24" normals="24" index="24" />
+<face num="0" />
+<vertex>
+	<coords x="-0.5" y="-0.5" z="0.5" />
+	<coords x="-0.5" y="-0.5" z="-0.5" />
+	<coords x="0.5" y="-0.5" z="-0.5" />
+	<coords x="0.5" y="-0.5" z="0.5" />
+</vertex>
+<normals>
+	<coords x="0.0" y="-1.0" z="0.0" />
+	<coords x="0.0" y="-1.0" z="0.0" />
+	<coords x="0.0" y="-1.0" z="0.0" />
+	<coords x="0.0" y="-1.0" z="0.0" />
+</normals>
+<face num="1" />
+<vertex>
+	<coords x="0.5" y="0.5" z="-0.5" />
+	<coords x="0.5" y="-0.5" z="-0.5" />
+	<coords x="-0.5" y="-0.5" z="-0.5" />
+	<coords x="-0.5" y="0.5" z="-0.5" />
+</vertex>
+<normals>
+	<coords x="0.0" y="0.0" z="-1.0" />
+	<coords x="0.0" y="0.0" z="-1.0" />
+	<coords x="0.0" y="0.0" z="-1.0" />
+	<coords x="0.0" y="0.0" z="-1.0" />
+</normals>
+<face num="2" />
+<vertex>
+	<coords x="-0.5" y="0.5" z="-0.5" />
+	<coords x="-0.5" y="-0.5" z="-0.5" />
+	<coords x="-0.5" y="-0.5" z="0.5" />
+	<coords x="-0.5" y="0.5" z="0.5" />
+</vertex>
+<normals>
+	<coords x="-1.0" y="0.0" z="0.0" />
+	<coords x="-1.0" y="0.0" z="0.0" />
+	<coords x="-1.0" y="0.0" z="0.0" />
+	<coords x="-1.0" y="0.0" z="0.0" />
+</normals>
+<face num="3" />
+<vertex>
+	<coords x="-0.5" y="0.5" z="0.5" />
+	<coords x="-0.5" y="-0.5" z="0.5" />
+	<coords x="0.5" y="-0.5" z="0.5" />
+	<coords x="0.5" y="0.5" z="0.5" />
+</vertex>
+<normals>
+	<coords x="0.0" y="0.0" z="1.0" />
+	<coords x="0.0" y="0.0" z="1.0" />
+	<coords x="0.0" y="0.0" z="1.0" />
+	<coords x="0.0" y="0.0" z="1.0" />
+</normals>
+<face num="4" />
+<vertex>
+	<coords x="0.5" y="0.5" z="0.5" />
+	<coords x="0.5" y="-0.5" z="0.5" />
+	<coords x="0.5" y="-0.5" z="-0.5" />
+	<coords x="0.5" y="0.5" z="-0.5" />
+</vertex>
+<normals>
+	<coords x="1.0" y="0.0" z="0.0" />
+	<coords x="1.0" y="0.0" z="0.0" />
+	<coords x="1.0" y="0.0" z="0.0" />
+	<coords x="1.0" y="0.0" z="0.0" />
+</normals>
+<face num="5" />
+<vertex>
+	<coords x="0.5" y="0.5" z="0.5" />
+	<coords x="0.5" y="0.5" z="-0.5" />
+	<coords x="-0.5" y="0.5" z="-0.5" />
+	<coords x="-0.5" y="0.5" z="0.5" />
+</vertex>
+<normals>
+	<coords x="0.0" y="1.0" z="0.0" />
+	<coords x="0.0" y="1.0" z="0.0" />
+	<coords x="0.0" y="1.0" z="0.0" />
+	<coords x="0.0" y="1.0" z="0.0" />
+</normals>
+<index>
+	<polygone type="quad" p1="0" p2="1" p3="2" p4="3" />
+	<polygone type="quad" p1="4" p2="5" p3="6" p4="7" />
+    <polygone type="quad" p1="8" p2="9" p3="10" p4="11" />
+    <polygone type="quad" p1="12" p2="13" p3="14" p4="15" />
+    <polygone type="quad" p1="16" p2="17" p3="18" p4="19" />
+    <polygone type="quad" p1="20" p2="21" p3="22" p4="23" />
+</index>
