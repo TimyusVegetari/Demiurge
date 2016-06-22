@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2014-2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,21 +22,10 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-// Description for Doxygen
-////////////////////////////////////////////////////////////
-/**
- * \file Camera.hpp
- * \brief Class for the 3D cameras of the game.
- * \author Anthony Acroute
- * \version 0.3
- * \date 2011-2015
- *
- */
-
-////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Cameras/Camera.hpp>
+#include <iostream>   ///< If we need to display informations via std::cout.
 //#define GLM_SWIZZLE
 //#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // glm::lookAt, glm::perspective

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 ////////////////////////////////////////////////////////////
 
 #include <Game/GameEngine/GraphicsEngine/Renderer3D/Cameras/CameraManager.hpp>
+#include <iostream>   ///< If we need to display informations via std::cout.
 
 ////////////////////////////////////////////////////////////
 // Constructor(s)/Destructor
@@ -31,6 +32,7 @@ CameraManager::CameraManager ( void ) :
   m_uiError             (Error::NONE),
   m_uiActivatedCameraID (0)
 {
+  m_mIndex.insert (CameraManager::Pair (0, Camera::Ptr (new Camera ())));
 }
 
 ////////////////////////////////////////////////////////////
@@ -86,11 +88,10 @@ GLuint CameraManager::CheckError ( void ) {
 ////////////////////////////////////////////////////////////
 Camera& CameraManager::GetCamera ( GLuint uiCameraID ) {
   auto mFound = m_mIndex.find (uiCameraID);
-  if (mFound == m_mIndex.end ()) {
+  if (mFound == m_mIndex.end () || uiCameraID == 0) {
     CheckIDError (uiCameraID);
 
-    m_mIndex.insert (CameraManager::Pair (uiCameraID, Camera::Ptr (new Camera ())));
-    return (*m_mIndex[uiCameraID]);
+    return (*m_mIndex[0]);
   }
   return (*mFound->second);
 }
@@ -98,11 +99,10 @@ Camera& CameraManager::GetCamera ( GLuint uiCameraID ) {
 ////////////////////////////////////////////////////////////
 Camera& CameraManager::GetCamera ( void ) {
   auto mFound = m_mIndex.find (m_uiActivatedCameraID);
-  if (mFound == m_mIndex.end ()) {
+  if (mFound == m_mIndex.end () || m_uiActivatedCameraID == 0) {
     CheckIDError (m_uiActivatedCameraID);
 
-    m_mIndex.insert (CameraManager::Pair (m_uiActivatedCameraID, Camera::Ptr (new Camera ())));
-    return (*m_mIndex[m_uiActivatedCameraID]);
+    return (*m_mIndex[0]);
   }
   return (*mFound->second);
 }

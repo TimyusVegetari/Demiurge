@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // This file is part of Demiurge.
-// Copyright (C) 2015 Acroute Anthony (ant110283@hotmail.fr)
+// Copyright (C) 2011-2016 Acroute Anthony (ant110283@hotmail.fr)
 //
 // Demiurge is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
  * \file ShaderProgram.hpp
  * \brief Class to define a shader program.
  * \author Anthony Acroute
- * \version 0.2
- * \date 2013-2015
+ * \version 0.3
+ * \date 2013-2016
  *
  */
 
@@ -102,6 +102,15 @@ class ShaderProgram {
     ///
     ////////////////////////////////////////////////////////////
     void DisableShaderProgram ( void );
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Send a color.
+    ///
+    /// \param szName   Name of the variable in the shader.
+    ///        fColor   Array of 4 components of the color.
+    ///
+    ////////////////////////////////////////////////////////////
+    void SendCurrentColor ( const GLchar* szName, const GLfloat* fColor );
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a texture.

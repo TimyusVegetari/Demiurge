@@ -72,6 +72,14 @@ void ShaderProgram::DisableShaderProgram ( void ) {
 }
 
 ////////////////////////////////////////////////////////////
+void ShaderProgram::SendCurrentColor ( const GLchar* szName, const GLfloat* fColor ) {
+  GLint iColorLoc = glGetUniformLocation (m_uiID, szName);
+  if (iColorLoc == -1)
+    std::cout << "Error while getting the uniform '" << szName << "'" << std::endl;
+  glUniform4fv (iColorLoc, 1, fColor);
+}
+
+////////////////////////////////////////////////////////////
 void ShaderProgram::SendUnitTexture ( const GLchar* szName, GLint iV0 ) {
   GLint iUnitTextureLoc = glGetUniformLocation (m_uiID, szName);
   if (iUnitTextureLoc == -1)
